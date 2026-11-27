@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
-<title>転がりチーズ スペシャル＆オンライン</title>
+<title>転がりチーズ DX</title>
 <style>
   :root{
     --bg:#a9cdea; --fg:#1d2b1d; --panel:#1f3524; --panel-fg:#fff; --accent:#ffd23f; --accent-fg:#1f3524;
@@ -23,27 +23,36 @@
   #game{position:fixed;inset:0} canvas{display:block;touch-action:none} .hidden{display:none !important}
   #joy{position:absolute;left:0;top:0;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.7);pointer-events:none}
   #knob{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:rgba(255,255,255,.9)}
-  #hudWrap{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px)+10px);display:flex;flex-direction:column;align-items:center;pointer-events:none}
-  #hud{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;color:#162618;text-shadow:0 2px 6px rgba(255,255,255,.8)}
+  #hudWrap{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px)+10px);display:flex;flex-direction:column;align-items:center;pointer-events:none;z-index:4}
+  #hud{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;color:#162618;text-shadow:0 2px 6px rgba(255,255,255,.85)}
   #hudSub{margin-top:3px;font-size:12px;font-weight:700;background:rgba(31,53,36,.85);color:#ffd23f;padding:3px 12px;border-radius:999px}
+  #rankBarWrap{margin-top:7px;width:min(320px,78vw);background:rgba(20,36,24,.78);border:1.5px solid rgba(255,255,255,.28);border-radius:999px;padding:6px 12px;box-shadow:0 4px 12px rgba(0,0,0,.22)}
+  #rankTrack{position:relative;height:8px;background:rgba(255,255,255,.22);border-radius:999px}
+  #rankTrack::after{content:"GOAL";position:absolute;right:-4px;top:-14px;font-size:9px;font-weight:900;color:#ffd23f;letter-spacing:.04em}
+  .rank-pin{position:absolute;top:50%;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);border:1.5px solid rgba(0,0,0,.55);transition:left .08s linear}
+  .rank-pin.me{width:16px;height:16px;border:2.5px solid #fff;box-shadow:0 0 8px #ffd23f;z-index:3}
+  #miniMap{position:absolute;right:12px;top:calc(env(safe-area-inset-top,0px)+74px);width:86px;height:172px;border-radius:12px;border:2px solid rgba(255,255,255,.65);background:rgba(20,36,24,.78);box-shadow:0 6px 18px rgba(0,0,0,.3);pointer-events:none;z-index:4}
   #toast{margin-top:8px;font-size:15px;font-weight:900;padding:5px 14px;border-radius:999px;background:rgba(0,0,0,.78);color:#fff;opacity:0;transform:translateY(-6px);transition:.2s}
   #toast.show{opacity:1;transform:translateY(0)} #toast.boost{background:rgba(0,180,150,.92)} #toast.fall{background:rgba(220,53,69,.92)}
   #menuBtn{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px)+12px);border:none;border-radius:10px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;background:rgba(31,53,36,.85);color:#fff;z-index:5}
   #diveBtn{position:absolute;right:18px;bottom:calc(env(safe-area-inset-bottom,0px)+24px);width:100px;height:100px;border-radius:50%;border:3px solid rgba(255,255,255,.85);background:rgba(255,210,63,.92);color:#1f3524;font-size:15px;font-weight:900;box-shadow:0 8px 20px rgba(0,0,0,.3);cursor:pointer;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;touch-action:none}
   #diveBtn small{font-size:10px;opacity:.75;margin-top:2px} #diveBtn.disabled{opacity:.45;transform:scale(.95)}
   .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:10px;background:rgba(15,28,18,.52);backdrop-filter:blur(4px);z-index:10}
-  .card{width:100%;max-width:460px;max-height:94vh;overflow-y:auto;background:var(--panel);color:var(--panel-fg);border-radius:18px;padding:16px 15px;box-shadow:0 16px 40px rgba(0,0,0,.45)}
-  .card h1{margin:0 0 10px;text-align:center;font-size:21px}
-  .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:9px}
+  .card{width:100%;max-width:460px;max-height:94vh;overflow-y:auto;background:var(--panel);color:var(--panel-fg);border-radius:18px;padding:15px 14px;box-shadow:0 16px 40px rgba(0,0,0,.45)}
+  .card h1{margin:0 0 8px;text-align:center;font-size:20px}
+  .top-bar{display:flex;gap:6px;margin-bottom:9px;align-items:center}
+  .top-pill{flex:1;border:1.5px solid rgba(255,255,255,.2);border-radius:10px;background:rgba(0,0,0,.25);color:#fff;padding:7px 8px;font-size:11.5px;font-weight:800;cursor:pointer;text-align:center}
+  .top-pill.gold{border-color:rgba(255,210,63,.55);color:var(--accent)}
+  .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
   .mode-btn{border:2px solid rgba(255,255,255,.18);border-radius:10px;padding:7px 4px;cursor:pointer;background:rgba(255,255,255,.06);color:#fff;text-align:center}
-  .mode-btn strong{display:block;font-size:12px;margin-bottom:2px} .mode-btn span{display:block;font-size:9.5px;opacity:.8;line-height:1.2}
-  .mode-btn.active{border-color:var(--accent);background:rgba(255,210,63,.2);color:var(--accent)} .mode-btn.wide{grid-column:span 2}
-  .mode-hint{font-size:11.5px;line-height:1.45;color:rgba(255,255,255,.9);background:rgba(255,255,255,.07);border-radius:9px;padding:7px 10px;margin-bottom:9px}
-  .best-box{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.25);border-radius:10px;padding:8px 12px;margin-bottom:9px;font-size:13px;font-weight:700}
-  .best-box .val{color:var(--accent);font-size:17px;font-variant-numeric:tabular-nums}
-  .online-box{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:10px;margin-bottom:10px}
+  .mode-btn strong{display:block;font-size:11.5px;margin-bottom:2px} .mode-btn span{display:block;font-size:9px;opacity:.82;line-height:1.2}
+  .mode-btn.active{border-color:var(--accent);background:rgba(255,210,63,.2);color:var(--accent)}
+  .mode-hint{font-size:11.5px;line-height:1.42;color:rgba(255,255,255,.92);background:rgba(255,255,255,.07);border-radius:9px;padding:7px 10px;margin-bottom:8px}
+  .best-box{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.25);border-radius:10px;padding:7px 12px;margin-bottom:8px;font-size:12.5px;font-weight:700}
+  .best-box .val{color:var(--accent);font-size:16px;font-variant-numeric:tabular-nums}
+  .online-box{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:10px;margin-bottom:9px}
   .sub-tabs,.toggle-row{display:grid;grid-template-columns:1fr 1fr;gap:6px} .toggle-row.tri{grid-template-columns:repeat(3,1fr)} .sub-tabs{margin-bottom:8px}
-  .sub-tab,.seg-btn{border:1.5px solid rgba(255,255,255,.2);border-radius:8px;padding:7px 5px;cursor:pointer;background:rgba(255,255,255,.06);color:#fff;font-size:11.5px;font-weight:700}
+  .sub-tab,.seg-btn{border:1.5px solid rgba(255,255,255,.2);border-radius:8px;padding:7px 4px;cursor:pointer;background:rgba(255,255,255,.06);color:#fff;font-size:11.5px;font-weight:700}
   .sub-tab.active{border-color:var(--accent);background:var(--accent);color:var(--accent-fg)}
   .seg-btn.active{border-color:var(--accent);background:rgba(255,210,63,.22);color:var(--accent)}
   .sub-tab:disabled,.seg-btn:disabled{opacity:.45;cursor:not-allowed}
@@ -55,21 +64,28 @@
   .room-input{flex:1;min-width:0;border:1px solid rgba(255,255,255,.25);border-radius:8px;background:rgba(255,255,255,.1);color:#fff;padding:8px 10px;font-size:14px;font-weight:700;-webkit-user-select:text;user-select:text;outline:none}
   .mini-btn{border:none;border-radius:8px;padding:0 10px;font-size:12px;font-weight:700;cursor:pointer;background:var(--muted);color:#fff}
   .toggle-group{margin-top:8px} .toggle-label{font-size:11px;font-weight:700;opacity:.85;margin-bottom:4px;display:block}
-  .settings{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+  .settings{display:flex;flex-direction:column;gap:6px;margin-bottom:11px}
   .setting-row{background:rgba(255,255,255,.06);border-radius:9px;padding:6px 10px}
+  .setting-row.locked{opacity:.72}
   .setting-head{display:flex;justify-content:space-between;margin-bottom:3px;font-size:12px;font-weight:700} .setting-val{color:var(--accent);font-variant-numeric:tabular-nums}
-  input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;margin:0}
+  input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;margin:0} input[type=range]:disabled{cursor:not-allowed}
   .btn-row{display:flex;gap:7px;flex-wrap:wrap}
   .btn{flex:1;min-width:100px;border:none;border-radius:10px;padding:11px 10px;font-size:13.5px;font-weight:800;cursor:pointer}
   .btn-primary{background:var(--accent);color:var(--accent-fg)} .btn-sub{background:var(--muted);color:#fff} .btn-danger{background:rgba(255,107,107,.24);color:#ffb3b3} .btn:disabled{opacity:.42;cursor:not-allowed}
-  .result-card{text-align:center;max-width:370px} .result-mode{font-size:12px;opacity:.82;margin:0 0 5px;font-weight:700}
+  .result-card{text-align:center;max-width:380px} .result-mode{font-size:12px;opacity:.82;margin:0 0 5px;font-weight:700}
   .result-title{font-size:21px;font-weight:900;margin:0 0 6px;color:var(--accent)} .result-title.fail{color:#ff8a80}
-  .result-value{font-size:38px;font-weight:900;margin:0 0 6px;font-variant-numeric:tabular-nums} .result-best{font-size:13px;font-weight:700;margin:0 0 12px;color:rgba(255,255,255,.88)}
+  .result-value{font-size:36px;font-weight:900;margin:0 0 6px;font-variant-numeric:tabular-nums} .result-best{font-size:13px;font-weight:700;margin:0 0 10px;color:rgba(255,255,255,.88)}
+  .pt-badge{display:inline-block;background:var(--ok);color:#0f2a15;font-size:13px;font-weight:900;padding:4px 12px;border-radius:999px;margin-bottom:8px}
   .new-best{display:inline-block;background:var(--accent);color:var(--accent-fg);font-size:11.5px;font-weight:900;padding:3px 10px;border-radius:999px;margin-bottom:6px}
-  .rank-list{list-style:none;margin:0 0 14px;padding:0;text-align:left;display:flex;flex-direction:column;gap:5px}
-  .rank-item{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);font-size:13px;font-weight:700}
+  .rank-list{list-style:none;margin:0 0 12px;padding:0;text-align:left;display:flex;flex-direction:column;gap:5px;max-height:240px;overflow-y:auto}
+  .rank-item{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);font-size:12.5px;font-weight:700}
   .rank-item.me{background:rgba(255,210,63,.22);border:1px solid var(--accent);color:var(--accent)}
   .rank-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:middle}
+  .skin-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+  .skin-item{border:1.5px solid rgba(255,255,255,.2);border-radius:10px;padding:9px 8px;background:rgba(255,255,255,.06);color:#fff;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px}
+  .skin-item.equipped{border-color:var(--accent);background:rgba(255,210,63,.22)}
+  .skin-swatch{width:28px;height:28px;border-radius:50%;flex-shrink:0;border:2px solid rgba(255,255,255,.6)}
+  .skin-meta strong{display:block;font-size:12px} .skin-meta span{display:block;font-size:10.5px;color:var(--accent);font-weight:700}
 </style>
 </head>
 <body>
@@ -78,29 +94,47 @@
   <div id="hudWrap" class="hidden">
     <div id="hud">0 m</div>
     <div id="hudSub">BEST 0 m</div>
+    <div id="rankBarWrap" class="hidden"><div id="rankTrack"></div></div>
     <div id="toast"></div>
   </div>
+  <canvas id="miniMap" width="86" height="172" class="hidden"></canvas>
   <button id="diveBtn" type="button" class="hidden">飛びつく!<small>Space</small></button>
   <div id="joy" class="hidden" aria-hidden="true"><div id="knob"></div></div>
 
+  <!-- タイトル＆設定 -->
   <div id="menuOverlay" class="overlay">
     <div class="card">
-      <h1>転がりチーズ</h1>
+      <h1>転がりチーズ DX</h1>
+      <div class="top-bar">
+        <button id="openShopBtn" type="button" class="top-pill gold">🧀 <span id="ptsDisp">0</span> pt / スキン</button>
+        <button id="openLbBtn" type="button" class="top-pill">🏆 500mランキング</button>
+      </div>
+
       <div class="modes">
-        <button type="button" class="mode-btn active" data-mode="normal"><strong>通常モード</strong><span>3000mで勝利</span></button>
+        <button type="button" class="mode-btn active" data-mode="normal"><strong>通常モード</strong><span>3000m / +5pt</span></button>
         <button type="button" class="mode-btn" data-mode="board"><strong>板よけモード</strong><span>板を高速回避</span></button>
         <button type="button" class="mode-btn" data-mode="human"><strong>人間モード</strong><span>障害物すり抜け</span></button>
-        <button type="button" class="mode-btn" data-mode="race"><strong>チーズレース</strong><span>スペシャルあり</span></button>
-        <button type="button" class="mode-btn wide" data-mode="online"><strong>オンライン対戦（最大6人）</strong><span>1vs最大5人鬼ごっこ / レース</span></button>
+        <button type="button" class="mode-btn" data-mode="race"><strong>チーズレース</strong><span>マップ＆順位バー</span></button>
+        <button type="button" class="mode-btn" data-mode="ta500"><strong>500mタイム</strong><span>人なし記録挑戦</span></button>
+        <button type="button" class="mode-btn" data-mode="online"><strong>オンライン</strong><span>最大6人対戦</span></button>
       </div>
       <div class="mode-hint" id="modeHint"></div>
       <div class="best-box" id="bestBox"><span id="menuBestLabel">ベスト</span><span class="val" id="menuBestVal">---</span></div>
 
-      <div class="toggle-group hidden" id="raceCourseBox" style="margin:0 0 10px">
-        <span class="toggle-label">レースコース</span>
+      <!-- 500mタイムアタック用 プレイヤー名 -->
+      <div class="online-box hidden" id="ta500Box">
+        <span class="toggle-label" style="margin-top:0">ランキング登録名</span>
+        <div class="room-row" style="margin-bottom:0">
+          <input id="playerNameInput" class="room-input" type="text" maxlength="14" placeholder="プレイヤー名">
+          <button id="taViewLbBtn" type="button" class="mini-btn">順位を見る</button>
+        </div>
+      </div>
+
+      <div class="toggle-group hidden" id="raceCourseBox" style="margin:0 0 9px">
+        <span class="toggle-label">レースコース（ノーマル1位で+5pt・距離固定）</span>
         <div class="toggle-row tri">
           <button type="button" class="seg-btn active" data-rcourse="special">スペシャル</button>
-          <button type="button" class="seg-btn" data-rcourse="normal">通常</button>
+          <button type="button" class="seg-btn" data-rcourse="normal">ノーマル(+5pt)</button>
           <button type="button" class="seg-btn" data-rcourse="board">板よけ</button>
         </div>
       </div>
@@ -163,10 +197,10 @@
       </div>
 
       <div class="settings" id="settingsArea">
-        <div class="setting-row"><div class="setting-head"><label for="optGoal">ゴール距離（最大3000m）</label><span class="setting-val" id="valGoal">3000 m</span></div><input id="optGoal" type="range" min="300" max="3000" step="100"></div>
-        <div class="setting-row"><div class="setting-head"><label for="optSpeed">チーズの速さ</label><span class="setting-val" id="valSpeed">14 m/s</span></div><input id="optSpeed" type="range" min="5" max="120" step="0.5"></div>
-        <div class="setting-row"><div class="setting-head"><label for="optVx" id="lblVx">横移動の速さ</label><span class="setting-val" id="valVx">6 m/s</span></div><input id="optVx" type="range" min="3" max="60" step="0.5"></div>
-        <div class="setting-row"><div class="setting-head"><label for="optChasers" id="lblChasers">追っ手の人数</label><span class="setting-val" id="valChasers">6 人</span></div><input id="optChasers" type="range" min="1" max="300" step="1"></div>
+        <div class="setting-row" id="rowGoal"><div class="setting-head"><label for="optGoal">ゴール距離</label><span class="setting-val" id="valGoal">3000 m</span></div><input id="optGoal" type="range" min="300" max="3000" step="100"></div>
+        <div class="setting-row" id="rowSpeed"><div class="setting-head"><label for="optSpeed">チーズの速さ</label><span class="setting-val" id="valSpeed">14 m/s</span></div><input id="optSpeed" type="range" min="5" max="120" step="0.5"></div>
+        <div class="setting-row" id="rowVx"><div class="setting-head"><label for="optVx" id="lblVx">横移動の速さ</label><span class="setting-val" id="valVx">6 m/s</span></div><input id="optVx" type="range" min="3" max="60" step="0.5"></div>
+        <div class="setting-row" id="rowChasers"><div class="setting-head"><label for="optChasers" id="lblChasers">追っ手の人数</label><span class="setting-val" id="valChasers">6 人</span></div><input id="optChasers" type="range" min="1" max="300" step="1"></div>
         <div class="setting-row" id="rowChSpeed"><div class="setting-head"><label for="optChSpeed" id="lblChSpeed">追っ手の速さ</label><span class="setting-val" id="valChSpeed">1.0 倍</span></div><input id="optChSpeed" type="range" min="0.5" max="1.8" step="0.05"></div>
         <div class="setting-row hidden" id="rowBoardGap"><div class="setting-head"><label for="optBoardGap">板の間隔</label><span class="setting-val" id="valBoardGap">25 m</span></div><input id="optBoardGap" type="range" min="10" max="60" step="1"></div>
         <div class="setting-row"><div class="setting-head"><label for="optCamUp">カメラの高さ</label><span class="setting-val" id="valCamUp">6 m</span></div><input id="optCamUp" type="range" min="3" max="70" step="1"></div>
@@ -179,10 +213,36 @@
     </div>
   </div>
 
+  <!-- スキンショップ -->
+  <div id="shopOverlay" class="overlay hidden">
+    <div class="card">
+      <h1>チーズスキンショップ</h1>
+      <div class="best-box"><span>所持ポイント（ノーマルAI対戦クリアで+5pt）</span><span class="val" id="shopPtsVal">0 pt</span></div>
+      <div class="skin-grid" id="skinGrid"></div>
+      <div class="btn-row"><button id="closeShopBtn" type="button" class="btn btn-primary">閉じる</button></div>
+    </div>
+  </div>
+
+  <!-- 500mタイムアタック ランキング -->
+  <div id="lbOverlay" class="overlay hidden">
+    <div class="card">
+      <h1>🏆 500m タイムランキング</h1>
+      <p class="mode-hint">人なし・ノーマル500m固定コースの公式記録。オンライン対戦した相手とも自動で記録が合体します！</p>
+      <ul class="rank-list" id="lbList"></ul>
+      <div class="btn-row" style="margin-bottom:8px">
+        <button id="lbExportBtn" type="button" class="btn btn-sub">記録コードをコピー</button>
+        <button id="lbImportBtn" type="button" class="btn btn-sub">相手の記録を取込</button>
+      </div>
+      <div class="btn-row"><button id="closeLbBtn" type="button" class="btn btn-primary">閉じる</button></div>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
   <div id="resultOverlay" class="overlay hidden">
     <div class="card result-card">
       <p class="result-mode" id="resMode"></p>
       <p class="result-title hidden" id="resTitle"></p>
+      <div class="pt-badge hidden" id="resPts">+5 ポイント獲得！</div>
       <div class="new-best hidden" id="resNewBest">NEW BEST!</div>
       <p class="result-value" id="dist">0 m</p>
       <p class="result-best" id="resBest"></p>
@@ -211,17 +271,75 @@
   const smooth = t => t * t * (3 - 2 * t);
   const TAU = Math.PI * 2;
 
-  const MAX_GOAL = 3000, MAX_ONLINE_PLAYERS = 6, MAX_CHEESES = 6;
+  const MAX_GOAL = 3000, TA_GOAL = 500, TA_SEED = 500500, MAX_ONLINE_PLAYERS = 6, MAX_CHEESES = 6;
   const RACER_COLORS = ['#ffd23f', '#ff595e', '#38bdf8', '#4ade80', '#c084fc', '#fb923c'];
-  const ROOM_PREFIX = 'kcheese-r4-', FREE_PREFIX = 'kcheese-f4-', FREE_SLOTS = 12;
+  const ROOM_PREFIX = 'kcheese-r5-', FREE_PREFIX = 'kcheese-f5-', FREE_SLOTS = 12;
   const PEER_OPTS = { debug:0, config:{ iceServers:[{ urls:'stun:stun.l.google.com:19302' },{ urls:'stun:stun1.l.google.com:19302' },{ urls:'stun:stun.cloudflare.com:3478' }] } };
 
+  // ---------- チーズスキン定義 ----------
+  const SKINS = [
+    { id:'classic',    name:'チェダー（標準）', cost:0,  rind:'#e3a03a', face:'#f3cf72', swatch:'linear-gradient(135deg,#f3cf72,#e3a03a)', style:'solid' },
+    { id:'white',      name:'モッツァレラ',     cost:5,  rind:'#e8e4d8', face:'#ffffff', swatch:'linear-gradient(135deg,#fff,#dcd6c8)',    style:'solid' },
+    { id:'blue',       name:'ブルーチーズ',     cost:5,  rind:'#c7cfcc', face:'#eef2ec', swatch:'radial-gradient(circle,#3b6b7a 25%,#eef2ec 65%)', style:'blue' },
+    { id:'strawberry', name:'いちごチーズ',     cost:10, rind:'#e65c8a', face:'#ffb3c9', swatch:'linear-gradient(135deg,#ffb3c9,#e65c8a)', style:'solid' },
+    { id:'matcha',     name:'抹茶チーズ',       cost:10, rind:'#3d6e2e', face:'#84b861', swatch:'linear-gradient(135deg,#84b861,#3d6e2e)', style:'solid' },
+    { id:'gold',       name:'ゴールドチーズ',   cost:15, rind:'#d49b00', face:'#fff07a', swatch:'linear-gradient(135deg,#fff49c,#d49b00)', style:'gold' },
+    { id:'cyber',      name:'サイバーネオン',   cost:20, rind:'#00f5d4', face:'#141b2d', swatch:'linear-gradient(135deg,#00f5d4,#141b2d)', style:'cyber' },
+    { id:'rainbow',    name:'レインボー',       cost:25, rind:'#ff595e', face:'#ffd23f', swatch:'linear-gradient(135deg,#ff595e,#ffd23f,#4ade80,#38bdf8,#c084fc)', style:'rainbow' },
+  ];
+
+  // ---------- プレイヤーデータ（ポイント・スキン・500mランキング） ----------
+  const DEFAULT_LB = [
+    { name:'スピード王AI', time:33.80, skin:'gold' },
+    { name:'チーズ職人',   time:35.90, skin:'blue' },
+    { name:'牧場の星',     time:38.40, skin:'white' },
+    { name:'見習いチーズ', time:42.10, skin:'classic' },
+  ];
+  const profile = {
+    name: 'チーズ' + Math.floor(100 + Math.random() * 900),
+    pts: 0,
+    owned: ['classic'],
+    skin: 'classic',
+    lb500: DEFAULT_LB.slice(),
+  };
+  function loadProfile(){
+    try {
+      const raw = localStorage.getItem('runawayCheese.v5.profile');
+      if (raw){
+        const d = JSON.parse(raw);
+        if (d.name) profile.name = String(d.name).slice(0, 14);
+        if (Number.isFinite(d.pts)) profile.pts = Math.max(0, Math.floor(d.pts));
+        if (Array.isArray(d.owned)) profile.owned = Array.from(new Set(['classic', ...d.owned]));
+        if (d.skin && profile.owned.includes(d.skin)) profile.skin = d.skin;
+        if (Array.isArray(d.lb500) && d.lb500.length) profile.lb500 = d.lb500;
+      }
+    } catch {}
+  }
+  function saveProfile(){
+    try { localStorage.setItem('runawayCheese.v5.profile', JSON.stringify(profile)); } catch {}
+    $('ptsDisp').textContent = profile.pts;
+    $('shopPtsVal').textContent = `${profile.pts} pt`;
+  }
+  function mergeLeaderboard(entries){
+    const map = new Map();
+    for (const e of [...profile.lb500, ...entries]){
+      if (!e || typeof e.name !== 'string' || !Number.isFinite(e.time) || e.time < 5 || e.time > 999) continue;
+      const nm = e.name.trim().slice(0, 14) || '名無し';
+      const prev = map.get(nm);
+      if (!prev || e.time < prev.time) map.set(nm, { name:nm, time:Math.round(e.time * 100) / 100, skin:e.skin || 'classic' });
+    }
+    profile.lb500 = Array.from(map.values()).sort((a, b) => a.time - b.time).slice(0, 25);
+    saveProfile();
+  }
+  loadProfile();
+
   const PRESETS = {
-    normal: { label:'通常モード', hint:'3000mゴールを超えたらチーズの勝ち！人間側は障害物をすり抜けて追ってきます。', goalDist:3000, speed:14, vxMax:6, chasers:6, chSpeed:1.0, boardGap:25, camUp:6 },
+    normal: { label:'通常モード', hint:'【ポイント対象・3000m固定】AI追っ手から逃げ切ってゴールすると+5pt獲得！メーターは変更できません。', goalDist:3000, speed:14, vxMax:6, chasers:6, chSpeed:1.0, boardGap:25, camUp:6 },
     board:  { label:'板よけモード', hint:'左右の板を高速で避けて3000mゴールを目指せ！人間側は板をすり抜けます。', goalDist:3000, speed:75, vxMax:32, chasers:60, chSpeed:1.0, boardGap:25, camUp:48 },
-    human:  { label:'人間モード（追っ手）', hint:'あなたは障害物をすり抜けられます！矢印/WASDで走り、Spaceか右下ボタンで飛びついて捕まえよう。', goalDist:3000, speed:12, vxMax:7, chasers:6, chSpeed:1.05, boardGap:25, camUp:6 },
-    race:   { label:'チーズレース', hint:'【スペシャルコース】落とし穴・ダッシュボード・板の一本道が登場！落ちると少し戻されます！', goalDist:3000, speed:22, vxMax:11, chasers:6, chSpeed:1.0, boardGap:28, camUp:11 },
-    online: { label:'オンライン対戦', hint:'最大6人（チーズ1人 vs 人間最大5人）の鬼ごっこ、またはスペシャルコースでのチーズレース！', goalDist:3000, speed:16, vxMax:8, chasers:0, chSpeed:1.05, boardGap:28, camUp:8 },
+    human:  { label:'人間モード（追っ手）', hint:'障害物をすり抜けられます！矢印/WASDで走り、Spaceか右下ボタンで飛びついて捕まえよう。', goalDist:3000, speed:12, vxMax:7, chasers:6, chSpeed:1.05, boardGap:25, camUp:6 },
+    race:   { label:'チーズレース', hint:'ミニマップ＆順位バー搭載！スペシャルは穴・ダッシュボード・一本道あり。ノーマル1位クリアで+5pt（距離固定）！', goalDist:3000, speed:22, vxMax:11, chasers:6, chSpeed:1.0, boardGap:28, camUp:11 },
+    ta500:  { label:'500mタイムアタック', hint:'人なし・ノーマル500m固定の公式タイム計測！好タイムを出して全プレイヤーランキング上位を目指そう。', goalDist:500, speed:14, vxMax:6.5, chasers:0, chSpeed:1.0, boardGap:25, camUp:6 },
+    online: { label:'オンライン対戦', hint:'最大6人の鬼ごっこ＆レース！対戦相手と500mランキングも自動で同期されます。', goalDist:3000, speed:16, vxMax:8, chasers:0, chSpeed:1.05, boardGap:28, camUp:8 },
   };
   const FREE_RULES = {
     chase_normal:  { onlineGame:'chase', onlineCourse:'normal',  goalDist:3000, speed:16, vxMax:8,  chasers:0, chSpeed:1.05, boardGap:28, camUp:8 },
@@ -234,7 +352,7 @@
 
   const userCfg = { mode:'normal', raceCourse:'special', onlineType:'free', onlineGame:'chase', onlineCourse:'normal', hostRole:'cheese', ...PRESETS.normal };
   const cfg = {
-    mode:'normal', onlineType:'room', isOnline:false, isRace:false, course:'normal', goalDist:3000,
+    mode:'normal', onlineType:'room', isOnline:false, isRace:false, isTA:false, isPointEligible:false, course:'normal', goalDist:3000,
     myRole:'cheese', myIndex:0, humanPlayerCount:0, halfW:8, xlim:7.8, cheeseR:0.32, cheeseW:0.2,
     gFall:9.8, gAlong:6.556, drag:0.073, turnCost:0.1, vxMax:4.5, latAcc:22, bounce:0.3, bounceMin:1.2, airControl:0.6,
     chStart:6, chMax:12, chAddEvery:100, startDelay:1.0, startGrace:2.0, chSpeedMult:1.0, runAcc:7, chVx:3.2,
@@ -262,17 +380,17 @@
     if (toastTimer) clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.className = ''; }, 1300);
   }
 
-  const bestKey = m => `runawayCheese.v4.best.${m}`;
+  const bestKey = m => `runawayCheese.v5.best.${m}`;
   function getBest(m){ if (m === 'online') return null; try { const n = parseFloat(localStorage.getItem(bestKey(m))); return Number.isFinite(n) && n > 0 ? n : null; } catch { return null; } }
   function saveBest(m, val){
     if (m === 'online' || val <= 0) return false;
-    const prev = getBest(m), lower = (m === 'human' || m === 'race');
+    const prev = getBest(m), lower = (m === 'human' || m === 'race' || m === 'ta500');
     if (prev === null || (lower ? val < prev : val > prev)){ try { localStorage.setItem(bestKey(m), String(val)); } catch {} return true; }
     return false;
   }
-  const formatBest = (m, v) => v === null ? '---' : (m === 'race' ? `最速 ${v.toFixed(1)} 秒` : m === 'human' ? `最短 ${Math.round(v)} m` : `${Math.round(v)} m`);
+  const formatBest = (m, v) => v === null ? '---' : (m === 'race' || m === 'ta500' ? `最速 ${v.toFixed(2)} 秒` : m === 'human' ? `最短 ${Math.round(v)} m` : `${Math.round(v)} m`);
 
-  // ---------- 地形＆スペシャルコース（穴・ダッシュボード・板の一本道） ----------
+  // ---------- 地形＆スペシャルコース ----------
   function bump(x, s){
     return 0.5 * Math.sin(0.31 * s + 1.4 * Math.sin(0.043 * s)) * (0.75 + 0.25 * Math.sin(0.37 * x + 0.11 * s))
          + 0.14 * Math.sin(0.83 * s + 0.6 * x + 2.0) + 0.08 * Math.sin(1.37 * s - 0.9 * x + 0.5)
@@ -348,7 +466,7 @@
     return { s:Math.max(2, s - 10), x:0 };
   }
   // === パート1 ここまで ===
-// === パート2 ここから ===
+  // === パート2 ここから ===
   // ---------- 状態＆three.js ----------
   let game = 'menu', outcome = 'caught', winnerIdx = -1, S0 = 0, overT = 0, playTime = 0;
   let activeN = 0, cheeseN = 1, shownHudKey = '', currentBest = null, maxDist = 0, diveRequested = false, raceOrder = [], raceFinishTimer = 0;
@@ -356,7 +474,7 @@
   const cheeses = Array.from({ length:MAX_CHEESES }, (_, i) => ({
     idx:i, s:0, x:0, y:0, v:0, vx:0, vy:0, rot:0, tilt:0, tiltV:0, grounded:true,
     held:null, hand:0, finished:false, finishTime:0, boostT:0, boostCool:0,
-    ctrlId:'ai', label:`P${i+1}`, color:RACER_COLORS[i], aiBias:0, aiSpeedK:1
+    ctrlId:'ai', label:`P${i+1}`, color:RACER_COLORS[i], skin:'classic', aiBias:0, aiSpeedK:1
   }));
   const mainCheese = () => cheeses[0];
 
@@ -373,7 +491,7 @@
   sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03; scene.add(sun, sun.target);
   const UP = new THREE.Vector3(0, 1, 0), rel = (out, s, x, y) => out.set(x, y + SLOPE * S0, -(s - S0));
 
-  // ---------- テクスチャ ----------
+  // ---------- テクスチャ＆スキン ----------
   function tileNoise(S, cells, rnd){
     const g = new Float32Array(cells * cells).map(() => rnd()), out = new Float32Array(S * S);
     for (let y = 0; y < S; y++) for (let x = 0; x < S; x++){
@@ -390,11 +508,64 @@
     const t = canvasTex(S, S, d => { for (let i=0;i<S*S;i++){ const v=clamp(lum[i],0,1); d[i*4]=Math.round(255*lerp(dk.r,b.r*1.15,v)); d[i*4+1]=Math.round(255*lerp(dk.g,b.g*1.12,v)); d[i*4+2]=Math.round(255*lerp(dk.b,b.b*1.05,v)); d[i*4+3]=255; } });
     t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = renderer.capabilities.getMaxAnisotropy(); return t;
   }
-  function rindTex(h){ const S=128, H=32, rnd=rand(11), c=new THREE.Color(h||css('--cheese-rind')), n=tileNoise(S,16,rnd); return canvasTex(S,H,d=>{ for(let y=0;y<H;y++)for(let x=0;x<S;x++){ const k=.84+.22*n[(y*4%S)*S+x], i=(y*S+x)*4; d[i]=Math.round(255*clamp(c.r*k,0,1)); d[i+1]=Math.round(255*clamp(c.g*k,0,1)); d[i+2]=Math.round(255*clamp(c.b*k,0,1)); d[i+3]=255; } }); }
-  function faceTex(h){ const S=128, rnd=rand(13), f=new THREE.Color(css('--cheese-face')), r=new THREE.Color(h||css('--cheese-rind')), n=tileNoise(S,16,rnd); return canvasTex(S,S,d=>{ for(let y=0;y<S;y++)for(let x=0;x<S;x++){ const base=Math.hypot((x+.5)/S*2-1,(y+.5)/S*2-1)>.82?r:f, k=.9+.14*n[y*S+x], i=(y*S+x)*4; d[i]=Math.round(255*clamp(base.r*k,0,1)); d[i+1]=Math.round(255*clamp(base.g*k,0,1)); d[i+2]=Math.round(255*clamp(base.b*k,0,1)); d[i+3]=255; } }); }
   function boardTex(){ const S=128, H=64, rnd=rand(31), c=new THREE.Color(css('--board')), l=new THREE.Color(css('--board-line')), n=tileNoise(S,16,rnd); return canvasTex(S,H,d=>{ for(let y=0;y<H;y++)for(let x=0;x<S;x++){ const base=(x<4||x>=S-4||y<4||y>=H-4||y%16<2)?l:c, k=.88+.18*n[(y*2%S)*S+x], i=(y*S+x)*4; d[i]=Math.round(255*clamp(base.r*k,0,1)); d[i+1]=Math.round(255*clamp(base.g*k,0,1)); d[i+2]=Math.round(255*clamp(base.b*k,0,1)); d[i+3]=255; } }); }
   function boostTex(){ const c=document.createElement('canvas'); c.width=c.height=128; const g=c.getContext('2d'); g.fillStyle='#005f73'; g.fillRect(0,0,128,128); g.strokeStyle='#ffd23f'; g.lineWidth=6; g.strokeRect(4,4,120,120); g.fillStyle='#00f5d4'; for(let y=26;y<=98;y+=36){ g.beginPath(); g.moveTo(64,y-14); g.lineTo(106,y+10); g.lineTo(86,y+10); g.lineTo(64,y-2); g.lineTo(42,y+10); g.lineTo(22,y+10); g.closePath(); g.fill(); } const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; return t; }
   function checkerTex(){ const c=document.createElement('canvas'); c.width=256; c.height=64; const g=c.getContext('2d'); for(let y=0;y<4;y++)for(let x=0;x<16;x++){ g.fillStyle=(x+y)%2===0?'#fff':'#181818'; g.fillRect(x*16,y*16,16,16); } const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; return t; }
+
+  // スキン別のチーズマテリアル生成＆キャッシュ
+  const skinMatCache = new Map();
+  function buildSkinMats(skinObj, overrideRind){
+    const style = skinObj.style || 'solid';
+    const rCol = new THREE.Color(overrideRind || skinObj.rind), fCol = new THREE.Color(skinObj.face);
+    const rc = document.createElement('canvas'); rc.width = 128; rc.height = 32; const rg = rc.getContext('2d');
+    if (style === 'rainbow'){
+      const gr = rg.createLinearGradient(0, 0, 128, 0);
+      ['#ff595e','#ffca3a','#8ac926','#1982c4','#6a4c93','#ff595e'].forEach((col, i) => gr.addColorStop(i / 5, col));
+      rg.fillStyle = gr; rg.fillRect(0, 0, 128, 32);
+    } else if (style === 'cyber'){
+      rg.fillStyle = '#111827'; rg.fillRect(0, 0, 128, 32);
+      rg.fillStyle = '#00f5d4'; rg.fillRect(0, 4, 128, 4); rg.fillRect(0, 24, 128, 4);
+      for (let x = 0; x < 128; x += 16) rg.fillRect(x, 0, 3, 32);
+    } else {
+      rg.fillStyle = '#' + rCol.getHexString(); rg.fillRect(0, 0, 128, 32);
+      const rnd = rand(41);
+      for (let i = 0; i < 90; i++){ rg.fillStyle = style === 'blue' ? 'rgba(55,105,120,.38)' : 'rgba(255,255,255,.1)'; rg.fillRect(rnd()*128, rnd()*32, 6, 4); }
+    }
+    const fc = document.createElement('canvas'); fc.width = fc.height = 128; const fg = fc.getContext('2d');
+    fg.fillStyle = '#' + rCol.getHexString(); fg.fillRect(0, 0, 128, 128);
+    fg.beginPath(); fg.arc(64, 64, 54, 0, TAU);
+    if (style === 'rainbow'){
+      const gr = fg.createLinearGradient(10, 10, 118, 118);
+      ['#ff595e','#ffca3a','#8ac926','#1982c4','#c084fc'].forEach((col, i) => gr.addColorStop(i / 4, col));
+      fg.fillStyle = gr;
+    } else fg.fillStyle = '#' + fCol.getHexString();
+    fg.fill();
+    if (style === 'blue'){
+      const rnd = rand(73); fg.fillStyle = '#366878';
+      for (let i = 0; i < 24; i++){ const a = rnd()*TAU, rad = rnd()*42; fg.beginPath(); fg.arc(64+Math.cos(a)*rad, 64+Math.sin(a)*rad, 3+rnd()*4, 0, TAU); fg.fill(); }
+    } else if (style === 'cyber'){
+      fg.strokeStyle = '#00f5d4'; fg.lineWidth = 4; fg.beginPath(); fg.arc(64, 64, 48, 0, TAU); fg.stroke();
+      fg.beginPath(); fg.arc(64, 64, 24, 0, TAU); fg.stroke();
+    } else if (style === 'gold'){
+      fg.strokeStyle = '#fff9c4'; fg.lineWidth = 5; fg.beginPath(); fg.arc(64, 64, 42, 0, TAU); fg.stroke();
+    }
+    const rTex = new THREE.CanvasTexture(rc); rTex.encoding = THREE.sRGBEncoding;
+    const fTex = new THREE.CanvasTexture(fc); fTex.encoding = THREE.sRGBEncoding;
+    const metal = style === 'gold' ? 0.55 : style === 'cyber' ? 0.25 : 0;
+    const rough = style === 'gold' ? 0.28 : style === 'cyber' ? 0.35 : 0.78;
+    const emi = style === 'cyber' ? lin('#007a70') : style === 'gold' ? lin('#4a3400') : lin('#000000');
+    const emiI = style === 'cyber' ? 0.65 : style === 'gold' ? 0.25 : 0;
+    const rm = new THREE.MeshStandardMaterial({ map:rTex, roughness:rough, metalness:metal, emissive:emi, emissiveIntensity:emiI });
+    const fm = new THREE.MeshStandardMaterial({ map:fTex, roughness:rough, metalness:metal, emissive:emi, emissiveIntensity:emiI });
+    return [rm, fm, fm];
+  }
+  function getSkinMats(skinId, overrideRind){
+    const key = `${skinId || 'classic'}|${overrideRind || ''}`;
+    if (skinMatCache.has(key)) return skinMatCache.get(key);
+    const obj = SKINS.find(s => s.id === skinId) || SKINS[0];
+    const mats = buildSkinMats(obj, overrideRind);
+    skinMatCache.set(key, mats); return mats;
+  }
 
   // ---------- 地形メッシュ（穴くり抜き対応）・柵・ギミック・ゴール ----------
   const NX = TERRAIN_SEG_X, NS = CHUNK_SEG_S, VN = (NX + 1) * (NS + 1), MAX_TRIS = NX * NS * 6;
@@ -510,12 +681,17 @@
   const cheeseGeo = new THREE.CylinderGeometry(1,1,1,32).rotateZ(Math.PI/2), cheeseVisuals = [], markers = [];
   for (let i = 0; i < MAX_CHEESES; i++){
     const grp = new THREE.Group(); grp.rotation.order = 'YXZ'; const spin = new THREE.Group(); grp.add(spin);
-    const tint = i === 0 ? null : RACER_COLORS[i], fMat = new THREE.MeshStandardMaterial({ map:faceTex(tint), roughness:0.8 });
-    const mesh = new THREE.Mesh(cheeseGeo, [new THREE.MeshStandardMaterial({ map:rindTex(tint), roughness:0.75 }), fMat, fMat]);
+    const mesh = new THREE.Mesh(cheeseGeo, getSkinMats('classic', i === 0 ? null : RACER_COLORS[i]));
     mesh.castShadow = true; spin.add(mesh); scene.add(grp); cheeseVisuals.push({ grp, spin, mesh });
     const mk = new THREE.Mesh(new THREE.ConeGeometry(0.24,0.45,4).rotateX(Math.PI), new THREE.MeshBasicMaterial({ color:RACER_COLORS[i] }));
     mk.visible = false; scene.add(mk); markers.push(mk);
   }
+  function applyCheeseSkin(idx, skinId, fallbackRind){
+    if (idx < 0 || idx >= MAX_CHEESES) return;
+    cheeses[idx].skin = skinId || 'classic';
+    cheeseVisuals[idx].mesh.material = getSkinMats(skinId || 'classic', fallbackRind || null);
+  }
+
   const trail = []; let trailK = 0;
   const trailGeo = new THREE.BufferGeometry();
   trailGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(TRAIL_N*6), 3));
@@ -528,7 +704,9 @@
   const _tp = Array.from({ length:TRAIL_N }, () => new THREE.Vector3()), _tt = new THREE.Vector3(), _ts = new THREE.Vector3();
   function drawTrail(dt){
     const fc = focusCheese(), want = fc.held ? 0 : (fc.boostT > 0 ? 1 : clamp((fc.v - Math.max(8, cfg.targetSpeed * 0.92)) / TRAIL_FADE, 0, 1));
-    trailK += (want - trailK) * Math.min(1, dt * 6); trailMat.uniforms.color.value.set(fc.boostT > 0 ? '#00f5d4' : css('--trail'));
+    trailK += (want - trailK) * Math.min(1, dt * 6);
+    const skColor = fc.skin === 'cyber' ? '#00f5d4' : fc.skin === 'strawberry' ? '#ff99c8' : fc.skin === 'gold' ? '#ffe066' : css('--trail');
+    trailMat.uniforms.color.value.set(fc.boostT > 0 ? '#00f5d4' : skColor);
     const n = trail.length; trailMesh.visible = trailK > 0.01 && n > 1; if (!trailMesh.visible) return;
     rel(_tp[0], fc.s, fc.x, fc.y); for (let i=1;i<TRAIL_N;i++){ const p = trail[Math.min(i,n-1)]; rel(_tp[i], p.s, p.x, p.y); }
     const pos = trailGeo.attributes.position.array, al = trailGeo.attributes.alpha.array;
@@ -749,7 +927,7 @@
     }
     const look=cfg.course==='board'?Math.max(18,cfg.boardGap*.9):10;
     for(const o of obstacles){ const ah=o.s-ch.s; if(ah<.2||ah>look)continue; const half=halfWidth(o)+(cfg.course==='board'?1.2:.75); if(Math.abs(ch.x-o.x)<half+.6) steer+=(o.kind==='board'?(o.x<0?1:-1):(ch.x<o.x?-1:1))*(1-ah/look)*(cfg.course==='board'?3.5:2.3); }
-    if (!cfg.isRace){
+    if (!cfg.isRace&&!cfg.isTA){
       let nd=999, nx=0; for(let i=0;i<activeN;i++){ const c=chasers[i],ds=ch.s-c.s; if(ds>-1&&ds<10){ const d=Math.hypot(ds,ch.x-c.x); if(d<nd){nd=d;nx=c.x;} } }
       if(nd<8){ let dir=ch.x>=nx?1:-1; if(ch.x>cfg.halfW-1.8)dir=-1; if(ch.x<-cfg.halfW+1.8)dir=1; steer+=dir*(1-nd/8)*1.4; pushY=.85; }
     }
@@ -821,7 +999,9 @@
     c.tiltV+=(-TILT_SPRING*c.tilt-TILT_DAMP*c.tiltV)*dt; c.tilt=clamp(c.tilt+c.tiltV*dt,-.6,.6); c.rot=(c.rot+c.v/cfg.cheeseR*dt)%TAU;
     if(game==='playing'&&!c.finished&&c.s>=cfg.goalDist){
       c.finished=true; c.finishTime=playTime;
-      if(cfg.isRace){ if(!raceOrder.includes(c.idx))raceOrder.push(c.idx); } else { c.s=cfg.goalDist; maxDist=cfg.goalDist; finishCaught(null,0,'cheese_goal',-1); }
+      if(cfg.isRace){ if(!raceOrder.includes(c.idx))raceOrder.push(c.idx); }
+      else if(cfg.isTA){ c.s=cfg.goalDist; maxDist=cfg.goalDist; finishCaught(null,0,'ta_goal',0); }
+      else { c.s=cfg.goalDist; maxDist=cfg.goalDist; finishCaught(null,0,'cheese_goal',-1); }
     }
   }
   function collideCheeses(){
@@ -902,20 +1082,91 @@
       const hm=cheeses.slice(0,cheeseN).filter(c=>c.ctrlId!=='ai'), any=hm.some(c=>c.finished), all=hm.length>0&&hm.every(c=>c.finished);
       if(any) raceFinishTimer+=dt;
       if(all||(any&&raceFinishTimer>=6)||raceOrder.length>=cheeseN) finishCaught(null,0,'race_done',raceOrder[0]??0);
-    } else {
+    } else if(!cfg.isTA){
       const mc=mainCheese();
-      if(game==='playing'&&cfg.humanPlayerCount===0){ const n=Math.min(cfg.chMax,cfg.chStart+Math.floor(mc.s/cfg.chAddEvery)); while(activeN<n){ const c=chasers[activeN++]; c.isPlayer=false; c.ctrlId=null; resetChaser(c,activeN-1,false); c.active=true; } }
+      if(game==='playing'&&cfg.humanPlayerCount===0&&cfg.chStart>0){ const n=Math.min(cfg.chMax,cfg.chStart+Math.floor(mc.s/cfg.chAddEvery)); while(activeN<n){ const c=chasers[activeN++]; c.isPlayer=false; c.ctrlId=null; resetChaser(c,activeN-1,false); c.active=true; } }
       for(let i=0;i<activeN;i++) updateChaser(chasers[i],dt);
       const mv=s=>s==='run'||s==='windup'||s==='idle';
       for(let i=0;i<activeN;i++)for(let j=i+1;j<activeN;j++){ const a=chasers[i],b=chasers[j]; if(!mv(a.state)||!mv(b.state))continue; if(Math.abs(a.s-b.s)<.8&&Math.abs(a.x-b.x)<.6){ const p=(.6-Math.abs(a.x-b.x))*.5*(a.x>=b.x?1:-1); a.x=clamp(a.x+p,-cfg.halfW+.5,cfg.halfW-.5); b.x=clamp(b.x-p,-cfg.halfW+.5,cfg.halfW-.5); } }
       if(mc.held) updateCheeseOne(mc,dt);
       if(game==='playing') maxDist=Math.min(cfg.goalDist,Math.max(maxDist,mc.s));
+    } else {
+      if(game==='playing') maxDist=Math.min(cfg.goalDist,Math.max(maxDist,mainCheese().s));
     }
     recordTrail();
     S0 = cfg.isRace ? focusCheese().s : (cfg.myRole==='human'&&activeN>cfg.myIndex ? chasers[cfg.myIndex].s : mainCheese().s);
   }
 
-  // ---------- ゲスト補間・描画 ----------
+  // ---------- チーズレース用 順位バー＆ミニマップ ----------
+  const rankPins = [];
+  for(let i=0;i<MAX_CHEESES;i++){
+    const el=document.createElement('div'); el.className='rank-pin hidden'; el.style.background=RACER_COLORS[i];
+    $('rankTrack').appendChild(el); rankPins.push(el);
+  }
+  function drawRankBar(){
+    const show = cfg.isRace && game !== 'menu';
+    $('rankBarWrap').classList.toggle('hidden', !show);
+    if(!show) return;
+    for(let i=0;i<MAX_CHEESES;i++){
+      const el=rankPins[i]; el.classList.toggle('hidden', i>=cheeseN);
+      if(i>=cheeseN) continue;
+      const pct=clamp(cheeses[i].s / cfg.goalDist, 0, 1) * 100;
+      el.style.left = pct.toFixed(2) + '%';
+      el.style.background = cheeses[i].color;
+      el.classList.toggle('me', i === cfg.myIndex);
+    }
+  }
+  const mmCv = $('miniMap'), mmCtx = mmCv.getContext('2d');
+  function drawMiniMap(){
+    const show = cfg.isRace && game !== 'menu';
+    mmCv.classList.toggle('hidden', !show);
+    if(!show) return;
+    const W=mmCv.width, H=mmCv.height, pad=8, innerW=W-pad*2;
+    const fc=focusCheese(), sMin=fc.s-18, sMax=fc.s+110, sSpan=sMax-sMin;
+    const toX = x => pad + ((x + cfg.halfW) / (cfg.halfW * 2)) * innerW;
+    const toY = s => H - ((s - sMin) / sSpan) * H;
+
+    mmCtx.clearRect(0,0,W,H);
+    mmCtx.fillStyle='#2a4b2c'; mmCtx.fillRect(pad, 0, innerW, H);
+    // スペシャルコースの谷・穴・板・ダッシュボード
+    if(cfg.course==='special'){
+      const i0=Math.max(1,Math.floor(sMin/SP_LEN)), i1=Math.floor(sMax/SP_LEN);
+      for(let idx=i0;idx<=i1;idx++){
+        const sec=getSpSection(idx); if(!sec)continue;
+        if(sec.valley){ const y1=toY(sec.valley.s1), y2=toY(sec.valley.s0); mmCtx.fillStyle='#0c1512'; mmCtx.fillRect(pad, y1, innerW, y2-y1); }
+        for(const h of sec.holes){ const x1=toX(h.x-h.w/2), x2=toX(h.x+h.w/2), y1=toY(h.s+h.len/2), y2=toY(h.s-h.len/2); mmCtx.fillStyle='#0c1512'; mmCtx.fillRect(x1,y1,x2-x1,y2-y1); mmCtx.strokeStyle='#f59e0b'; mmCtx.lineWidth=1; mmCtx.strokeRect(x1,y1,x2-x1,y2-y1); }
+        for(const b of sec.bridges){ const x1=toX(b.x-b.w/2), x2=toX(b.x+b.w/2), y1=toY(b.s1), y2=toY(b.s0); mmCtx.fillStyle='#d69e56'; mmCtx.fillRect(x1,y1,x2-x1,y2-y1); }
+        for(const p of sec.boosts){ const x1=toX(p.x-p.w/2), x2=toX(p.x+p.w/2), y1=toY(p.s+p.len/2), y2=toY(p.s-p.len/2); mmCtx.fillStyle='#00f5d4'; mmCtx.fillRect(x1,y1,x2-x1,y2-y1); }
+      }
+    }
+    // 障害物（板や岩）
+    for(const o of obstacles){
+      if(o.s<sMin||o.s>sMax||o.kind==='bush')continue;
+      const y=toY(o.s);
+      if(o.kind==='board'){ const x1=toX(o.x-o.len/2), x2=toX(o.x+o.len/2); mmCtx.fillStyle='#d69e56'; mmCtx.fillRect(x1,y-2,x2-x1,4); }
+      else { mmCtx.fillStyle='rgba(255,255,255,.35)'; mmCtx.fillRect(toX(o.x)-1.5,y-1.5,3,3); }
+    }
+    // ゴールライン
+    if(cfg.goalDist>=sMin&&cfg.goalDist<=sMax){
+      const gy=toY(cfg.goalDist); mmCtx.fillStyle='#fff'; mmCtx.fillRect(pad,gy-2,innerW,4);
+      mmCtx.fillStyle='#111'; for(let x=pad;x<pad+innerW;x+=8)mmCtx.fillRect(x,gy-2,4,4);
+    }
+    // コース両端ライン
+    mmCtx.strokeStyle='rgba(255,255,255,.45)'; mmCtx.lineWidth=1.5;
+    mmCtx.beginPath(); mmCtx.moveTo(pad,0); mmCtx.lineTo(pad,H); mmCtx.moveTo(W-pad,0); mmCtx.lineTo(W-pad,H); mmCtx.stroke();
+    // 全チーズ描画（自分を手前に大きく）
+    for(let pass=0;pass<2;pass++){
+      for(let i=0;i<cheeseN;i++){
+        const isMe=(i===cfg.myIndex); if((pass===0&&isMe)||(pass===1&&!isMe))continue;
+        const c=cheeses[i], cx=toX(c.x), cy=clamp(toY(c.s), 5, H-5);
+        mmCtx.beginPath(); mmCtx.arc(cx, cy, isMe?5.5:3.8, 0, TAU);
+        mmCtx.fillStyle=c.color; mmCtx.fill();
+        mmCtx.lineWidth=isMe?2:1; mmCtx.strokeStyle=isMe?'#fff':'#000'; mmCtx.stroke();
+      }
+    }
+  }
+
+  // ---------- ゲスト補間・3D描画 ----------
   function applyGuestInterpolation(dt){
     const sn=net.snap; if(!sn)return; const k=Math.min(1,dt*18); cheeseN=sn.ch.length;
     for(let i=0;i<cheeseN;i++){
@@ -973,14 +1224,19 @@
       camX+=(fc.x*cfg.camFollowX-camX)*Math.min(1,dt*4); const cy=clamp(fc.y+SLOPE*S0-bump(fc.x,fc.s),-4,4);
       _camP.set(camX,SLOPE*cfg.camBack+cfg.camUp+cy*.3,cfg.camBack); _camL.set(camX,-SLOPE*CAM_LOOK+cy*.3,-CAM_LOOK);
     }
-    zoom+=(((game==='caught'||game==='over')&&outcome!=='race_done'&&outcome!=='cheese_goal'?1:0)-zoom)*Math.min(1,dt*ZOOM_SPEED);
+    zoom+=(((game==='caught'||game==='over')&&outcome!=='race_done'&&outcome!=='cheese_goal'&&outcome!=='ta_goal'?1:0)-zoom)*Math.min(1,dt*ZOOM_SPEED);
     if(zoom>.001){ rel(_zL,fc.s,fc.x,fc.y); _zP.set(_zL.x+ZOOM_SIDE,ground(fc.x,fc.s-ZOOM_BACK)+SLOPE*S0+ZOOM_UP,_zL.z+ZOOM_BACK); const k=smooth(zoom); _camP.lerp(_zP,k); _camL.lerp(_zL,k); }
     camera.position.copy(_camP); camera.lookAt(_camL); drawTrail(dt);
     sun.target.position.set(camX,0,-2); sun.position.set(camX-6,16,-10);
 
-    if(cfg.isRace){
+    drawRankBar(); drawMiniMap();
+
+    if(cfg.isTA){
+      const rem=Math.max(0,Math.ceil(cfg.goalDist-fc.s)), key=`t:${rem}:${Math.floor(playTime*10)}`;
+      if(key!==shownHudKey){ shownHudKey=key; $('hud').textContent=`${playTime.toFixed(2)} 秒`; $('hudSub').textContent=`500mタイムアタック / 残り ${rem}m`; }
+    } else if(cfg.isRace){
       const st=getRaceStandings(), rk=st.findIndex(c=>c.idx===cfg.myIndex)+1, rem=Math.max(0,Math.ceil(cfg.goalDist-fc.s)), key=`r:${rk}:${rem}:${Math.floor(playTime*2)}`;
-      if(key!==shownHudKey){ shownHudKey=key; $('hud').textContent=`${rk}位 / ${cheeseN} (残り ${rem}m)`; $('hudSub').textContent=`${cfg.course==='special'?'スペシャル':cfg.course==='board'?'板よけ':'通常'} / ${playTime.toFixed(1)}秒`; }
+      if(key!==shownHudKey){ shownHudKey=key; $('hud').textContent=`${rk}位 / ${cheeseN} (残り ${rem}m)`; $('hudSub').textContent=`${cfg.course==='special'?'スペシャル':cfg.course==='board'?'板よけ':'ノーマル'}${cfg.isPointEligible?' (+5pt対象)':''} / ${playTime.toFixed(1)}秒`; }
     } else if(cfg.isOnline){
       const mc=mainCheese(), d=Math.min(cfg.goalDist,Math.max(0,Math.floor(mc.s))), me=cfg.myRole==='human'&&activeN>cfg.myIndex?chasers[cfg.myIndex]:null, gap=me?Math.max(0,Math.round(mc.s-me.s)):0, key=`o:${cfg.myRole}:${d}:${gap}`;
       if(key!==shownHudKey){ shownHudKey=key; if(cfg.myRole==='cheese'){$('hud').textContent=`${d} / ${cfg.goalDist} m`;$('hudSub').textContent=`チーズ役（ゴールで勝ち）/ 追っ手 ${activeN}人`;} else {$('hud').textContent=`チーズまで ${gap} m`;$('hudSub').textContent=`人間役（障害物すり抜け）/ チーズ ${d}/${cfg.goalDist}m`;} }
@@ -989,19 +1245,28 @@
       if(key!==shownHudKey){ shownHudKey=key; $('hud').textContent=`チーズまで ${gap} m`; $('hudSub').textContent=`チーズ ${d}/${cfg.goalDist}m / BEST ${formatBest('human',currentBest)}`; }
     } else {
       const d=Math.min(cfg.goalDist,Math.max(0,Math.floor(maxDist))), key=`c:${d}`;
-      if(key!==shownHudKey){ shownHudKey=key; $('hud').textContent=`${d} / ${cfg.goalDist} m`; $('hudSub').textContent=`BEST ${Math.round(currentBest===null?d:Math.max(currentBest,d))} m（${cfg.goalDist}mで勝ち!）`; }
+      if(key!==shownHudKey){ shownHudKey=key; $('hud').textContent=`${d} / ${cfg.goalDist} m`; $('hudSub').textContent=`BEST ${Math.round(currentBest===null?d:Math.max(currentBest,d))} m${cfg.isPointEligible?'（3000mクリアで+5pt!）':''}`; }
     }
     renderer.render(scene, camera);
   }
 
-  // ---------- 設定反映・オンライン ----------
+  // ---------- 設定反映・オンライン（ランキング＆スキン同期対応） ----------
+  function isGoalLockedMode(){
+    if(userCfg.mode==='ta500') return true;
+    if(userCfg.mode==='normal') return true;
+    if(userCfg.mode==='race'&&userCfg.raceCourse==='normal') return true;
+    return false;
+  }
   function applyUserConfig(src, isOn, myR, myI, hCnt){
-    const s=src||userCfg, isRace=isOn?s.onlineGame==='race':s.mode==='race', course=isOn?s.onlineCourse:(s.mode==='board'?'board':s.mode==='race'?s.raceCourse:'normal'), isB=course==='board';
-    cfg.mode=isOn?'online':s.mode; cfg.onlineType=s.onlineType||'room'; cfg.isOnline=!!isOn; cfg.isRace=isRace; cfg.course=course;
-    cfg.goalDist=clamp(Math.round(s.goalDist||MAX_GOAL),300,MAX_GOAL); cfg.myRole=isRace?'cheese':(isOn?myR:(s.mode==='human'?'human':'cheese'));
-    cfg.myIndex=myI||0; cfg.humanPlayerCount=isRace?0:(isOn?(hCnt||1):(s.mode==='human'?1:0));
-    cfg.targetSpeed=s.speed; cfg.vxMax=s.vxMax; cfg.chSpeedMult=s.chSpeed; cfg.boardGap=s.boardGap; cfg.camUp=s.camUp;
-    if(isRace){ cfg.chStart=cfg.chMax=0; } else if(isOn){ cfg.chStart=cfg.chMax=clamp(cfg.humanPlayerCount+Math.round(s.chasers),cfg.humanPlayerCount,35); }
+    const s=src||userCfg, isTA=!isOn&&s.mode==='ta500', isRace=isOn?s.onlineGame==='race':s.mode==='race';
+    const course=isTA?'normal':(isOn?s.onlineCourse:(s.mode==='board'?'board':s.mode==='race'?s.raceCourse:'normal')), isB=course==='board';
+    cfg.mode=isOn?'online':s.mode; cfg.onlineType=s.onlineType||'room'; cfg.isOnline=!!isOn; cfg.isRace=isRace; cfg.isTA=isTA; cfg.course=course;
+    cfg.isPointEligible=!isOn&&((s.mode==='normal')||(s.mode==='race'&&s.raceCourse==='normal'));
+    cfg.goalDist=isTA?TA_GOAL:(cfg.isPointEligible?MAX_GOAL:clamp(Math.round(s.goalDist||MAX_GOAL),300,MAX_GOAL));
+    cfg.myRole=(isRace||isTA)?'cheese':(isOn?myR:(s.mode==='human'?'human':'cheese'));
+    cfg.myIndex=myI||0; cfg.humanPlayerCount=(isRace||isTA)?0:(isOn?(hCnt||1):(s.mode==='human'?1:0));
+    cfg.targetSpeed=isTA?14:s.speed; cfg.vxMax=isTA?6.5:s.vxMax; cfg.chSpeedMult=s.chSpeed; cfg.boardGap=s.boardGap; cfg.camUp=s.camUp;
+    if(isRace||isTA){ cfg.chStart=cfg.chMax=0; } else if(isOn){ cfg.chStart=cfg.chMax=clamp(cfg.humanPlayerCount+Math.round(s.chasers),cfg.humanPlayerCount,35); }
     else { cfg.chStart=clamp(Math.round(s.chasers),1,CH_ALLOC); cfg.chMax=s.mode==='human'?cfg.chStart:Math.min(CH_ALLOC,Math.max(12,cfg.chStart+6)); }
     if(isB){
       cfg.halfW=20;cfg.cheeseR=.24;cfg.cheeseW=.12;cfg.gFall=250;cfg.drag=1;cfg.gAlong=cfg.targetSpeed*cfg.targetSpeed;cfg.turnCost=0;cfg.latAcc=Math.max(80,cfg.vxMax*5);
@@ -1021,10 +1286,10 @@
   const cleanRoomText=raw=>raw.trim().replace(/[！-～]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0xFEE0)).replace(/\s+/g,'');
   const encodeRoomId=raw=>{ const s=cleanRoomText(raw).toLowerCase(); return s?Array.from(new TextEncoder().encode(s),b=>b.toString(16).padStart(2,'0')).join('').slice(0,48):''; };
   const clearNetTimers=()=>{ if(net.startTimer){clearTimeout(net.startTimer);net.startTimer=null;} if(net.joinTimer){clearTimeout(net.joinTimer);net.joinTimer=null;} if(net.helloTimer){clearInterval(net.helloTimer);net.helloTimer=null;} };
-  const buildHostRoster=()=>{ const arr=[{id:'host',name:'ホスト'}]; let n=1; for(const cl of net.clients.values())arr.push({id:cl.id,name:`ゲスト${n++}`}); net.roster=arr; return arr; };
+  const buildHostRoster=()=>{ const arr=[{id:'host',name:profile.name||'ホスト',skin:profile.skin}]; let n=1; for(const cl of net.clients.values())arr.push({id:cl.id,name:cl.name||`ゲスト${n++}`,skin:cl.skin||'classic'}); net.roster=arr; return arr; };
   const broadcastToClients=obj=>{ for(const cl of net.clients.values())if(cl.conn&&cl.conn.open){try{cl.conn.send(obj);}catch{}} };
   const sendToHost=obj=>{ if(net.hostConn&&net.hostConn.open){try{net.hostConn.send(obj);}catch{}} };
-  const sendLobbyPreview=()=>{ if(net.role==='host')broadcastToClients({t:'lobby',cfg:{...userCfg},roster:buildHostRoster()}); };
+  const sendLobbyPreview=()=>{ if(net.role==='host')broadcastToClients({t:'lobby',cfg:{...userCfg},roster:buildHostRoster(),lb:profile.lb500}); };
 
   function sendHostSnapshot(force){
     if(net.role!=='host'||net.clients.size===0)return; const now=performance.now(); if(!force&&now-net.lastSend<SYNC_MS)return; net.lastSend=now;
@@ -1039,14 +1304,22 @@
   }
   function handleHostData(cl, msg){
     if(!msg||typeof msg!=='object')return;
-    if(msg.t==='hello'){ try{cl.conn.send({t:'welcome',myId:cl.id,cfg:{...userCfg},roster:buildHostRoster()});}catch{} }
-    else if(msg.t==='in'){ cl.input.x=clamp(Number(msg.x)||0,-1,1); cl.input.y=clamp(Number(msg.y)||0,-1,1); if(msg.d)cl.input.dive=true; }
+    if(msg.t==='hello'){
+      if(msg.name) cl.name=String(msg.name).slice(0,14);
+      if(msg.skin) cl.skin=String(msg.skin);
+      if(Array.isArray(msg.lb)) mergeLeaderboard(msg.lb);
+      const roster=buildHostRoster();
+      try{cl.conn.send({t:'welcome',myId:cl.id,cfg:{...userCfg},roster,lb:profile.lb500});}catch{}
+      broadcastToClients({t:'lobby',cfg:{...userCfg},roster,lb:profile.lb500});
+      syncMenuUI();
+    } else if(msg.t==='in'){ cl.input.x=clamp(Number(msg.x)||0,-1,1); cl.input.y=clamp(Number(msg.y)||0,-1,1); if(msg.d)cl.input.dive=true; }
   }
   function handleGuestData(msg){
     if(!msg||typeof msg!=='object')return;
+    if(Array.isArray(msg.lb)) mergeLeaderboard(msg.lb);
     if(msg.t==='welcome'){ clearNetTimers(); net.connected=true; net.searching=false; net.myId=msg.myId; if(msg.cfg)Object.assign(userCfg,msg.cfg,{mode:'online'}); if(msg.roster)net.roster=msg.roster; setNetStatus('ok',`接続完了！（部屋: ${net.room} / ${net.roster.length}人参加中）ホスト開始待ち`); syncMenuUI(); }
     else if(msg.t==='lobby'){ if(msg.cfg)Object.assign(userCfg,msg.cfg,{mode:'online'}); if(msg.roster)net.roster=msg.roster; if(net.connected)setNetStatus('ok',`接続中（部屋: ${net.room} / ${net.roster.length}人参加中）ホスト開始待ち`); syncMenuUI(); }
-    else if(msg.t==='start'){ clearNetTimers(); net.connected=true; net.searching=false; Object.assign(userCfg,msg.cfg,{mode:'online'}); const a=msg.assign[net.myId]||{role:'human',idx:0}; startMatchInternal(true,msg.seed,a.role,a.idx,msg.cheeseN,msg.humanCount,null,msg.labels); }
+    else if(msg.t==='start'){ clearNetTimers(); net.connected=true; net.searching=false; Object.assign(userCfg,msg.cfg,{mode:'online'}); const a=msg.assign[net.myId]||{role:'human',idx:0}; startMatchInternal(true,msg.seed,a.role,a.idx,msg.cheeseN,msg.humanCount,null,msg.labels,msg.skins); }
     else if(msg.t==='snap') net.snap=msg; else if(msg.t==='menu') setupWorld(false);
   }
   function disconnectNet(silent){
@@ -1058,10 +1331,10 @@
   }
   function acceptHostConnection(conn, gen, isFree){
     if(gen!==net.searchGen||net.clients.size>=MAX_ONLINE_PLAYERS-1||game!=='menu'){ const rej=()=>{try{conn.send({t:'busy'});}catch{} setTimeout(()=>{try{conn.close();}catch{}},200);}; if(conn.open)rej(); else conn.on('open',rej); return; }
-    const cid=conn.peer, cl={conn,id:cid,input:{x:0,y:0,dive:false}}; net.clients.set(cid,cl); conn.on('data',m=>handleHostData(cl,m));
+    const cid=conn.peer, cl={conn,id:cid,name:'',skin:'classic',input:{x:0,y:0,dive:false}}; net.clients.set(cid,cl); conn.on('data',m=>handleHostData(cl,m));
     const onOpen=()=>{
       if(gen!==net.searchGen||!net.clients.has(cid))return; net.connected=true; const roster=buildHostRoster();
-      try{conn.send({t:'welcome',myId:cid,cfg:{...userCfg},roster});}catch{} broadcastToClients({t:'lobby',cfg:{...userCfg},roster});
+      try{conn.send({t:'welcome',myId:cid,cfg:{...userCfg},roster,lb:profile.lb500});}catch{} broadcastToClients({t:'lobby',cfg:{...userCfg},roster,lb:profile.lb500});
       if(isFree){ setNetStatus('ok',`${roster.length}人集まりました！${roster.length>=MAX_ONLINE_PLAYERS?'間もなく開始…':'数秒後に開始（受付中）'}`); if(net.startTimer)clearTimeout(net.startTimer); net.startTimer=setTimeout(()=>{ if(gen===net.searchGen&&game==='menu'&&net.clients.size>0)hostLaunchOnlineMatch(); },roster.length>=MAX_ONLINE_PLAYERS?900:3500); }
       else setNetStatus('ok',`${roster.length}/${MAX_ONLINE_PLAYERS}人参加中（部屋: ${net.room}）「対戦スタート」で開始`);
       syncMenuUI();
@@ -1070,7 +1343,7 @@
     conn.on('close',()=>{
       if(!net.clients.has(cid))return; net.clients.delete(cid);
       if(game!=='menu'){ for(let i=0;i<cheeseN;i++)if(cheeses[i].ctrlId===cid)cheeses[i].ctrlId='ai'; for(let i=0;i<activeN;i++)if(chasers[i].ctrlId===cid){chasers[i].isPlayer=false;chasers[i].ctrlId=null;} }
-      const roster=buildHostRoster(); net.connected=net.clients.size>0; broadcastToClients({t:'lobby',cfg:{...userCfg},roster});
+      const roster=buildHostRoster(); net.connected=net.clients.size>0; broadcastToClients({t:'lobby',cfg:{...userCfg},roster,lb:profile.lb500});
       if(game==='menu'){ if(net.clients.size===0){if(net.startTimer){clearTimeout(net.startTimer);net.startTimer=null;} setNetStatus('wait',isFree?`待機中（${net.room}）…`:`部屋「${net.room}」待機中（1/${MAX_ONLINE_PLAYERS}人）`);} else setNetStatus('ok',`${roster.length}/${MAX_ONLINE_PLAYERS}人参加中`); syncMenuUI(); }
     });
   }
@@ -1096,7 +1369,7 @@
     const tm=setTimeout(fail,4000);
     gp.on('open',()=>{
       if(st||gen!==net.searchGen){try{gp.destroy();}catch{}return;}
-      const conn=gp.connect(slotId,{reliable:true,serialization:'json'}); conn.on('open',()=>{try{conn.send({t:'hello'});}catch{}});
+      const conn=gp.connect(slotId,{reliable:true,serialization:'json'}); conn.on('open',()=>{try{conn.send({t:'hello',name:profile.name,skin:profile.skin,lb:profile.lb500});}catch{}});
       conn.on('data',m=>{ if(gen!==net.searchGen)return; if(!st){ if(m&&m.t==='busy'){fail();return;} if(m&&(m.t==='welcome'||m.t==='start')){ st=true;clearTimeout(tm);net.role='guest';net.room=`全国#${idx+1}`;net.hostConn=conn; conn.on('close',()=>{const wp=game!=='menu';disconnectNet(true);setNetStatus('err','ホスト切断');if(wp)setupWorld(false);else syncMenuUI();}); handleGuestData(m); } } else handleGuestData(m); });
       conn.on('close',()=>{if(!st)fail();}); conn.on('error',()=>{if(!st)fail();});
     });
@@ -1123,7 +1396,7 @@
       if(gen!==net.searchGen)return;
       const conn=peer.connect(ROOM_PREFIX+encodeRoomId(code),{reliable:true,serialization:'json'}); net.hostConn=conn;
       conn.on('data',m=>{ if(gen!==net.searchGen)return; if(m&&m.t==='busy'){disconnectNet(true);setNetStatus('err','満員または対戦中です');syncMenuUI();return;} handleGuestData(m); });
-      const onOpen=()=>{ if(gen!==net.searchGen||net.hostConn!==conn)return; const hi=()=>{if(gen===net.searchGen&&!net.connected&&conn.open){try{conn.send({t:'hello'});}catch{}}}; hi(); let t=0; net.helloTimer=setInterval(()=>{if(++t>6||net.connected||gen!==net.searchGen){clearInterval(net.helloTimer);net.helloTimer=null;return;}hi();},600); };
+      const onOpen=()=>{ if(gen!==net.searchGen||net.hostConn!==conn)return; const hi=()=>{if(gen===net.searchGen&&!net.connected&&conn.open){try{conn.send({t:'hello',name:profile.name,skin:profile.skin,lb:profile.lb500});}catch{}}}; hi(); let t=0; net.helloTimer=setInterval(()=>{if(++t>6||net.connected||gen!==net.searchGen){clearInterval(net.helloTimer);net.helloTimer=null;return;}hi();},600); };
       if(conn.open)onOpen(); else conn.on('open',onOpen);
       conn.on('close',()=>{ if(gen!==net.searchGen)return; const wp=game!=='menu'; disconnectNet(true); setNetStatus('err','ホスト切断'); if(wp)setupWorld(false); else syncMenuUI(); });
       conn.on('error',()=>{ if(gen!==net.searchGen)return; disconnectNet(true); setNetStatus('err','P2P接続失敗。別の回線でお試しください'); syncMenuUI(); });
@@ -1132,29 +1405,70 @@
   }
   function hostLaunchOnlineMatch(){
     if(net.role!=='host'||net.clients.size===0)return; clearNetTimers();
-    const roster=buildHostRoster(), seed=Math.floor(Math.random()*1e6), assign={}, labels={cheeses:[],humans:[]}; let tc=1, hc=0;
+    const roster=buildHostRoster(), seed=Math.floor(Math.random()*1e6), assign={}, labels={cheeses:[],humans:[]}, skins=[]; let tc=1, hc=0;
     if(userCfg.onlineGame==='race'){
       tc=clamp(Math.max(roster.length,Math.round(userCfg.chasers)),roster.length,MAX_CHEESES);
-      roster.forEach((p,i)=>{assign[p.id]={role:'cheese',idx:i};labels.cheeses.push(p.name);});
-      for(let i=roster.length;i<tc;i++)labels.cheeses.push(`CPU${i-roster.length+1}`);
+      roster.forEach((p,i)=>{assign[p.id]={role:'cheese',idx:i};labels.cheeses.push(p.name);skins.push(p.skin||'classic');});
+      for(let i=roster.length;i<tc;i++){labels.cheeses.push(`CPU${i-roster.length+1}`);skins.push('classic');}
     } else {
       let ci=userCfg.hostRole==='cheese'?0:1; if(net.matchKind==='free')ci=Math.floor(Math.random()*roster.length);
-      assign[roster[ci].id]={role:'cheese',idx:0}; labels.cheeses.push(roster[ci].name);
+      assign[roster[ci].id]={role:'cheese',idx:0}; labels.cheeses.push(roster[ci].name); skins.push(roster[ci].skin||'classic');
       roster.forEach((p,i)=>{if(i!==ci){assign[p.id]={role:'human',idx:hc++};labels.humans.push(p.name);}});
     }
-    broadcastToClients({t:'start',seed,cfg:{...userCfg,mode:'online'},assign,cheeseN:tc,humanCount:hc,labels});
-    const ha=assign['host']; startMatchInternal(true,seed,ha.role,ha.idx,tc,hc,assign,labels);
+    broadcastToClients({t:'start',seed,cfg:{...userCfg,mode:'online'},assign,cheeseN:tc,humanCount:hc,labels,skins});
+    const ha=assign['host']; startMatchInternal(true,seed,ha.role,ha.idx,tc,hc,assign,labels,skins);
+  }
+
+  // ---------- スキンショップ＆ランキングモーダル ----------
+  function renderShop(){
+    $('shopPtsVal').textContent = `${profile.pts} pt`;
+    const grid = $('skinGrid'); grid.innerHTML = '';
+    for(const sk of SKINS){
+      const owned = profile.owned.includes(sk.id), eq = profile.skin === sk.id;
+      const btn = document.createElement('button'); btn.type = 'button';
+      btn.className = 'skin-item' + (eq ? ' equipped' : '');
+      const status = eq ? '装備中' : owned ? 'タップで装備' : `${sk.cost} pt で解放`;
+      btn.innerHTML = `<span class="skin-swatch" style="background:${sk.swatch}"></span><span class="skin-meta"><strong>${sk.name}</strong><span>${status}</span></span>`;
+      btn.addEventListener('click', () => {
+        if(owned){ profile.skin = sk.id; saveProfile(); applyCheeseSkin(0, profile.skin, null); renderShop(); }
+        else if(profile.pts >= sk.cost){ profile.pts -= sk.cost; profile.owned.push(sk.id); profile.skin = sk.id; saveProfile(); applyCheeseSkin(0, profile.skin, null); renderShop(); showToast(`${sk.name}を解放！`,'boost'); }
+        else showToast(`あと ${sk.cost - profile.pts} pt 必要です`, 'fall');
+      });
+      grid.appendChild(btn);
+    }
+  }
+  function renderLeaderboard(){
+    const ul = $('lbList'); ul.innerHTML = '';
+    const myNm = (profile.name || '').trim();
+    profile.lb500.forEach((e, i) => {
+      const li = document.createElement('li'), isMe = e.name === myNm;
+      const sk = SKINS.find(s => s.id === e.skin) || SKINS[0];
+      li.className = 'rank-item' + (isMe ? ' me' : '');
+      li.innerHTML = `<span><i class="rank-dot" style="background:${sk.rind}"></i>${i+1}位 ${e.name}${isMe?' (あなた)':''}</span><span>${e.time.toFixed(2)} 秒</span>`;
+      ul.appendChild(li);
+    });
   }
 
   // ---------- 開始・結果・ループ・UI ----------
-  function startMatchInternal(isOn, fixedSeed, myR, myI, tc, hc, assignMap, labels){
+  function startMatchInternal(isOn, fixedSeed, myR, myI, tc, hc, assignMap, labels, skins){
     applyUserConfig(userCfg,isOn,myR,myI,hc); cheeseN=cfg.isRace?clamp(tc,2,MAX_CHEESES):1; raceOrder=[]; raceFinishTimer=0; winnerIdx=-1;
-    const scs=(!cfg.isRace&&cfg.humanPlayerCount>0)?4.5:0;
+    const scs=(!cfg.isRace&&!cfg.isTA&&cfg.humanPlayerCount>0)?4.5:0;
     for(let i=0;i<cheeseN;i++){
       const c=cheeses[i], gap=cfg.isRace?Math.min(2.4,cfg.halfW*1.5/cheeseN):0, sx=cfg.isRace?(i-(cheeseN-1)/2)*gap:0;
       Object.assign(c,{s:scs,x:sx,y:ground(sx,scs)+cfg.cheeseR,v:0,vx:0,vy:0,rot:0,tilt:0,tiltV:0,grounded:true,held:null,hand:0,finished:false,finishTime:0,boostT:0,boostCool:0,aiBias:Math.random()*2-1,aiSpeedK:.5+Math.random()*.5});
-      if(isOn&&assignMap){ let ow='ai'; for(const[pid,a]of Object.entries(assignMap))if(a.role==='cheese'&&a.idx===i)ow=pid; c.ctrlId=ow; c.label=(labels&&labels.cheeses[i])||`P${i+1}`; }
-      else if(!isOn){ c.ctrlId=cfg.mode==='human'?'ai':(i===0?'host':'ai'); c.label=i===0?'あなた':`CPU${i}`; } else c.label=(labels&&labels.cheeses[i])||`P${i+1}`;
+      let sk = 'classic', fallRind = i === 0 ? null : RACER_COLORS[i];
+      if(isOn&&assignMap){
+        let ow='ai'; for(const[pid,a]of Object.entries(assignMap))if(a.role==='cheese'&&a.idx===i)ow=pid;
+        c.ctrlId=ow; c.label=(labels&&labels.cheeses[i])||`P${i+1}`; sk=(skins&&skins[i])||'classic';
+        if(sk!=='classic') fallRind=null;
+      } else if(!isOn){
+        c.ctrlId=cfg.mode==='human'?'ai':(i===0?'host':'ai'); c.label=i===0?(profile.name||'あなた'):`CPU${i}`;
+        if(i===0){ sk=profile.skin; fallRind=null; }
+      } else {
+        c.label=(labels&&labels.cheeses[i])||`P${i+1}`; sk=(skins&&skins[i])||'classic';
+        if(sk!=='classic') fallRind=null;
+      }
+      applyCheeseSkin(i, sk, fallRind);
     }
     activeN=cfg.chStart;
     for(let i=0;i<CH_ALLOC;i++){
@@ -1165,38 +1479,64 @@
       } else c.label='AI追っ手';
       if(c.active) resetChaser(c,i,true);
     }
-    S0=(!cfg.isRace&&cfg.myRole==='human')?-3.2:scs; maxDist=0; camX=0; zoom=0; trail.length=0; trailK=0; overT=0; acc=0; playTime=0;
+    S0=(!cfg.isRace&&!cfg.isTA&&cfg.myRole==='human')?-3.2:scs; maxDist=0; camX=0; zoom=0; trail.length=0; trailK=0; overT=0; acc=0; playTime=0;
     shownHudKey=''; diveRequested=false; outcome='caught'; net.snap=null; for(const cl of net.clients.values())cl.input={x:0,y:0,dive:false};
-    currentBest=getBest(cfg.mode); endJoy(); for(const ch of chunks)ch.k=null; clearObstacles(fixedSeed); updateObstacles();
+    currentBest=getBest(cfg.mode); endJoy(); for(const ch of chunks)ch.k=null;
+    clearObstacles(cfg.isTA ? TA_SEED : fixedSeed); updateObstacles();
     $('resultOverlay').classList.add('hidden'); game='playing'; $('menuOverlay').classList.add('hidden'); $('hudWrap').classList.remove('hidden'); $('menuBtn').classList.remove('hidden');
-    $('diveBtn').classList.toggle('hidden',cfg.isRace||cfg.myRole!=='human');
+    $('diveBtn').classList.toggle('hidden',cfg.isRace||cfg.isTA||cfg.myRole!=='human');
   }
   function setupWorld(startPlaying){
     if(startPlaying){
       if(userCfg.mode==='online'){ if(net.role==='host'&&net.clients.size>0)hostLaunchOnlineMatch(); return; }
-      const isR=userCfg.mode==='race'; startMatchInternal(false,undefined,userCfg.mode==='human'?'human':'cheese',0,isR?clamp(Math.round(userCfg.chasers),2,MAX_CHEESES):1,userCfg.mode==='human'?1:0,null,null); return;
+      const isR=userCfg.mode==='race'; startMatchInternal(false,undefined,userCfg.mode==='human'?'human':'cheese',0,isR?clamp(Math.round(userCfg.chasers),2,MAX_CHEESES):1,userCfg.mode==='human'?1:0,null,null,null); return;
     }
     const isOn=userCfg.mode==='online'; applyUserConfig(userCfg,isOn,isOn?userCfg.hostRole:(userCfg.mode==='human'?'human':'cheese'),0,userCfg.mode==='human'?1:0);
     cheeseN=cfg.isRace?clamp(Math.round(userCfg.chasers),2,MAX_CHEESES):1;
-    for(let i=0;i<cheeseN;i++){ const sx=cfg.isRace?(i-(cheeseN-1)/2)*2:0; Object.assign(cheeses[i],{s:0,x:sx,y:ground(sx,0)+cfg.cheeseR,v:0,vx:0,vy:0,rot:0,tilt:0,tiltV:0,grounded:true,held:null,hand:0,finished:false,boostT:0}); }
+    for(let i=0;i<cheeseN;i++){
+      const sx=cfg.isRace?(i-(cheeseN-1)/2)*2:0;
+      Object.assign(cheeses[i],{s:0,x:sx,y:ground(sx,0)+cfg.cheeseR,v:0,vx:0,vy:0,rot:0,tilt:0,tiltV:0,grounded:true,held:null,hand:0,finished:false,boostT:0});
+      applyCheeseSkin(i, i===0?profile.skin:'classic', i===0?null:RACER_COLORS[i]);
+    }
     S0=0;maxDist=0;camX=0;zoom=0;trail.length=0;trailK=0;overT=0;acc=0;playTime=0;shownHudKey='';diveRequested=false;endJoy();
     activeN=Math.min(cfg.chStart,20); for(let i=0;i<CH_ALLOC;i++){chasers[i].active=i<activeN;chasers[i].isPlayer=false;if(chasers[i].active)resetChaser(chasers[i],i,true);}
-    for(const ch of chunks)ch.k=null; clearObstacles(); updateObstacles();
-    game='menu'; $('resultOverlay').classList.add('hidden'); $('menuOverlay').classList.remove('hidden'); $('hudWrap').classList.add('hidden'); $('menuBtn').classList.add('hidden'); $('diveBtn').classList.add('hidden'); syncMenuUI();
+    for(const ch of chunks)ch.k=null; clearObstacles(cfg.isTA ? TA_SEED : undefined); updateObstacles();
+    game='menu'; $('resultOverlay').classList.add('hidden'); $('menuOverlay').classList.remove('hidden'); $('hudWrap').classList.add('hidden'); $('menuBtn').classList.add('hidden'); $('diveBtn').classList.add('hidden');
+    $('rankBarWrap').classList.add('hidden'); $('miniMap').classList.add('hidden'); syncMenuUI();
   }
   function showOver(){
     game='over'; $('diveBtn').classList.add('hidden'); if(cfg.isOnline&&net.role==='host')sendHostSnapshot(true);
-    const d=Math.min(cfg.goalDist,Math.max(1,Math.floor(maxDist))), tEl=$('resTitle'), rEl=$('rankList'), cLbl=cfg.course==='special'?'スペシャル':cfg.course==='board'?'板よけ':'通常';
-    rEl.classList.add('hidden'); rEl.innerHTML=''; let isNew=false;
-    if(cfg.isRace){
+    const d=Math.min(cfg.goalDist,Math.max(1,Math.floor(maxDist))), tEl=$('resTitle'), rEl=$('rankList'), cLbl=cfg.course==='special'?'スペシャル':cfg.course==='board'?'板よけ':'ノーマル';
+    rEl.classList.add('hidden'); rEl.innerHTML=''; let isNew=false, gotPts=0;
+
+    if(cfg.isTA){
+      const t = Math.round(playTime * 100) / 100;
+      $('resMode').textContent='500m タイムアタック（ノーマル固定）';
+      tEl.classList.remove('hidden'); tEl.classList.remove('fail'); tEl.textContent='500m フィニッシュ！';
+      isNew = saveBest('ta500', t);
+      mergeLeaderboard([{ name:profile.name||'あなた', time:t, skin:profile.skin }]);
+      const myRank = profile.lb500.findIndex(e => e.name === (profile.name||'あなた')) + 1;
+      $('dist').textContent=`${t.toFixed(2)} 秒`;
+      $('resBest').textContent=`ランキング ${myRank}位 / ${profile.lb500.length}人  (BEST ${formatBest('ta500',getBest('ta500'))})`;
+      rEl.classList.remove('hidden');
+      profile.lb500.slice(0, 6).forEach((e, i) => {
+        const li=document.createElement('li'), isMe=e.name===(profile.name||'あなた'), sk=SKINS.find(s=>s.id===e.skin)||SKINS[0];
+        li.className='rank-item'+(isMe?' me':'');
+        li.innerHTML=`<span><i class="rank-dot" style="background:${sk.rind}"></i>${i+1}位 ${e.name}${isMe?' (あなた)':''}</span><span>${e.time.toFixed(2)}秒</span>`;
+        rEl.appendChild(li);
+      });
+    } else if(cfg.isRace){
       const st=getRaceStandings(), rk=st.findIndex(c=>c.idx===cfg.myIndex)+1, mc=cheeses[cfg.myIndex];
       $('resMode').textContent=`${cfg.isOnline?'オンライン':''}チーズレース（${cLbl} / ${cfg.goalDist}m）`;
       tEl.classList.remove('hidden'); tEl.textContent=rk===1?'1位 優勝！':`${rk}位 フィニッシュ`; tEl.classList.toggle('fail',rk>1);
-      $('dist').textContent=mc.finished?`${mc.finishTime.toFixed(1)} 秒`:`${Math.floor(mc.s)} m`;
-      if(!cfg.isOnline&&rk===1&&mc.finished)isNew=saveBest('race',mc.finishTime);
+      $('dist').textContent=mc.finished?`${mc.finishTime.toFixed(2)} 秒`:`${Math.floor(mc.s)} m`;
+      if(!cfg.isOnline&&rk===1&&mc.finished){
+        isNew=saveBest('race',mc.finishTime);
+        if(cfg.isPointEligible) gotPts=5;
+      }
       $('resBest').textContent=cfg.isOnline?`${cheeseN}チーズ対戦`:`BEST ${formatBest('race',getBest('race'))}`;
       rEl.classList.remove('hidden');
-      st.forEach((c,i)=>{ const li=document.createElement('li'); li.className='rank-item'+(c.idx===cfg.myIndex?' me':''); li.innerHTML=`<span><i class="rank-dot" style="background:${c.color}"></i>${i+1}位 ${c.label}${c.idx===cfg.myIndex?' (あなた)':''}</span><span>${c.finished?c.finishTime.toFixed(1)+'秒':Math.floor(c.s)+'m'}</span>`; rEl.appendChild(li); });
+      st.forEach((c,i)=>{ const li=document.createElement('li'); li.className='rank-item'+(c.idx===cfg.myIndex?' me':''); li.innerHTML=`<span><i class="rank-dot" style="background:${c.color}"></i>${i+1}位 ${c.label}${c.idx===cfg.myIndex?' (あなた)':''}</span><span>${c.finished?c.finishTime.toFixed(2)+'秒':Math.floor(c.s)+'m'}</span>`; rEl.appendChild(li); });
     } else if(cfg.isOnline){
       $('resMode').textContent=`オンライン鬼ごっこ（${cLbl} / ${cfg.goalDist}m）`; tEl.classList.remove('hidden');
       const cw=outcome==='cheese_goal', iw=(cfg.myRole==='cheese'&&cw)||(cfg.myRole==='human'&&!cw);
@@ -1210,9 +1550,16 @@
       $('resBest').textContent=`BEST ${formatBest('human',getBest('human'))}（${playTime.toFixed(1)}秒）`;
     } else {
       $('resMode').textContent=PRESETS[cfg.mode].label;
-      if(outcome==='cheese_goal'){tEl.classList.remove('hidden');tEl.classList.remove('fail');tEl.textContent=`${cfg.goalDist}m ゴール！チーズの勝ち！`;} else tEl.classList.add('hidden');
+      if(outcome==='cheese_goal'){
+        tEl.classList.remove('hidden'); tEl.classList.remove('fail'); tEl.textContent=`${cfg.goalDist}m ゴール！チーズの勝ち！`;
+        if(cfg.isPointEligible) gotPts=5;
+      } else tEl.classList.add('hidden');
       isNew=saveBest(cfg.mode,d); $('dist').textContent=`${d} m`; $('resBest').textContent=`BEST ${formatBest(cfg.mode,getBest(cfg.mode))}`;
     }
+
+    if(gotPts > 0){ profile.pts += gotPts; saveProfile(); $('resPts').textContent = `+${gotPts} ポイント獲得！（所持 ${profile.pts} pt）`; }
+    $('resPts').classList.toggle('hidden', gotPts <= 0);
+
     const isH=cfg.isOnline&&net.role==='host'&&net.clients.size>0, isF=cfg.isOnline&&cfg.onlineType==='free';
     $('nextFreeBtn').classList.toggle('hidden',!isF); $('swapRetryBtn').classList.toggle('hidden',!(isH&&!cfg.isRace)); $('retryBtn').classList.toggle('hidden',cfg.isOnline&&(!isH||isF));
     $('toMenuBtn').textContent=cfg.isOnline?'ロビーへ':'モード・設定'; $('resNewBest').classList.toggle('hidden',!isNew); $('resultOverlay').classList.remove('hidden');
@@ -1223,16 +1570,21 @@
     const dt=Math.min((now-last)/1000,1/30); last=now;
     if(game!=='menu'){
       if(cfg.isOnline&&net.role==='guest'){ sendGuestInput(false); applyGuestInterpolation(dt); }
-      else { acc+=dt*(game==='playing'?1:SLOW_SCALE); while(acc>=STEP){step(STEP);acc-=STEP;} if(game==='caught'){overT+=dt;if(overT>=(outcome==='race_done'||outcome==='cheese_goal'?.9:OVER_DELAY))showOver();} if(cfg.isOnline&&net.role==='host')sendHostSnapshot(false); }
+      else { acc+=dt*(game==='playing'?1:SLOW_SCALE); while(acc>=STEP){step(STEP);acc-=STEP;} if(game==='caught'){overT+=dt;if(overT>=(outcome==='race_done'||outcome==='cheese_goal'||outcome==='ta_goal'?.85:OVER_DELAY))showOver();} if(cfg.isOnline&&net.role==='host')sendHostSnapshot(false); }
     }
     draw(dt); requestAnimationFrame(loop);
   }
 
   function syncMenuUI(){
-    const m=userCfg.mode, isOn=m==='online', isR=isOn?userCfg.onlineGame==='race':m==='race', isF=isOn&&userCfg.onlineType==='free', isRm=isOn&&userCfg.onlineType==='room', isH=m==='human';
+    const m=userCfg.mode, isOn=m==='online', isTA=m==='ta500', isR=isOn?userCfg.onlineGame==='race':m==='race', isF=isOn&&userCfg.onlineType==='free', isRm=isOn&&userCfg.onlineType==='room', isH=m==='human';
     const isB=isOn?userCfg.onlineCourse==='board':(m==='board'||(m==='race'&&userCfg.raceCourse==='board')), isG=isOn&&net.role==='guest', busy=net.searching||net.role!=='none';
+    const goalLocked = isGoalLockedMode();
+    if(isTA) userCfg.goalDist = TA_GOAL;
+    else if(goalLocked) userCfg.goalDist = MAX_GOAL;
+
     document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
-    $('modeHint').textContent=PRESETS[m].hint; $('bestBox').classList.toggle('hidden',isOn); $('raceCourseBox').classList.toggle('hidden',m!=='race'); $('onlineBox').classList.toggle('hidden',!isOn);
+    $('modeHint').textContent=PRESETS[m].hint; $('bestBox').classList.toggle('hidden',isOn); $('ta500Box').classList.toggle('hidden',!isTA);
+    $('raceCourseBox').classList.toggle('hidden',m!=='race'); $('onlineBox').classList.toggle('hidden',!isOn);
     if(m==='race')document.querySelectorAll('[data-rcourse]').forEach(b=>b.classList.toggle('active',b.dataset.rcourse===userCfg.raceCourse));
     if(!isOn){ $('menuBestLabel').textContent=`${PRESETS[m].label} ベスト`; $('menuBestVal').textContent=formatBest(m,getBest(m)); }
     else {
@@ -1244,24 +1596,53 @@
       if(isF){ $('freeSearchBtn').classList.toggle('hidden',busy); $('freeCancelBtn').classList.toggle('hidden',!busy); $('freeStartNowBtn').classList.toggle('hidden',!(net.role==='host'&&net.clients.size>0)); }
       else { $('connectForm').classList.toggle('hidden',net.role!=='none'); $('connectedControls').classList.toggle('hidden',net.role==='none'); $('roomStartBtn').classList.toggle('hidden',!(net.role==='host'&&net.clients.size>0)); $('copyInviteBtn').classList.toggle('hidden',net.role!=='host'); $('roleToggleLabel').textContent=isG?'ホストが役割を設定します':'ホストの役割（他は人間）'; document.querySelectorAll('[data-role]').forEach(b=>{b.classList.toggle('active',b.dataset.role===userCfg.hostRole);b.disabled=isG;}); }
     }
-    $('settingsArea').classList.toggle('hidden',isF); $('bottomStartRow').classList.toggle('hidden',isF); $('rowChSpeed').classList.toggle('hidden',isR);
+    $('settingsArea').classList.toggle('hidden',isF); $('bottomStartRow').classList.toggle('hidden',isF);
+    $('rowSpeed').classList.toggle('hidden',isTA); $('rowVx').classList.toggle('hidden',isTA);
+    $('rowChasers').classList.toggle('hidden',isTA); $('rowChSpeed').classList.toggle('hidden',isR||isTA);
     const ci=$('optChasers');
     if(isR){ci.min='2';ci.max=String(MAX_CHEESES);userCfg.chasers=clamp(userCfg.chasers,2,MAX_CHEESES);$('lblChasers').textContent=isOn?'チーズ総数（足りない分はCPU）':'チーズの総数（自分＋CPU）';}
     else if(isRm){ci.min='0';ci.max='30';userCfg.chasers=clamp(userCfg.chasers,0,30);$('lblChasers').textContent='追加AI追っ手（0人で人間のみ）';}
-    else {ci.min='1';ci.max='300';userCfg.chasers=clamp(userCfg.chasers,1,300);$('lblChasers').textContent=isH?'参加人数（自分含む）':'追っ手の人数';}
+    else if(!isTA){ci.min='1';ci.max='300';userCfg.chasers=clamp(userCfg.chasers,1,300);$('lblChasers').textContent=isH?'参加人数（自分含む）':'追っ手の人数';}
+
     $('lblVx').textContent=isH?'自分の横移動の速さ':'横移動の速さ'; $('lblChSpeed').textContent=(isH||isOn)?'人間の走る速さ':'追っ手の速さ';
-    $('optGoal').value=userCfg.goalDist;$('valGoal').textContent=`${userCfg.goalDist} m`; $('optSpeed').value=userCfg.speed;$('valSpeed').textContent=`${userCfg.speed} m/s`;
+    $('optGoal').value=userCfg.goalDist;
+    $('valGoal').textContent=goalLocked ? `${userCfg.goalDist} m（固定）` : `${userCfg.goalDist} m`;
+    $('rowGoal').classList.toggle('locked', goalLocked);
+    $('optSpeed').value=userCfg.speed;$('valSpeed').textContent=`${userCfg.speed} m/s`;
     $('optVx').value=userCfg.vxMax;$('valVx').textContent=`${userCfg.vxMax} m/s`; ci.value=userCfg.chasers;$('valChasers').textContent=isR?`${userCfg.chasers} 個`:`${userCfg.chasers} 人`;
     $('optChSpeed').value=userCfg.chSpeed;$('valChSpeed').textContent=`${userCfg.chSpeed.toFixed(2).replace(/\.00$/,'.0')} 倍`;
     $('optBoardGap').value=userCfg.boardGap;$('valBoardGap').textContent=`${userCfg.boardGap} m`; $('optCamUp').value=userCfg.camUp;$('valCamUp').textContent=`${userCfg.camUp} m`;
-    $('rowBoardGap').classList.toggle('hidden',!isB); $('settingsArea').querySelectorAll('input').forEach(i=>i.disabled=isG); $('presetResetBtn').disabled=isG;
+    $('rowBoardGap').classList.toggle('hidden',!isB);
+    $('settingsArea').querySelectorAll('input').forEach(i=>i.disabled=isG);
+    $('optGoal').disabled = isG || goalLocked;
+    $('presetResetBtn').disabled=isG;
+
     const sb=$('startBtn');
     if(isRm){ if(net.role==='host'&&net.clients.size>0){sb.disabled=false;sb.textContent=`対戦スタート (${net.roster.length}人)`;} else if(net.role==='guest'&&net.connected){sb.disabled=true;sb.textContent='ホスト開始待ち…';} else {sb.disabled=true;sb.textContent='2人以上揃うと開始可能';} }
-    else if(!isF){ sb.disabled=false; sb.textContent='スタート'; }
+    else if(!isF){ sb.disabled=false; sb.textContent=isTA?'タイム計測スタート':'スタート'; }
   }
 
+  // ---------- イベント登録 ----------
+  $('openShopBtn').addEventListener('click',()=>{ renderShop(); $('shopOverlay').classList.remove('hidden'); });
+  $('closeShopBtn').addEventListener('click',()=>{ $('shopOverlay').classList.add('hidden'); });
+  const openLb=()=>{ renderLeaderboard(); $('lbOverlay').classList.remove('hidden'); };
+  $('openLbBtn').addEventListener('click',openLb); $('taViewLbBtn').addEventListener('click',openLb);
+  $('closeLbBtn').addEventListener('click',()=>{ $('lbOverlay').classList.add('hidden'); });
+  $('playerNameInput').addEventListener('input',e=>{ profile.name=e.target.value.trim().slice(0,14)||'名無し'; saveProfile(); });
+  $('lbExportBtn').addEventListener('click',async()=>{
+    const code = btoa(unescape(encodeURIComponent(JSON.stringify(profile.lb500.slice(0,12)))));
+    try{ await navigator.clipboard.writeText(code); showToast('記録コードをコピーしました','boost'); }
+    catch{ prompt('この記録コードを相手に送ってください', code); }
+  });
+  $('lbImportBtn').addEventListener('click',()=>{
+    const raw = prompt('相手からもらった記録コードを貼り付けてください');
+    if(!raw) return;
+    try{ const arr = JSON.parse(decodeURIComponent(escape(atob(raw.trim())))); if(Array.isArray(arr)){ mergeLeaderboard(arr); renderLeaderboard(); showToast('ランキングを合体しました！','boost'); } }
+    catch{ alert('コードの形式が正しくありません'); }
+  });
+
   document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{ const m=b.dataset.mode; if(userCfg.mode==='online'&&m!=='online'&&(net.role!=='none'||net.searching))disconnectNet(false); Object.assign(userCfg,{mode:m,...PRESETS[m]}); if(m==='race')userCfg.raceCourse='special'; if(m==='online'){userCfg.onlineCourse='normal';userCfg.onlineGame='chase';setNetStatus('',userCfg.onlineType==='free'?'ルールとコースを選んで開始してください':'合言葉を決めて部屋を作るか入ってください（最大6人）');} setupWorld(false); }));
-  document.querySelectorAll('[data-rcourse]').forEach(b=>b.addEventListener('click',()=>{ const c=b.dataset.rcourse; userCfg.raceCourse=c; if(c==='board'){userCfg.speed=55;userCfg.vxMax=30;userCfg.boardGap=28;userCfg.camUp=38;} else if(c==='special'){userCfg.speed=22;userCfg.vxMax=11;userCfg.camUp=11;} else {userCfg.speed=24;userCfg.vxMax=11;userCfg.camUp=10;} setupWorld(false); }));
+  document.querySelectorAll('[data-rcourse]').forEach(b=>b.addEventListener('click',()=>{ const c=b.dataset.rcourse; userCfg.raceCourse=c; if(c==='board'){userCfg.speed=55;userCfg.vxMax=30;userCfg.boardGap=28;userCfg.camUp=38;} else if(c==='special'){userCfg.speed=22;userCfg.vxMax=11;userCfg.camUp=11;} else {userCfg.goalDist=MAX_GOAL;userCfg.speed=24;userCfg.vxMax=11;userCfg.camUp=10;} setupWorld(false); }));
   document.querySelectorAll('[data-match]').forEach(b=>b.addEventListener('click',()=>{ if(net.searching||net.role!=='none')return; userCfg.onlineType=b.dataset.match; if(userCfg.onlineType==='free')Object.assign(userCfg,FREE_RULES[`${userCfg.onlineGame}_${userCfg.onlineCourse}`]); setNetStatus('',userCfg.onlineType==='free'?'ルールとコースを選んで開始してください':'合言葉を決めて部屋を作るか入ってください（最大6人）'); setupWorld(false); }));
   document.querySelectorAll('[data-otype]').forEach(b=>b.addEventListener('click',()=>{ userCfg.onlineGame=b.dataset.otype; if(userCfg.onlineGame==='race')userCfg.onlineCourse='special'; if(userCfg.onlineType==='free')Object.assign(userCfg,FREE_RULES[`${userCfg.onlineGame}_${userCfg.onlineCourse}`]); else userCfg.chasers=userCfg.onlineGame==='race'?6:0; setupWorld(false); sendLobbyPreview(); }));
   document.querySelectorAll('[data-course]').forEach(b=>b.addEventListener('click',()=>{ const c=b.dataset.course; userCfg.onlineCourse=c; if(userCfg.onlineType==='free')Object.assign(userCfg,FREE_RULES[`${userCfg.onlineGame}_${c}`]); else if(c==='board'){userCfg.speed=50;userCfg.vxMax=28;userCfg.boardGap=28;userCfg.camUp=38;} else if(c==='special'){userCfg.speed=userCfg.onlineGame==='race'?22:18;userCfg.vxMax=10;userCfg.camUp=11;} else {userCfg.speed=userCfg.onlineGame==='race'?24:16;userCfg.vxMax=10;userCfg.camUp=8;} setupWorld(false); sendLobbyPreview(); }));
@@ -1271,7 +1652,7 @@
   $('hostBtn').addEventListener('click',createRoom); $('joinBtn').addEventListener('click',joinRoom); $('disconnectBtn').addEventListener('click',()=>disconnectNet(false)); $('roomStartBtn').addEventListener('click',()=>setupWorld(true));
   $('copyInviteBtn').addEventListener('click',async()=>{ const c=net.room||cleanRoomText($('roomCode').value); if(!c)return; const t=(location.protocol==='http:'||location.protocol==='https:')?`${location.origin}${location.pathname}?room=${encodeURIComponent(c)}`:c; try{await navigator.clipboard.writeText(t);const b=$('copyInviteBtn'),o=b.textContent;b.textContent='コピー完了!';setTimeout(()=>b.textContent=o,1400);}catch{prompt('相手に送ってください',t);} });
   const onSet=()=>{syncMenuUI();sendLobbyPreview();};
-  $('optGoal').addEventListener('input',e=>{userCfg.goalDist=parseInt(e.target.value,10);onSet();}); $('optSpeed').addEventListener('input',e=>{userCfg.speed=parseFloat(e.target.value);onSet();});
+  $('optGoal').addEventListener('input',e=>{if(!isGoalLockedMode()){userCfg.goalDist=parseInt(e.target.value,10);onSet();}}); $('optSpeed').addEventListener('input',e=>{userCfg.speed=parseFloat(e.target.value);onSet();});
   $('optVx').addEventListener('input',e=>{userCfg.vxMax=parseFloat(e.target.value);onSet();}); $('optChasers').addEventListener('input',e=>{userCfg.chasers=parseInt(e.target.value,10);onSet();});
   $('optChSpeed').addEventListener('input',e=>{userCfg.chSpeed=parseFloat(e.target.value);onSet();}); $('optBoardGap').addEventListener('input',e=>{userCfg.boardGap=parseInt(e.target.value,10);onSet();});
   $('optCamUp').addEventListener('input',e=>{userCfg.camUp=parseInt(e.target.value,10);cfg.camUp=userCfg.camUp;onSet();});
@@ -1281,7 +1662,7 @@
   $('nextFreeBtn').addEventListener('click',()=>{setupWorld(false);startFreeMatch();});
   const backMenu=()=>{ if(cfg.isOnline){if(cfg.onlineType==='free'||net.role==='guest')disconnectNet(false); else if(net.role==='host')broadcastToClients({t:'menu'});} setupWorld(false); };
   $('toMenuBtn').addEventListener('click',backMenu); $('menuBtn').addEventListener('click',backMenu);
-  $('diveBtn').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(game==='playing'&&!cfg.isRace&&cfg.myRole==='human'){diveRequested=true;if(cfg.isOnline&&net.role==='guest')sendGuestInput(true);}});
+  $('diveBtn').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(game==='playing'&&!cfg.isRace&&!cfg.isTA&&cfg.myRole==='human'){diveRequested=true;if(cfg.isOnline&&net.role==='guest')sendGuestInput(true);}});
 
   let dragId=null, joyX0=0, joyY0=0;
   function input(){ return dragId!==null ? (Math.hypot(stick.x,stick.y)<JOY_DEAD?{x:0,y:0}:stick) : {x:(keys.right?1:0)-(keys.left?1:0),y:(keys.up?1:0)-(keys.down?1:0)}; }
@@ -1293,7 +1674,7 @@
     if(document.activeElement&&document.activeElement.tagName==='INPUT')return;
     if(game==='over'&&(e.key==='Enter'||e.key===' ')){if(!cfg.isOnline){e.preventDefault();setupWorld(true);}return;}
     if(game==='menu'&&e.key==='Enter'){if(userCfg.mode!=='online'||(userCfg.onlineType==='room'&&!$('startBtn').disabled)){e.preventDefault();setupWorld(true);}return;}
-    if(game==='playing'&&!cfg.isRace&&cfg.myRole==='human'&&(e.key===' '||e.code==='Space')){e.preventDefault();diveRequested=true;if(cfg.isOnline&&net.role==='guest')sendGuestInput(true);return;}
+    if(game==='playing'&&!cfg.isRace&&!cfg.isTA&&cfg.myRole==='human'&&(e.key===' '||e.code==='Space')){e.preventDefault();diveRequested=true;if(cfg.isOnline&&net.role==='guest')sendGuestInput(true);return;}
     if(e.key==='ArrowLeft'||e.key==='a')keys.left=true; if(e.key==='ArrowRight'||e.key==='d')keys.right=true; if(e.key==='ArrowUp'||e.key==='w')keys.up=true; if(e.key==='ArrowDown'||e.key==='s')keys.down=true;
   });
   document.addEventListener('keyup',e=>{ if(e.key==='ArrowLeft'||e.key==='a')keys.left=false; if(e.key==='ArrowRight'||e.key==='d')keys.right=false; if(e.key==='ArrowUp'||e.key==='w')keys.up=false; if(e.key==='ArrowDown'||e.key==='s')keys.down=false; });
@@ -1309,6 +1690,8 @@
   }
   addEventListener('resize', resize);
 
+  $('playerNameInput').value = profile.name;
+  saveProfile();
   const inviteRoom = new URLSearchParams(location.search).get('room');
   if (inviteRoom){
     Object.assign(userCfg, { mode:'online', onlineType:'room', onlineGame:'chase', onlineCourse:'normal', ...PRESETS.online });
