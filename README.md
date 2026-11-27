@@ -6,11 +6,10 @@
 <title>転がりチーズ オンライン対戦</title>
 <style>
   :root{
-    --bg:#a9cdea; --fg:#1d2b1d; --sub:#4a5a4a; --panel:#1f3524; --panel-fg:#ffffff;
+    --bg:#a9cdea; --fg:#1d2b1d; --panel:#1f3524; --panel-fg:#ffffff;
     --accent:#ffd23f; --accent-fg:#1f3524; --ok:#69db7c; --danger:#ff6b6b; --muted:rgba(255,255,255,.14);
     --sky:#a9cdea; --grass:#5f8f3e; --grass-dark:#4c7731;
-    --cheese-rind:#e3a03a; --cheese-face:#f3cf72;
-    --fence:#7a5a3a;
+    --cheese-rind:#e3a03a; --cheese-face:#f3cf72; --fence:#7a5a3a;
     --skins:#f1c9a5,#e0ac85,#c68a62,#8d5a3b;
     --shirts:#f2f2f2,#c93a3a,#2f5fbf,#3a8a4a,#262626,#e0b52e,#7a3fae,#e07a2c,#4fa3c7,#b8b8b8;
     --pants:#2f3b55,#3a3a3a,#5a6b7d,#4b3a2a,#22304a,#6b6b52;
@@ -18,176 +17,108 @@
     --shoes:#eeeeee,#2e2e2e,#7a3b2a,#3a4a6a;
     --rock:#8c8a82; --bark:#6b4a2f; --wood:#c9a574; --straw:#d8b55a;
     --gorse:#34502a; --gorse-light:#6f8f3c; --gorse-flower:#efc72c;
-    --board:#d69e56; --board-line:#7a4e24;
-    --trail:#fff4d6;
+    --board:#d69e56; --board-line:#7a4e24; --trail:#fff4d6;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;height:100%;overflow:hidden}
   body{
     background:var(--bg); color:var(--fg);
     font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP",system-ui,sans-serif;
-    touch-action:manipulation;
-    -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+    touch-action:manipulation; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
   }
   #game{position:fixed;inset:0}
   canvas{display:block;touch-action:none}
   .hidden{display:none !important}
-
-  /* ジョイスティック */
   #joy{position:absolute;left:0;top:0;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;
     background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.7);pointer-events:none}
   #knob{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:rgba(255,255,255,.9)}
-
-  /* HUD */
-  #hudWrap{
-    position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 12px);
-    display:flex;flex-direction:column;align-items:center;pointer-events:none;
-  }
-  #hud{
-    font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15;
-    color:#162618;text-shadow:0 2px 6px rgba(255,255,255,.78);
-  }
-  #hudSub{
-    margin-top:3px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;
-    background:rgba(31,53,36,.84);color:#ffd23f;padding:3px 12px;border-radius:999px;
-  }
-  #menuBtn{
-    position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 12px);
+  #hudWrap{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 12px);
+    display:flex;flex-direction:column;align-items:center;pointer-events:none}
+  #hud{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15;
+    color:#162618;text-shadow:0 2px 6px rgba(255,255,255,.78)}
+  #hudSub{margin-top:3px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;
+    background:rgba(31,53,36,.84);color:#ffd23f;padding:3px 12px;border-radius:999px}
+  #menuBtn{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 12px);
     border:none;border-radius:10px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;
-    background:rgba(31,53,36,.84);color:#fff;backdrop-filter:blur(4px);z-index:5;
-  }
+    background:rgba(31,53,36,.84);color:#fff;backdrop-filter:blur(4px);z-index:5}
   #menuBtn:active{transform:scale(.96)}
-
-  /* 人間役用 飛びつきボタン */
-  #diveBtn{
-    position:absolute;right:20px;bottom:calc(env(safe-area-inset-bottom,0px) + 26px);
+  #diveBtn{position:absolute;right:20px;bottom:calc(env(safe-area-inset-bottom,0px) + 26px);
     width:104px;height:104px;border-radius:50%;border:3px solid rgba(255,255,255,.85);
     background:rgba(255,210,63,.92);color:#1f3524;font-size:16px;font-weight:900;
     box-shadow:0 8px 20px rgba(0,0,0,.3);cursor:pointer;z-index:5;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;
-    touch-action:none;
-  }
+    display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;touch-action:none}
   #diveBtn small{font-size:10px;font-weight:700;opacity:.75;margin-top:2px}
   #diveBtn:active{transform:scale(.92);background:#ffe070}
   #diveBtn.disabled{opacity:.45;transform:scale(.95)}
-
-  /* オーバーレイ共通 */
-  .overlay{
-    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;
-    background:rgba(15,28,18,.5);backdrop-filter:blur(4px);z-index:10;
-  }
-  .card{
-    width:100%;max-width:450px;max-height:94vh;overflow-y:auto;
+  .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;
+    background:rgba(15,28,18,.5);backdrop-filter:blur(4px);z-index:10}
+  .card{width:100%;max-width:450px;max-height:94vh;overflow-y:auto;
     background:var(--panel);color:var(--panel-fg);border-radius:18px;padding:18px 16px;
-    box-shadow:0 16px 40px rgba(0,0,0,.42);
-  }
+    box-shadow:0 16px 40px rgba(0,0,0,.42)}
   .card h1{margin:0 0 11px;text-align:center;font-size:22px;letter-spacing:.04em}
-
-  /* モード選択タブ（2x2） */
   .modes{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
-  .mode-btn{
-    border:2px solid rgba(255,255,255,.18);border-radius:11px;padding:8px 6px;cursor:pointer;
-    background:rgba(255,255,255,.06);color:#fff;text-align:center;transition:.15s;
-  }
+  .mode-btn{border:2px solid rgba(255,255,255,.18);border-radius:11px;padding:8px 6px;cursor:pointer;
+    background:rgba(255,255,255,.06);color:#fff;text-align:center;transition:.15s}
   .mode-btn strong{display:block;font-size:13px;margin-bottom:2px}
   .mode-btn span{display:block;font-size:10px;opacity:.8;line-height:1.2}
-  .mode-btn.active{
-    border-color:var(--accent);background:rgba(255,210,63,.18);color:var(--accent);
-  }
+  .mode-btn.active{border-color:var(--accent);background:rgba(255,210,63,.18);color:var(--accent)}
   .mode-btn.active span{color:#fff;opacity:.92}
-
-  .mode-hint{
-    font-size:11.5px;line-height:1.45;color:rgba(255,255,255,.88);
-    background:rgba(255,255,255,.07);border-radius:10px;padding:8px 10px;margin-bottom:10px;
-  }
-
-  .best-box{
-    display:flex;justify-content:space-between;align-items:center;
-    background:rgba(0,0,0,.25);border-radius:10px;padding:8px 13px;margin-bottom:10px;
-    font-size:13px;font-weight:700;
-  }
+  .mode-hint{font-size:11.5px;line-height:1.45;color:rgba(255,255,255,.88);
+    background:rgba(255,255,255,.07);border-radius:10px;padding:8px 10px;margin-bottom:10px}
+  .best-box{display:flex;justify-content:space-between;align-items:center;
+    background:rgba(0,0,0,.25);border-radius:10px;padding:8px 13px;margin-bottom:10px;font-size:13px;font-weight:700}
   .best-box .val{color:var(--accent);font-size:18px;font-variant-numeric:tabular-nums}
-
-  /* オンラインパネル */
-  .online-box{
-    background:rgba(0,0,0,.24);border:1px solid rgba(255,255,255,.14);border-radius:12px;
-    padding:11px;margin-bottom:11px;
-  }
+  .online-box{background:rgba(0,0,0,.24);border:1px solid rgba(255,255,255,.14);border-radius:12px;
+    padding:11px;margin-bottom:11px}
   .sub-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
-  .sub-tab{
-    border:1.5px solid rgba(255,255,255,.18);border-radius:9px;padding:8px 6px;cursor:pointer;
-    background:rgba(255,255,255,.05);color:#fff;font-size:12.5px;font-weight:800;
-  }
+  .sub-tab{border:1.5px solid rgba(255,255,255,.18);border-radius:9px;padding:8px 6px;cursor:pointer;
+    background:rgba(255,255,255,.05);color:#fff;font-size:12.5px;font-weight:800}
   .sub-tab.active{border-color:var(--accent);background:var(--accent);color:var(--accent-fg)}
   .sub-tab:disabled{opacity:.45;cursor:not-allowed}
-
-  .status-line{
-    display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;
-    background:rgba(255,255,255,.06);border-radius:9px;padding:8px 10px;margin-bottom:10px;
-    line-height:1.35;
-  }
+  .status-line{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;
+    background:rgba(255,255,255,.06);border-radius:9px;padding:8px 10px;margin-bottom:10px;line-height:1.35}
   .dot{width:10px;height:10px;border-radius:50%;background:#adb5bd;flex-shrink:0}
   .dot.wait{background:var(--accent);animation:pulse 1s infinite}
   .dot.ok{background:var(--ok)}
   .dot.err{background:var(--danger)}
   @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}}
-
   .room-row{display:flex;gap:6px;margin-bottom:8px}
-  .room-input{
-    flex:1;min-width:0;border:1px solid rgba(255,255,255,.25);border-radius:9px;
+  .room-input{flex:1;min-width:0;border:1px solid rgba(255,255,255,.25);border-radius:9px;
     background:rgba(255,255,255,.1);color:#fff;padding:9px 11px;font-size:15px;font-weight:700;
-    -webkit-user-select:text;user-select:text;outline:none;
-  }
+    -webkit-user-select:text;user-select:text;outline:none}
   .room-input:focus{border-color:var(--accent)}
   .room-input::placeholder{color:rgba(255,255,255,.45);font-weight:400}
-  .mini-btn{
-    border:none;border-radius:9px;padding:0 11px;font-size:12px;font-weight:700;cursor:pointer;
-    background:var(--muted);color:#fff;white-space:nowrap;
-  }
+  .mini-btn{border:none;border-radius:9px;padding:0 11px;font-size:12px;font-weight:700;cursor:pointer;
+    background:var(--muted);color:#fff;white-space:nowrap}
   .mini-btn:active{transform:scale(.96)}
-
   .toggle-group{margin-top:9px}
   .toggle-label{font-size:11.5px;font-weight:700;opacity:.85;margin-bottom:5px;display:block}
   .toggle-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-  .seg-btn{
-    border:1.5px solid rgba(255,255,255,.2);border-radius:9px;padding:7px 6px;cursor:pointer;
-    background:rgba(255,255,255,.05);color:#fff;font-size:12px;font-weight:700;
-  }
+  .seg-btn{border:1.5px solid rgba(255,255,255,.2);border-radius:9px;padding:7px 6px;cursor:pointer;
+    background:rgba(255,255,255,.05);color:#fff;font-size:12px;font-weight:700}
   .seg-btn.active{border-color:var(--accent);background:rgba(255,210,63,.2);color:var(--accent)}
   .seg-btn:disabled{opacity:.5;cursor:default}
-
-  .free-note{
-    margin:8px 0 0;font-size:11px;opacity:.76;line-height:1.4;
-  }
-
-  /* 設定スライダー */
+  .free-note{margin:8px 0 0;font-size:11px;opacity:.76;line-height:1.4}
   .settings{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
   .setting-row{background:rgba(255,255,255,.06);border-radius:10px;padding:7px 11px}
   .setting-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;font-size:12.5px;font-weight:700}
   .setting-val{color:var(--accent);font-variant-numeric:tabular-nums;font-size:12.5px}
   input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;margin:0}
-
   .btn-row{display:flex;gap:8px;flex-wrap:wrap}
-  .btn{
-    flex:1;min-width:110px;border:none;border-radius:11px;padding:12px 12px;font-size:14px;font-weight:800;cursor:pointer;
-  }
+  .btn{flex:1;min-width:110px;border:none;border-radius:11px;padding:12px 12px;font-size:14px;font-weight:800;cursor:pointer}
   .btn-primary{background:var(--accent);color:var(--accent-fg)}
   .btn-sub{background:var(--muted);color:#fff}
   .btn-danger{background:rgba(255,107,107,.24);color:#ffb3b3}
   .btn:disabled{opacity:.42;cursor:not-allowed}
   .btn:not(:disabled):active{transform:scale(.97)}
-
-  /* リザルト */
   .result-card{text-align:center;max-width:360px}
   .result-mode{font-size:12.5px;opacity:.82;margin:0 0 6px;font-weight:700}
   .result-title{font-size:22px;font-weight:900;margin:0 0 6px;color:var(--accent)}
   .result-title.fail{color:#ff8a80}
   .result-value{font-size:42px;font-weight:900;margin:0 0 6px;font-variant-numeric:tabular-nums;line-height:1.1}
   .result-best{font-size:13.5px;font-weight:700;margin:0 0 16px;color:rgba(255,255,255,.88)}
-  .new-best{
-    display:inline-block;background:var(--accent);color:var(--accent-fg);
-    font-size:12px;font-weight:900;padding:3px 10px;border-radius:999px;margin-bottom:8px;
-  }
+  .new-best{display:inline-block;background:var(--accent);color:var(--accent-fg);
+    font-size:12px;font-weight:900;padding:3px 10px;border-radius:999px;margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -206,26 +137,21 @@
       <h1>転がりチーズ</h1>
       <div class="modes">
         <button type="button" class="mode-btn active" data-mode="normal">
-          <strong>通常モード</strong>
-          <span>チーズで逃げる</span>
+          <strong>通常モード</strong><span>チーズで逃げる</span>
         </button>
         <button type="button" class="mode-btn" data-mode="board">
-          <strong>板よけモード</strong>
-          <span>左右の板を回避</span>
+          <strong>板よけモード</strong><span>左右の板を回避</span>
         </button>
         <button type="button" class="mode-btn" data-mode="human">
-          <strong>人間モード</strong>
-          <span>AIチーズを捕まえる</span>
+          <strong>人間モード</strong><span>AIチーズを捕まえる</span>
         </button>
         <button type="button" class="mode-btn" data-mode="online">
-          <strong>オンライン対戦</strong>
-          <span>全国フリー / 合言葉</span>
+          <strong>オンライン対戦</strong><span>全国フリー / 合言葉</span>
         </button>
       </div>
 
       <div class="mode-hint" id="modeHint"></div>
 
-      <!-- オフライン用ベストスコア -->
       <div class="best-box" id="bestBox">
         <span id="menuBestLabel">通常モード ベスト</span>
         <span class="val" id="menuBestVal">0 m</span>
@@ -243,7 +169,6 @@
           <span id="netStatus">コースを選んでマッチングを開始してください</span>
         </div>
 
-        <!-- コース選択（フリー・合言葉共通） -->
         <div class="toggle-group" style="margin-top:0;margin-bottom:9px">
           <span class="toggle-label">対戦コース</span>
           <div class="toggle-row">
@@ -252,20 +177,20 @@
           </div>
         </div>
 
-        <!-- 全国フリーマッチ専用UI -->
+        <!-- 全国フリーマッチ -->
         <div id="freeMatchUI">
           <div class="btn-row">
             <button id="freeSearchBtn" type="button" class="btn btn-primary">全国フリーマッチ開始</button>
             <button id="freeCancelBtn" type="button" class="btn btn-danger hidden">マッチング中止</button>
           </div>
-          <p class="free-note">※同じコースで探している全国のプレイヤーと自動で繋がります。チーズ役・人間役はランダム決定（完全1vs1・公平ルール）。</p>
+          <p class="free-note">※同じコースで探している全国のプレイヤーと自動で繋がります。役割はランダム決定（完全1vs1）。</p>
         </div>
 
-        <!-- 合言葉マッチ専用UI -->
+        <!-- 合言葉マッチ -->
         <div id="roomMatchUI" class="hidden">
           <div id="connectForm">
             <div class="room-row">
-              <input id="roomCode" class="room-input" type="text" maxlength="20" placeholder="合言葉（例: 4821）" autocomplete="off">
+              <input id="roomCode" class="room-input" type="text" maxlength="20" placeholder="合言葉（例: 4821 / あいう）" autocomplete="off">
               <button id="randCodeBtn" type="button" class="mini-btn">ランダム</button>
             </div>
             <div class="btn-row">
@@ -276,6 +201,8 @@
 
           <div id="connectedControls" class="hidden">
             <div class="btn-row" style="margin-bottom:8px">
+              <button id="roomStartBtn" type="button" class="btn btn-primary hidden">対戦スタート</button>
+              <button id="copyInviteBtn" type="button" class="btn btn-sub hidden">招待URLコピー</button>
               <button id="disconnectBtn" type="button" class="btn btn-danger">接続を切る</button>
             </div>
           </div>
@@ -290,53 +217,30 @@
         </div>
       </div>
 
-      <!-- 各種スライダー設定 -->
+      <!-- スライダー設定 -->
       <div class="settings" id="settingsArea">
         <div class="setting-row">
-          <div class="setting-head">
-            <label for="optSpeed">チーズの速さ</label>
-            <span class="setting-val" id="valSpeed">9.5 m/s</span>
-          </div>
+          <div class="setting-head"><label for="optSpeed">チーズの速さ</label><span class="setting-val" id="valSpeed">9.5 m/s</span></div>
           <input id="optSpeed" type="range" min="5" max="120" step="0.5">
         </div>
-
         <div class="setting-row">
-          <div class="setting-head">
-            <label for="optVx" id="lblVx">横移動の速さ</label>
-            <span class="setting-val" id="valVx">4.5 m/s</span>
-          </div>
+          <div class="setting-head"><label for="optVx" id="lblVx">横移動の速さ</label><span class="setting-val" id="valVx">4.5 m/s</span></div>
           <input id="optVx" type="range" min="3" max="60" step="0.5">
         </div>
-
         <div class="setting-row">
-          <div class="setting-head">
-            <label for="optChasers" id="lblChasers">追っ手の人数</label>
-            <span class="setting-val" id="valChasers">6 人</span>
-          </div>
+          <div class="setting-head"><label for="optChasers" id="lblChasers">追っ手の人数</label><span class="setting-val" id="valChasers">6 人</span></div>
           <input id="optChasers" type="range" min="1" max="300" step="1">
         </div>
-
         <div class="setting-row">
-          <div class="setting-head">
-            <label for="optChSpeed" id="lblChSpeed">追っ手の速さ</label>
-            <span class="setting-val" id="valChSpeed">1.0 倍</span>
-          </div>
+          <div class="setting-head"><label for="optChSpeed" id="lblChSpeed">追っ手の速さ</label><span class="setting-val" id="valChSpeed">1.0 倍</span></div>
           <input id="optChSpeed" type="range" min="0.5" max="1.8" step="0.05">
         </div>
-
         <div class="setting-row hidden" id="rowBoardGap">
-          <div class="setting-head">
-            <label for="optBoardGap">板の間隔</label>
-            <span class="setting-val" id="valBoardGap">25 m</span>
-          </div>
+          <div class="setting-head"><label for="optBoardGap">板の間隔</label><span class="setting-val" id="valBoardGap">25 m</span></div>
           <input id="optBoardGap" type="range" min="10" max="60" step="1">
         </div>
-
         <div class="setting-row">
-          <div class="setting-head">
-            <label for="optCamUp">カメラの高さ</label>
-            <span class="setting-val" id="valCamUp">5 m</span>
-          </div>
+          <div class="setting-head"><label for="optCamUp">カメラの高さ</label><span class="setting-val" id="valCamUp">5 m</span></div>
           <input id="optCamUp" type="range" min="3" max="70" step="1">
         </div>
       </div>
@@ -379,9 +283,22 @@
   const frac = x => x - Math.floor(x);
   const smooth = t => t * t * (3 - 2 * t);
   const TAU = Math.PI * 2;
-  const ROOM_PREFIX = 'korogari-cheese-v1-';
-  const FREE_PREFIX = 'korogari-cheese-free-v1-';
-  const FREE_SLOTS = 15; // 最大15部屋（30人同時対応）
+
+  // PeerJS接続設定（複数のSTUNサーバーを指定して接続成功率を上げる）
+  const ROOM_PREFIX = 'kcheese-r2-';
+  const FREE_PREFIX = 'kcheese-f2-';
+  const FREE_SLOTS = 15;
+  const PEER_OPTS = {
+    debug: 0,
+    config: {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        { urls: 'stun:stun.cloudflare.com:3478' },
+      ],
+    },
+  };
 
   // ---------- モード別プリセット ----------
   const PRESETS = {
@@ -402,12 +319,11 @@
     },
     online: {
       label: 'オンライン対戦',
-      hint: '全国の誰かとランダム対戦できる「全国フリーマッチ」と、友達と合言葉で遊ぶ「合言葉マッチ」が選べます。チーズは100m引き離せば勝利！',
+      hint: '全国フリーマッチと合言葉マッチが選べます。チーズは100m引き離せば勝ち、人間は捕まえれば勝ち！',
       speed: 9.5, vxMax: 5.0, chasers: 0, chSpeed: 1.05, boardGap: 28, camUp: 6,
     },
   };
 
-  // 全国フリーマッチ用の公平固定ルール
   const FREE_RULES = {
     normal: { onlineCourse:'normal', speed:9.5, vxMax:5.2, chasers:0, chSpeed:1.06, boardGap:28, camUp:6 },
     board:  { onlineCourse:'board',  speed:45,  vxMax:26,  chasers:0, chSpeed:1.05, boardGap:28, camUp:36 },
@@ -415,141 +331,60 @@
 
   const userCfg = {
     mode: 'normal',
-    onlineType: 'free',     // 'free' | 'room'
-    onlineCourse: 'normal', // 'normal' | 'board'
-    hostRole: 'cheese',     // 'cheese' | 'human'
+    onlineType: 'free',
+    onlineCourse: 'normal',
+    hostRole: 'cheese',
     ...PRESETS.normal,
   };
 
   const cfg = {
-    mode: 'normal',
-    course: 'normal',
-    isOnline: false,
-    onlineType: 'free',
-    myRole: 'cheese',
-    humanPlayerActive: false,
-    halfW: 8, xlim: 7.8,
-    cheeseR: 0.32, cheeseW: 0.2,
+    mode: 'normal', course: 'normal', isOnline: false, onlineType: 'free',
+    myRole: 'cheese', humanPlayerActive: false,
+    halfW: 8, xlim: 7.8, cheeseR: 0.32, cheeseW: 0.2,
     gFall: 9.8, gAlong: 6.556, drag: 0.073, turnCost: 0.1,
     vxMax: 4.5, latAcc: 22, bounce: 0.3, bounceMin: 1.2, airControl: 0.6,
-    chStart: 6, chMax: 12, chAddEvery: 100,
-    startDelay: 1.0, startGrace: 2.0,
+    chStart: 6, chMax: 12, chAddEvery: 100, startDelay: 1.0, startGrace: 2.0,
     chSpeedMult: 1.0, runAcc: 7, chVx: 3.2,
     boardGap: 25, boardW: 20, boardH: 3.2, boardThick: 1.6,
     avoidLook: 6, thigh: 0.43, shin: 0.43,
-    camBack: 8, camUp: 5, camFollowX: 0.75, camVfovMax: 65,
-    targetSpeed: 9.5,
+    camBack: 8, camUp: 5, camFollowX: 0.75, camVfovMax: 65, targetSpeed: 9.5,
   };
 
-  // ---------- オンライン通信状態（PeerJS） ----------
   const net = {
-    peer: null,
-    conn: null,
-    role: 'none',       // 'none' | 'host' | 'guest'
-    matchKind: 'room',  // 'free' | 'room'
-    searching: false,
-    connected: false,
-    room: '',
-    searchGen: 0,
-    startTimer: null,
-    remoteInput: { x:0, y:0, dive:false },
-    lastSend: 0,
-    snap: null,
+    peer: null, conn: null, role: 'none', matchKind: 'room',
+    searching: false, connected: false, room: '', searchGen: 0,
+    startTimer: null, joinTimer: null, helloTimer: null,
+    remoteInput: { x:0, y:0, dive:false }, lastSend: 0, snap: null,
   };
 
   // ---------- 固定定数 ----------
-  const SLOPE = 0.9;
-  const CH_ALLOC = 300;
-  const TILT_KICK = 0.35;
-  const TILT_SPRING = 30;
-  const TILT_DAMP = 4;
-  const TILT_DRIFT = 3;
-  const JOY_R = 50;
-  const JOY_DEAD = 0.12;
-  const PUSH_ACC = 0.6;
-  const BRAKE_ACC = 6;
+  const SLOPE = 0.9, CH_ALLOC = 300;
+  const TILT_KICK = 0.35, TILT_SPRING = 30, TILT_DAMP = 4, TILT_DRIFT = 3;
+  const JOY_R = 50, JOY_DEAD = 0.12, PUSH_ACC = 0.6, BRAKE_ACC = 6;
+  const CATCHUP_DIST = 10, CATCHUP = 3.5, SPEED_VAR = 0.3;
+  const DIVE_RANGE = 3.0, DIVE_BACK = 0.5, DIVE_DX = 2.2, WINDUP = 0.2;
+  const DIVE_T = 0.42, DIVE_REACH = 0.9, DIVE_SPIN = 2.2, AIM = 0.7;
+  const CATCH_WINDOW = DIVE_T + 0.35, CATCH_HEIGHT = 0.95;
+  const RAG_MIN = 1.0, RAG_MAX = 2.6, RAG_STILL = 2.5, GETUP_T = 0.6, COOLDOWN = 0.8;
+  const RESPAWN_BEHIND = 30, SPAWN_BEHIND = 20;
+  const ESCAPE_LIMIT_SOLO = 80, ESCAPE_LIMIT_ONLINE = 100;
+  const OVER_DELAY = 2.0, SLOW_SCALE = 0.25, ZOOM_SPEED = 3;
+  const ZOOM_BACK = 3.0, ZOOM_UP = 1.8, ZOOM_SIDE = 1.3;
+  const RAG_ITER = 8, RAG_DAMP = 0.999, RAG_MU = 0.85, RUN_DUTY = 0.28;
+  const UPARM = 0.29, FOREARM = 0.27, FOOT_H = 0.07;
 
-  const CATCHUP_DIST = 10;
-  const CATCHUP = 3.5;
-  const SPEED_VAR = 0.3;
-  const DIVE_RANGE = 3.0;
-  const DIVE_BACK = 0.5;
-  const DIVE_DX = 2.2;
-  const WINDUP = 0.2;
-  const DIVE_T = 0.42;
-  const DIVE_REACH = 0.9;
-  const DIVE_SPIN = 2.2;
-  const AIM = 0.7;
-  const CATCH_WINDOW = DIVE_T + 0.35;
-  const CATCH_HEIGHT = 0.95;
-  const RAG_MIN = 1.0;
-  const RAG_MAX = 2.6;
-  const RAG_STILL = 2.5;
-  const GETUP_T = 0.6;
-  const COOLDOWN = 0.8;
-  const RESPAWN_BEHIND = 30;
-  const SPAWN_BEHIND = 20;
-  const ESCAPE_LIMIT_SOLO = 80;
-  const ESCAPE_LIMIT_ONLINE = 100;
-  const OVER_DELAY = 2.0;
-  const SLOW_SCALE = 0.25;
-  const ZOOM_SPEED = 3;
-  const ZOOM_BACK = 3.0;
-  const ZOOM_UP = 1.8;
-  const ZOOM_SIDE = 1.3;
-
-  const RAG_ITER = 8;
-  const RAG_DAMP = 0.999;
-  const RAG_MU = 0.85;
-  const RUN_DUTY = 0.28;
-  const UPARM = 0.29, FOREARM = 0.27;
-  const FOOT_H = 0.07;
-
-  const OB_BAND = 4;
-  const OB_START = 25;
-  const OB_RATE0 = 0.6;
-  const OB_RATE_GROW = 1 / 500;
-  const OB_RATE_MAX = 1;
-  const OB_SECOND = 1 / 600;
+  const OB_BAND = 4, OB_START = 25, OB_RATE0 = 0.6, OB_RATE_GROW = 1/500, OB_RATE_MAX = 1, OB_SECOND = 1/600;
   const OB_KIND = [['rock', 0.3], ['bush', 0.25], ['log', 0.25], ['bale', 0.2]];
-  const OB_AHEAD = 160;
-  const OB_BEHIND = 30;
-  const ROCK_VARIANTS = 5;
-  const BUSH_VARIANTS = 3;
-  const BUSH_SPIKES = 340;
-  const BUSH_FLOWERS = 60;
-  const OB_BOUNCE = 0.35;
-  const OB_LOSS = 0.8;
-  const BUSH_DRAG = 6;
-  const BUSH_RUN = 0.55;
-  const TRIP_MARGIN = 0.25;
-  const TRIP_SPIN = 3.5;
-  const TRIP_HOP = 1.0;
-  const TRIP_COOL = 1.0;
+  const OB_AHEAD = 160, OB_BEHIND = 30;
+  const ROCK_VARIANTS = 5, BUSH_VARIANTS = 3, BUSH_SPIKES = 340, BUSH_FLOWERS = 60;
+  const OB_BOUNCE = 0.35, OB_LOSS = 0.8, BUSH_DRAG = 6, BUSH_RUN = 0.55;
+  const TRIP_MARGIN = 0.25, TRIP_SPIN = 3.5, TRIP_HOP = 1.0, TRIP_COOL = 1.0;
   const SKILL_MIN = 0.3, SKILL_MAX = 0.92;
-
-  const STEP = 1 / 120;
-  const SYNC_MS = 33;
-
-  const TRAIL_FADE = 0.6;
-  const TRAIL_N = 36;
-  const TRAIL_STEP = 0.15;
-  const TRAIL_ALPHA = 0.55;
-  const TRAIL_TAPER = 0.6;
-
-  const CHUNK_LEN = 25;
-  const CHUNK_SEG_S = 50;
-  const TERRAIN_HALF = 28;
-  const TERRAIN_SEG_X = 76;
-  const OUTSIDE_SHADE = 0.55;
-  const CHUNK_COUNT = 9;
-  const CHUNK_BEHIND = 20;
-  const GRASS_TILE = 2;
-  const POST_GAP = 2.5;
-  const FOG_NEAR = 55, FOG_FAR = 165;
-  const SHADOW_SIZE = 14;
-  const CAM_LOOK = -1.5;
-  const CAM_HFOV = 60;
+  const STEP = 1 / 120, SYNC_MS = 33;
+  const TRAIL_FADE = 0.6, TRAIL_N = 36, TRAIL_STEP = 0.15, TRAIL_ALPHA = 0.55, TRAIL_TAPER = 0.6;
+  const CHUNK_LEN = 25, CHUNK_SEG_S = 50, TERRAIN_HALF = 28, TERRAIN_SEG_X = 76;
+  const OUTSIDE_SHADE = 0.55, CHUNK_COUNT = 9, CHUNK_BEHIND = 20, GRASS_TILE = 2, POST_GAP = 2.5;
+  const FOG_NEAR = 55, FOG_FAR = 165, SHADOW_SIZE = 14, CAM_LOOK = -1.5, CAM_HFOV = 60;
 
   // ---------- ベストスコア保存 ----------
   function bestKey(mode){ return `runawayCheese.best.${mode}`; }
@@ -591,17 +426,9 @@
   const slopeX = (x, s) => (bump(x + EPS, s) - bump(x - EPS, s)) / (2 * EPS);
 
   // ---------- 状態 ----------
-  let game = 'menu';
-  let outcome = 'caught';
-  let S0 = 0;
-  let overT = 0;
-  let playTime = 0;
+  let game = 'menu', outcome = 'caught', S0 = 0, overT = 0, playTime = 0;
   const stick = { x:0, y:0 };
-  let activeN = 0;
-  let shownHudKey = '';
-  let currentBest = null;
-  let maxDist = 0;
-  let diveRequested = false;
+  let activeN = 0, shownHudKey = '', currentBest = null, maxDist = 0, diveRequested = false;
   const cheese = { s:0, x:0, y:0, v:0, vx:0, vy:0, rot:0, tilt:0, tiltV:0, grounded:true, held:null, hand:0 };
   const keys = { left:false, right:false, up:false, down:false };
 
@@ -806,9 +633,7 @@
         const x = side * (cfg.halfW + 0.1);
         const y1 = ground(x, s1), y2 = ground(x, s2);
         rel(dummy.position, s1, x, y1 + 0.5);
-        dummy.rotation.set(0, 0, 0);
-        dummy.scale.set(1, 1, 1);
-        dummy.updateMatrix();
+        dummy.rotation.set(0, 0, 0); dummy.scale.set(1, 1, 1); dummy.updateMatrix();
         posts.setMatrixAt(pi++, dummy.matrix);
         for (const h of [0.45, 0.9]){
           rel(dummy.position, (s1 + s2) / 2, x, (y1 + y2) / 2 + h);
@@ -828,14 +653,16 @@
   cheeseGroup.rotation.order = 'YXZ';
   const cheeseSpin = new THREE.Group();
   cheeseGroup.add(cheeseSpin);
-  let cheeseMesh;
-  {
-    const rindMat = new THREE.MeshStandardMaterial({ map:rindTexture(), roughness:0.75 });
-    const faceMat = new THREE.MeshStandardMaterial({ map:faceTexture(), roughness:0.8 });
-    cheeseMesh = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 48).rotateZ(Math.PI / 2), [rindMat, faceMat, faceMat]);
-    cheeseMesh.castShadow = true;
-    cheeseSpin.add(cheeseMesh);
-  }
+  const cheeseMesh = new THREE.Mesh(
+    new THREE.CylinderGeometry(1, 1, 1, 48).rotateZ(Math.PI / 2),
+    [
+      new THREE.MeshStandardMaterial({ map:rindTexture(), roughness:0.75 }),
+      new THREE.MeshStandardMaterial({ map:faceTexture(), roughness:0.8 }),
+      new THREE.MeshStandardMaterial({ map:faceTexture(), roughness:0.8 }),
+    ]
+  );
+  cheeseMesh.castShadow = true;
+  cheeseSpin.add(cheeseMesh);
   scene.add(cheeseGroup);
 
   // ---------- チーズの軌跡 ----------
@@ -1030,8 +857,7 @@
       const len = 0.18 + rnd() * 0.22;
       sc.set(0.025 + rnd() * 0.015, len, 0.025 + rnd() * 0.015);
       m.compose(p, q, sc);
-      const shade = 0.6 + 0.5 * dy;
-      parts.push({ g:cone.clone().applyMatrix4(m), c:leaf.clone().lerp(leafLight, rnd()).multiplyScalar(shade) });
+      parts.push({ g:cone.clone().applyMatrix4(m), c:leaf.clone().lerp(leafLight, rnd()).multiplyScalar(0.6 + 0.5 * dy) });
     }
     const bud = new THREE.IcosahedronGeometry(1, 0);
     for (let i = 0; i < BUSH_FLOWERS; i++){
@@ -1076,12 +902,7 @@
       if (s0 < Math.max(25, cfg.boardGap)) return;
       const rnd = rand(obSeed * 100003 + b * 7919);
       const side = rnd() < 0.5 ? -1 : 1;
-      const o = {
-        kind: 'board', s: s0,
-        x: side * (cfg.halfW - cfg.boardW / 2),
-        len: cfg.boardW, h: cfg.boardH, thick: cfg.boardThick,
-        id: b, yaw: 0,
-      };
+      const o = { kind:'board', s:s0, x:side * (cfg.halfW - cfg.boardW / 2), len:cfg.boardW, h:cfg.boardH, thick:cfg.boardThick, id:b, yaw:0 };
       o.mesh = takeMesh(o);
       obstacles.push(o);
       return;
@@ -1108,8 +929,7 @@
   }
   function updateObstacles(){
     const bandLen = cfg.course === 'board' ? cfg.boardGap : OB_BAND;
-    const aheadRef = Math.max(S0, cheese.s);
-    const behindRef = Math.min(S0, cheese.s);
+    const aheadRef = Math.max(S0, cheese.s), behindRef = Math.min(S0, cheese.s);
     while (obNextBand * bandLen < aheadRef + OB_AHEAD) genBand(obNextBand++);
     for (let i = obstacles.length - 1; i >= 0; i--){
       if (obstacles[i].s < behindRef - OB_BEHIND){ releaseMesh(obstacles[i]); obstacles.splice(i, 1); }
@@ -1117,8 +937,7 @@
   }
   function clearObstacles(fixedSeed){
     for (const o of obstacles) releaseMesh(o);
-    obstacles.length = 0;
-    obNextBand = 0;
+    obstacles.length = 0; obNextBand = 0;
     obSeed = fixedSeed !== undefined ? fixedSeed : Math.floor(Math.random() * 1e6);
   }
   function drawObstacles(){
@@ -1142,10 +961,8 @@
       const minX = o.x - o.len / 2, maxX = o.x + o.len / 2;
       const minS = o.s - o.thick / 2, maxS = o.s + o.thick / 2;
       const gy = ground(clamp(x, minX, maxX), o.s);
-      const minY = gy - 1.5, maxY = gy + o.h;
-      const cx = clamp(x, minX, maxX), cy = clamp(y, minY, maxY), cs = clamp(s, minS, maxS);
-      const dx = x - cx, dy = y - cy, ds = s - cs;
-      const d = Math.hypot(dx, dy, ds);
+      const cx = clamp(x, minX, maxX), cy = clamp(y, gy - 1.5, gy + o.h), cs = clamp(s, minS, maxS);
+      const dx = x - cx, dy = y - cy, ds = s - cs, d = Math.hypot(dx, dy, ds);
       if (d >= pr) return 0;
       if (d < 1e-6){ _n[0] = 0; _n[1] = 0; _n[2] = -1; return (s - minS) + pr; }
       _n[0] = dx / d; _n[1] = dy / d; _n[2] = ds / d;
@@ -1156,9 +973,7 @@
       if (o.kind === 'rock'){ cy = ground(o.x, o.s) + o.r * 0.25; R = o.r * 0.9 + pr; }
       else {
         const x1 = o.x - o.len / 2, t = clamp((x - x1) / o.len, 0, 1);
-        cx = x1 + t * o.len;
-        cy = lerp(ground(x1, o.s), ground(x1 + o.len, o.s), t) + o.r * 0.85;
-        R = o.r + pr;
+        cx = x1 + t * o.len; cy = lerp(ground(x1, o.s), ground(x1 + o.len, o.s), t) + o.r * 0.85; R = o.r + pr;
       }
       const dx = x - cx, dy = y - cy, ds = s - o.s, d = Math.hypot(dx, dy, ds);
       if (d >= R || d < 1e-6) return 0;
@@ -1227,8 +1042,7 @@
           c.vx -= (1 + OB_BOUNCE) * vn * _n[0];
           c.vy -= (1 + OB_BOUNCE) * vn * _n[1];
           c.v -= (1 + OB_BOUNCE) * vn * _n[2];
-          c.vx *= OB_LOSS; c.v *= OB_LOSS;
-          c.grounded = false;
+          c.vx *= OB_LOSS; c.v *= OB_LOSS; c.grounded = false;
         }
         c.tiltV += (Math.random() - 0.5) * Math.min(20, Math.abs(vn)) * TILT_KICK * 3;
       }
@@ -1260,9 +1074,7 @@
     const sy = Math.sin(c.yaw), cy = Math.cos(c.yaw);
     const Fx = sy, Fs = cy, Rx = cy, Rs = -sy;
     const set = (i, x, y, s) => { o[i * 3] = x; o[i * 3 + 1] = y; o[i * 3 + 2] = s; };
-    const ph = c.phase;
-    const v = mode === 'run' ? c.v : 0;
-    const vr = Math.min(1, v / 3);
+    const ph = c.phase, v = mode === 'run' ? c.v : 0, vr = Math.min(1, v / 3);
     let lean = 0, hipY = 0.93, twist = 0, armL = 0.1, armR = 0.1, bend = 0.3;
     const feet = [[0, 0], [0, 0]];
     if (mode === 'run'){
@@ -1275,9 +1087,8 @@
       const a = clamp(v / Math.max(0.5, c.freq) * RUN_DUTY / 2, 0, 0.45);
       for (let side = 0; side < 2; side++){
         const r = frac(ph + side * 0.5);
-        if (r < RUN_DUTY){
-          feet[side][0] = a * (1 - 2 * r / RUN_DUTY);
-        } else {
+        if (r < RUN_DUTY){ feet[side][0] = a * (1 - 2 * r / RUN_DUTY); }
+        else {
           const u = (r - RUN_DUTY) / (1 - RUN_DUTY);
           feet[side][0] = -a + 2 * a * smooth(u) - 0.3 * vr * Math.sin(Math.PI * u);
           feet[side][1] = (0.08 + 0.27 * Math.min(1, v / 6)) * Math.sin(Math.PI * u);
@@ -1293,8 +1104,7 @@
       lean = -0.35; hipY = 0.86; armL = -0.3; armR = 0.5; bend = 1.2;
       feet[0][0] = 0.2; feet[1][0] = -0.25;
     }
-    const gy = ground(c.x, c.s);
-    const px = c.x, py = gy + hipY, ps = c.s;
+    const gy = ground(c.x, c.s), px = c.x, py = gy + hipY, ps = c.s;
     const cl = Math.cos(lean), sl = Math.sin(lean);
     const Tx = -Fx * sl, Ty = cl, Ts = -Fs * sl;
     const Px = Fx * cl, Py = sl, Ps = Fs * cl;
@@ -1352,16 +1162,14 @@
     const dx = p[ib] - p[ia], dy = p[ib + 1] - p[ia + 1], ds = p[ib + 2] - p[ia + 2];
     const d = Math.sqrt(dx * dx + dy * dy + ds * ds) || 1e-6;
     if (minOnly && d >= rest) return;
-    const wa = INV_M[a] / (INV_M[a] + INV_M[b]), wb = 1 - wa;
-    const f = (d - rest) / d;
+    const wa = INV_M[a] / (INV_M[a] + INV_M[b]), wb = 1 - wa, f = (d - rest) / d;
     p[ia] += dx * f * wa; p[ia + 1] += dy * f * wa; p[ia + 2] += ds * f * wa;
     p[ib] -= dx * f * wb; p[ib + 1] -= dy * f * wb; p[ib + 2] -= ds * f * wb;
   }
-
   function torsoForward(p, out){
     const rx = p[HPR * 3] - p[HPL * 3], ry = p[HPR * 3 + 1] - p[HPL * 3 + 1], rs = p[HPR * 3 + 2] - p[HPL * 3 + 2];
     const ux = p[NECK * 3] - p[PELVIS * 3], uy = p[NECK * 3 + 1] - p[PELVIS * 3 + 1], us = p[NECK * 3 + 2] - p[PELVIS * 3 + 2];
-    let fx = ry * us - rs * uy, fy = rs * ux - rx * us, fs = rx * uy - ry * ux;
+    const fx = ry * us - rs * uy, fy = rs * ux - rx * us, fs = rx * uy - ry * ux;
     const l = Math.hypot(fx, fy, fs) || 1;
     out[0] = fx / l; out[1] = fy / l; out[2] = fs / l;
   }
@@ -1390,16 +1198,11 @@
   const _gy = new Float64Array(NP), _pen = new Float64Array(NP), _nrm = new Float64Array(NP * 3), _hasN = new Uint8Array(NP);
   function ragStep(c, dt, reaching){
     const p = c.p, q = c.q, gdt = 9.8 * dt * dt;
-    for (let i = 0; i < NP * 3; i++){
-      const v = (p[i] - q[i]) * RAG_DAMP;
-      q[i] = p[i];
-      p[i] += v;
-    }
+    for (let i = 0; i < NP * 3; i++){ const v = (p[i] - q[i]) * RAG_DAMP; q[i] = p[i]; p[i] += v; }
     for (let i = 0; i < NP; i++) p[i * 3 + 1] -= gdt;
     if (reaching) reachArms(p);
     for (let i = 0; i < NP; i++){ _gy[i] = ground(p[i * 3], p[i * 3 + 2]) + PART_R[i]; _pen[i] = 0; _hasN[i] = 0; }
-    const near = obstaclesNear(p[PELVIS * 3], p[PELVIS * 3 + 2], 3);
-    const lim = cfg.halfW - 0.1;
+    const near = obstaclesNear(p[PELVIS * 3], p[PELVIS * 3 + 2], 3), lim = cfg.halfW - 0.1;
     for (let it = 0; it < RAG_ITER; it++){
       for (const [a, b, r] of DIST) solveDist(p, a, b, r, false);
       for (const [a, b, r] of MIN_DIST) solveDist(p, a, b, r, true);
@@ -1461,26 +1264,19 @@
   }
   cylMesh.instanceColor.needsUpdate = sphMesh.instanceColor.needsUpdate = true;
 
-  // ---------- チーズAI（オフライン人間モード用） ----------
+  // ---------- チーズAI ----------
   function cheeseAIInput(){
     let avoidForce = 0;
     for (const o of obstacles){
       const ahead = o.s - cheese.s;
       if (ahead < 0.2 || ahead > 9) continue;
       const half = halfWidth(o) + 0.7;
-      if (Math.abs(cheese.x - o.x) < half + 0.5){
-        const dir = cheese.x < o.x ? -1 : 1;
-        avoidForce += dir * (1 - ahead / 9) * 2.4;
-      }
+      if (Math.abs(cheese.x - o.x) < half + 0.5) avoidForce += (cheese.x < o.x ? -1 : 1) * (1 - ahead / 9) * 2.4;
     }
     let nearDist = 999, nearX = 0;
     for (let i = 0; i < activeN; i++){
-      const c = chasers[i];
-      const ds = cheese.s - c.s;
-      if (ds > -1 && ds < 10){
-        const d = Math.hypot(ds, cheese.x - c.x);
-        if (d < nearDist){ nearDist = d; nearX = c.x; }
-      }
+      const c = chasers[i], ds = cheese.s - c.s;
+      if (ds > -1 && ds < 10){ const d = Math.hypot(ds, cheese.x - c.x); if (d < nearDist){ nearDist = d; nearX = c.x; } }
     }
     let dodgeForce = 0, pushY = 0.25;
     if (nearDist < 8){
@@ -1503,34 +1299,24 @@
   }
   function getHumanCtrl(){
     if (cfg.isOnline){
-      if (cfg.myRole === 'human'){
-        const d = diveRequested; diveRequested = false;
-        return { ...input(), dive: d };
-      } else {
-        const d = net.remoteInput.dive; net.remoteInput.dive = false;
-        return { x: net.remoteInput.x, y: net.remoteInput.y, dive: d };
-      }
+      if (cfg.myRole === 'human'){ const d = diveRequested; diveRequested = false; return { ...input(), dive: d }; }
+      const d = net.remoteInput.dive; net.remoteInput.dive = false;
+      return { x: net.remoteInput.x, y: net.remoteInput.y, dive: d };
     }
     const d = diveRequested; diveRequested = false;
     return { ...input(), dive: d };
   }
 
   // ---------- 人の動き ----------
-  function setPose(c, mode, k){
-    c.q.set(c.p);
-    writePose(c, c.p, mode, k);
-  }
+  function setPose(c, mode, k){ c.q.set(c.p); writePose(c, c.p, mode, k); }
   function resetChaser(c, i, initial){
     c.isPlayer = cfg.humanPlayerActive && i === 0;
     c.state = initial ? 'wait' : 'run';
     if (initial){
-      if (c.isPlayer){
-        c.s = -3.2; c.x = 0;
-      } else {
+      if (c.isPlayer){ c.s = -3.2; c.x = 0; }
+      else {
         const perRow = Math.max(6, Math.min(20, Math.floor((cfg.halfW * 2 - 1.4) / 1.4)));
-        const row = Math.floor(i / perRow);
-        const countInRow = Math.min(perRow, cfg.chStart - row * perRow);
-        const col = i % perRow;
+        const row = Math.floor(i / perRow), countInRow = Math.min(perRow, cfg.chStart - row * perRow), col = i % perRow;
         const gap = Math.min(1.6, (cfg.halfW * 2 - 1.4) / Math.max(1, countInRow));
         c.s = -3.2 - row * 1.35 - (col % 2) * 0.4;
         c.x = clamp((col - (countInRow - 1) / 2) * gap, -cfg.halfW + 0.6, cfg.halfW - 0.6);
@@ -1559,11 +1345,7 @@
 
   function updateCheese(dt){
     const c = cheese;
-    if (c.held){
-      const p = c.held.p, k = c.hand * 3;
-      c.x = p[k]; c.y = p[k + 1]; c.s = p[k + 2];
-      return;
-    }
+    if (c.held){ const p = c.held.p, k = c.hand * 3; c.x = p[k]; c.y = p[k + 1]; c.s = p[k + 2]; return; }
     if (game === 'playing'){
       const k = c.grounded ? 1 : cfg.airControl;
       const { x:ix, y:iy } = getCheeseCtrl();
@@ -1573,51 +1355,33 @@
       const pushScale = Math.max(1, cfg.targetSpeed / 9.5);
       if (iy > 0) c.v += iy * PUSH_ACC * pushScale * k * dt;
       else if (iy < 0) c.v = Math.max(Math.min(c.v, 0), c.v + iy * BRAKE_ACC * pushScale * k * dt);
-      if (c.grounded){
-        c.vx -= c.tilt * TILT_DRIFT * dt;
-        c.v -= cfg.turnCost * Math.abs(c.vx) * dt;
-      }
+      if (c.grounded){ c.vx -= c.tilt * TILT_DRIFT * dt; c.v -= cfg.turnCost * Math.abs(c.vx) * dt; }
       c.v = Math.max(-3, c.v + (cfg.gAlong - cfg.drag * c.v * Math.abs(c.v)) * dt);
       if (cheeseHeight() < 0.5 && inBush(c.x, c.s)) c.v = Math.max(Math.min(c.v, 0), c.v - BUSH_DRAG * dt);
     }
-    c.s += c.v * dt;
-    c.x += c.vx * dt;
+    c.s += c.v * dt; c.x += c.vx * dt;
     if (game === 'playing') cheeseObstacles(c);
     if (c.x < -cfg.xlim){ c.x = -cfg.xlim; c.vx = Math.max(0, c.vx); }
     if (c.x > cfg.xlim){ c.x = cfg.xlim; c.vx = Math.min(0, c.vx); }
-    c.vy -= cfg.gFall * dt;
-    c.y += c.vy * dt;
+    c.vy -= cfg.gFall * dt; c.y += c.vy * dt;
     const gy = ground(c.x, c.s) + cfg.cheeseR;
     if (c.y <= gy){
-      const gvy = slopeS(c.x, c.s) * c.v + slopeX(c.x, c.s) * c.vx;
-      const hit = gvy - c.vy;
+      const gvy = slopeS(c.x, c.s) * c.v + slopeX(c.x, c.s) * c.vx, hit = gvy - c.vy;
       if (hit > cfg.bounceMin){
         c.vy = gvy + hit * cfg.bounce;
         c.tiltV += (Math.random() - 0.5) * hit * TILT_KICK * 4;
         if (game === 'playing') c.vx += (Math.random() - 0.5) * hit * 0.3;
-      } else {
-        c.vy = gvy;
-      }
-      c.y = gy;
-      c.grounded = true;
-    } else if (c.y - gy > 0.03){
-      c.grounded = false;
-    }
+      } else c.vy = gvy;
+      c.y = gy; c.grounded = true;
+    } else if (c.y - gy > 0.03) c.grounded = false;
     c.tiltV += (-TILT_SPRING * c.tilt - TILT_DAMP * c.tiltV) * dt;
     c.tilt = clamp(c.tilt + c.tiltV * dt, -0.6, 0.6);
     c.rot = (c.rot + c.v / cfg.cheeseR * dt) % TAU;
   }
 
   function finishCaught(c, hand, resOutcome){
-    game = 'caught';
-    outcome = resOutcome;
-    endJoy();
-    overT = 0;
-    if (c){
-      cheese.held = c;
-      cheese.hand = hand;
-      cheese.v = cheese.vx = cheese.vy = 0;
-    }
+    game = 'caught'; outcome = resOutcome; endJoy(); overT = 0;
+    if (c){ cheese.held = c; cheese.hand = hand; cheese.v = cheese.vx = cheese.vy = 0; }
     for (const o of chasers) if (o !== c && (o.state === 'run' || o.state === 'windup' || o.state === 'wait')) o.state = 'idle';
     if (cfg.isOnline && net.role === 'host') sendHostSnapshot(true);
   }
@@ -1634,8 +1398,7 @@
         ts = cheese.s + cheese.v * DIVE_T * 0.85;
         tx = clamp(cheese.x + cheese.vx * DIVE_T * 0.5, -cfg.halfW + 0.5, cfg.halfW - 0.5);
       } else {
-        const dash = Math.max(c.v, 6) * DIVE_T + 1.8;
-        ts = c.s + dash;
+        ts = c.s + Math.max(c.v, 6) * DIVE_T + 1.8;
         tx = clamp(c.x + c.vx * DIVE_T, -cfg.halfW + 0.5, cfg.halfW - 0.5);
       }
     } else {
@@ -1651,10 +1414,9 @@
     for (let i = 0; i < NP; i++){
       const ox = p[i * 3] - p[k], oy = p[i * 3 + 1] - p[k + 1], os = p[i * 3 + 2] - p[k + 2];
       const wx = DIVE_SPIN * rx, ws = DIVE_SPIN * rs;
-      const rvx = -ws * oy, rvy = ws * ox - wx * os, rvs = wx * oy;
-      c.q[i * 3] = p[i * 3] - (vx + rvx) * STEP;
-      c.q[i * 3 + 1] = p[i * 3 + 1] - (vy + rvy) * STEP;
-      c.q[i * 3 + 2] = p[i * 3 + 2] - (vs + rvs) * STEP;
+      c.q[i * 3] = p[i * 3] - (vx - ws * oy) * STEP;
+      c.q[i * 3 + 1] = p[i * 3 + 1] - (vy + ws * ox - wx * os) * STEP;
+      c.q[i * 3 + 2] = p[i * 3 + 2] - (vs + wx * oy) * STEP;
     }
   }
 
@@ -1663,8 +1425,7 @@
     c.cool -= dt;
     switch (c.state){
       case 'wait':
-        c.t += dt;
-        setPose(c, 'ready', 0);
+        c.t += dt; setPose(c, 'ready', 0);
         if (c.t >= cfg.startDelay){ c.state = 'run'; c.t = 0; }
         break;
       case 'run':
@@ -1680,8 +1441,7 @@
           if (inBush(c.x, c.s)) target *= BUSH_RUN;
           c.v += clamp(target - c.v, -Math.max(12, cfg.runAcc * 1.4) * dt, Math.max(12, cfg.runAcc * 1.4) * dt);
           const pVx = Math.max(cfg.vxMax, 5.2);
-          const tvx = ctrl.x * pVx;
-          c.vx += clamp(tvx - c.vx, -Math.max(28, pVx * 5) * dt, Math.max(28, pVx * 5) * dt);
+          c.vx += clamp(ctrl.x * pVx - c.vx, -Math.max(28, pVx * 5) * dt, Math.max(28, pVx * 5) * dt);
         } else {
           const runMax = (cfg.targetSpeed + 0.9 + cheese.s * 0.001) * cfg.chSpeedMult;
           const baseFollow = (Math.max(cheese.v, 3) + 1.3 + cheese.s * 0.0005) * cfg.chSpeedMult;
@@ -1695,7 +1455,6 @@
           const tvx = clamp((want - c.x) * 3, -cfg.chVx, cfg.chVx);
           c.vx += clamp(tvx - c.vx, -Math.max(15, cfg.chVx * 2.5) * dt, Math.max(15, cfg.chVx * 2.5) * dt);
         }
-
         c.s += c.v * dt;
         c.x = clamp(c.x + c.vx * dt, -cfg.halfW + 0.5, cfg.halfW - 0.5);
         c.yaw = Math.atan2(c.vx, Math.max(c.v, 1)) * 0.8;
@@ -1708,18 +1467,14 @@
           const nb = cheese.s - c.s;
           if (Math.abs(nb) < 1.2 && Math.abs(cheese.x - c.x) < 0.9 && cheeseHeight() < CATCH_HEIGHT){
             setPose(c, 'reach', 0);
-            const res = cfg.humanPlayerActive ? (c.isPlayer ? 'human_win' : 'rival_win') : 'caught';
-            finishCaught(c, HNR, res);
+            finishCaught(c, HNR, cfg.humanPlayerActive ? (c.isPlayer ? 'human_win' : 'rival_win') : 'caught');
             break;
           }
         }
-
         if (c.state === 'run'){
           setPose(c, 'run', 0);
           if (c.isPlayer){
-            if (game === 'playing' && wantDive && c.cool <= 0){
-              c.state = 'windup'; c.t = 0; c.crouchK = 0;
-            }
+            if (game === 'playing' && wantDive && c.cool <= 0){ c.state = 'windup'; c.t = 0; c.crouchK = 0; }
           } else if (game === 'playing' && c.cool <= 0 && behind > -DIVE_BACK && behind < DIVE_RANGE &&
               Math.abs(cheese.x - c.x) < DIVE_DX && cheeseHeight() < CATCH_HEIGHT){
             c.state = 'windup'; c.t = 0; c.crouchK = 0;
@@ -1737,36 +1492,29 @@
         c.t += dt;
         ragStep(c, dt, c.t < DIVE_T * 0.9 && cheese.held !== c);
         const p = c.p, k = PELVIS * 3;
-        c.x = p[k]; c.s = p[k + 2];
-        c.v = (p[k + 2] - c.q[k + 2]) / dt;
+        c.x = p[k]; c.s = p[k + 2]; c.v = (p[k + 2] - c.q[k + 2]) / dt;
         if (game === 'playing' && c.canCatch && c.t < CATCH_WINDOW && cheeseHeight() < CATCH_HEIGHT){
           const X = cheese.x, Y = cheese.y, S = cheese.s;
           const dl = _d3(p, HNL, X, Y, S), dr = _d3(p, HNR, X, Y, S);
           const body = Math.min(_d3(p, NECK, X, Y, S), _d3(p, PELVIS, X, Y, S), _d3(p, SHL, X, Y, S), _d3(p, SHR, X, Y, S));
           const bonus = c.isPlayer ? 0.14 : 0;
           if (Math.min(dl, dr) < cfg.cheeseR + 0.25 + bonus || body < cfg.cheeseR + 0.3 + bonus){
-            const res = cfg.humanPlayerActive ? (c.isPlayer ? 'human_win' : 'rival_win') : 'caught';
-            finishCaught(c, dl < dr ? HNL : HNR, res);
+            finishCaught(c, dl < dr ? HNL : HNR, cfg.humanPlayerActive ? (c.isPlayer ? 'human_win' : 'rival_win') : 'caught');
             break;
           }
         }
         const sp = Math.hypot(p[k] - c.q[k], p[k + 1] - c.q[k + 1], p[k + 2] - c.q[k + 2]) / dt;
         if (cheese.held !== c && c.t > RAG_MIN && (sp < RAG_STILL || c.t > RAG_MAX)){
-          c.state = 'getup'; c.t = 0;
-          c.a.set(p);
+          c.state = 'getup'; c.t = 0; c.a.set(p);
           c.s0 = c.s; c.x0 = c.x; c.g0 = ground(c.x, c.s);
           c.v = Math.max(0, Math.min(c.v, 4)); c.vx = 0; c.yaw = 0; c.phase = 0;
         }
         break;
       }
       case 'getup': {
-        c.t += dt;
-        c.v += (3 - c.v) * Math.min(1, 3 * dt);
-        c.s += c.v * dt;
-        c.freq = clamp(c.v * 0.32, 1.2, 3.0);
-        c.phase += c.freq * dt;
-        c.q.set(c.p);
-        writePose(c, c.p, 'run', 0);
+        c.t += dt; c.v += (3 - c.v) * Math.min(1, 3 * dt); c.s += c.v * dt;
+        c.freq = clamp(c.v * 0.32, 1.2, 3.0); c.phase += c.freq * dt;
+        c.q.set(c.p); writePose(c, c.p, 'run', 0);
         const k = smooth(Math.min(1, c.t / GETUP_T));
         const dS = c.s - c.s0, dX = c.x - c.x0, dY = ground(c.x, c.s) - c.g0;
         for (let i = 0; i < NP; i++){
@@ -1774,20 +1522,13 @@
           c.p[i * 3 + 1] = lerp(c.a[i * 3 + 1] + dY, c.p[i * 3 + 1], k);
           c.p[i * 3 + 2] = lerp(c.a[i * 3 + 2] + dS, c.p[i * 3 + 2], k);
         }
-        if (c.t >= GETUP_T){
-          c.state = game === 'playing' ? 'run' : 'idle';
-          c.t = 0;
-          c.cool = c.isPlayer ? 0.35 : COOLDOWN;
-          c.tripCool = TRIP_COOL;
-        }
+        if (c.t >= GETUP_T){ c.state = game === 'playing' ? 'run' : 'idle'; c.t = 0; c.cool = c.isPlayer ? 0.35 : COOLDOWN; c.tripCool = TRIP_COOL; }
         break;
       }
       case 'idle':
         c.v = Math.max(0, c.v - 8 * dt);
         if (behind < 1.5 && Math.abs(cheese.x - c.x) < 1) c.v = 0;
-        c.s += c.v * dt;
-        c.freq = clamp(c.v * 0.32, 1.2, 3.0);
-        c.phase += c.freq * dt;
+        c.s += c.v * dt; c.freq = clamp(c.v * 0.32, 1.2, 3.0); c.phase += c.freq * dt;
         setPose(c, 'run', 0);
         break;
     }
@@ -1814,11 +1555,7 @@
     updateCheese(dt);
     if (game === 'playing' && !cfg.humanPlayerActive){
       const n = Math.min(cfg.chMax, cfg.chStart + Math.floor(cheese.s / cfg.chAddEvery));
-      while (activeN < n){
-        const c = chasers[activeN++];
-        resetChaser(c, activeN - 1, false);
-        c.active = true;
-      }
+      while (activeN < n){ const c = chasers[activeN++]; resetChaser(c, activeN - 1, false); c.active = true; }
     }
     for (let i = 0; i < activeN; i++) updateChaser(chasers[i], dt);
     separate();
@@ -1830,84 +1567,45 @@
       if (game === 'playing'){
         maxDist = Math.max(maxDist, Math.max(0, cheese.s));
         const lim = cfg.isOnline ? ESCAPE_LIMIT_ONLINE : ESCAPE_LIMIT_SOLO;
-        if (cheese.s - pl.s > lim){
-          finishCaught(null, 0, 'escaped');
-        }
+        if (cheese.s - pl.s > lim) finishCaught(null, 0, 'escaped');
       }
-    } else if (game === 'playing'){
-      maxDist = Math.max(maxDist, cheese.s);
-    }
+    } else if (game === 'playing') maxDist = Math.max(maxDist, cheese.s);
 
     S0 = (cfg.myRole === 'human' && activeN > 0) ? chasers[0].s : cheese.s;
   }
 
-  // ---------- ゲスト側の補間更新（オンライン時） ----------
+  // ---------- ゲスト側補間 ----------
   function applyGuestInterpolation(dt){
     const sn = net.snap;
     if (!sn) return;
-    const k = Math.min(1, dt * 18);
-
-    const sc = sn.ch;
-    if (Math.hypot(sc.s - cheese.s, sc.x - cheese.x) > 10){
-      cheese.s = sc.s; cheese.x = sc.x; cheese.y = sc.y;
-    } else {
-      cheese.s = lerp(cheese.s, sc.s, k);
-      cheese.x = lerp(cheese.x, sc.x, k);
-      cheese.y = lerp(cheese.y, sc.y, k);
-    }
-    cheese.v = sc.v;
-    cheese.vx = sc.vx;
-    cheese.tilt = lerp(cheese.tilt, sc.tl, k);
+    const k = Math.min(1, dt * 18), sc = sn.ch;
+    if (Math.hypot(sc.s - cheese.s, sc.x - cheese.x) > 10){ cheese.s = sc.s; cheese.x = sc.x; cheese.y = sc.y; }
+    else { cheese.s = lerp(cheese.s, sc.s, k); cheese.x = lerp(cheese.x, sc.x, k); cheese.y = lerp(cheese.y, sc.y, k); }
+    cheese.v = sc.v; cheese.vx = sc.vx; cheese.tilt = lerp(cheese.tilt, sc.tl, k);
     cheese.rot = (cheese.rot + cheese.v / cfg.cheeseR * dt) % TAU;
-    cheese.held = sc.h >= 0 ? chasers[sc.h] : null;
-    cheese.hand = sc.hd;
+    cheese.held = sc.h >= 0 ? chasers[sc.h] : null; cheese.hand = sc.hd;
 
     activeN = sn.cs.length;
     for (let i = 0; i < activeN; i++){
-      const d = sn.cs[i];
-      const c = chasers[i];
-      c.active = true;
-      c.isPlayer = cfg.humanPlayerActive && i === 0;
+      const d = sn.cs[i], c = chasers[i];
+      c.active = true; c.isPlayer = cfg.humanPlayerActive && i === 0;
       const prevState = c.state;
-      c.state = d.st;
-      c.v = d.v;
-      c.cool = d.cl;
-      c.freq = clamp(c.v * 0.32, 1.2, 3.0);
-
+      c.state = d.st; c.v = d.v; c.cool = d.cl; c.freq = clamp(c.v * 0.32, 1.2, 3.0);
       if (d.p){
         const jump = prevState !== d.st && prevState !== 'rag' && prevState !== 'getup';
-        for (let j = 0; j < NP * 3; j++){
-          c.p[j] = jump ? d.p[j] : lerp(c.p[j], d.p[j], Math.min(1, dt * 22));
-        }
-        c.x = c.p[PELVIS * 3];
-        c.s = c.p[PELVIS * 3 + 2];
+        for (let j = 0; j < NP * 3; j++) c.p[j] = jump ? d.p[j] : lerp(c.p[j], d.p[j], Math.min(1, dt * 22));
+        c.x = c.p[PELVIS * 3]; c.s = c.p[PELVIS * 3 + 2];
       } else {
-        if (Math.hypot(d.s - c.s, d.x - c.x) > 10){
-          c.s = d.s; c.x = d.x; c.yaw = d.yw; c.phase = d.ph;
-        } else {
-          c.s = lerp(c.s, d.s, k);
-          c.x = lerp(c.x, d.x, k);
-          c.yaw = lerp(c.yaw, d.yw, k);
-          c.phase += c.freq * dt;
-        }
-        const poseMode = d.st === 'wait' ? 'ready' : d.st === 'windup' ? 'crouch' : 'run';
-        writePose(c, c.p, poseMode, d.ck || 0);
+        if (Math.hypot(d.s - c.s, d.x - c.x) > 10){ c.s = d.s; c.x = d.x; c.yaw = d.yw; c.phase = d.ph; }
+        else { c.s = lerp(c.s, d.s, k); c.x = lerp(c.x, d.x, k); c.yaw = lerp(c.yaw, d.yw, k); c.phase += c.freq * dt; }
+        writePose(c, c.p, d.st === 'wait' ? 'ready' : d.st === 'windup' ? 'crouch' : 'run', d.ck || 0);
       }
     }
-
-    maxDist = sn.md;
-    playTime = sn.pt;
+    maxDist = sn.md; playTime = sn.pt;
     if (sn.g !== game){
-      if (sn.g === 'caught' && game === 'playing'){
-        game = 'caught';
-        outcome = sn.oc;
-        endJoy();
-      } else if (sn.g === 'over' && game !== 'over'){
-        outcome = sn.oc;
-        showOver();
-      }
+      if (sn.g === 'caught' && game === 'playing'){ game = 'caught'; outcome = sn.oc; endJoy(); }
+      else if (sn.g === 'over' && game !== 'over'){ outcome = sn.oc; showOver(); }
     }
-
     recordTrail();
     S0 = (cfg.myRole === 'human' && activeN > 0) ? chasers[0].s : cheese.s;
     updateObstacles();
@@ -1929,23 +1627,20 @@
       _y.divideScalar(len);
       _x.copy(_right).addScaledVector(_y, -_right.dot(_y));
       if (_x.lengthSq() < 1e-4) _x.copy(_back).addScaledVector(_y, -_back.dot(_y));
-      _x.normalize();
-      _z.crossVectors(_x, _y);
+      _x.normalize(); _z.crossVectors(_x, _y);
       _m.makeBasis(_x.multiplyScalar(ra), _y.multiplyScalar(len), _z.multiplyScalar(rb));
       _m.setPosition(_c.addVectors(RP[a], RP[b]).multiplyScalar(0.5));
       cylMesh.setMatrixAt(idx * CYL.length + j, _m);
     });
     SPH.forEach(([a, key, sx, sy, sz], j) => {
-      _c.copy(RP[a]);
-      _x.copy(_right); _y.copy(_up); _z.copy(_back);
+      _c.copy(RP[a]); _x.copy(_right); _y.copy(_up); _z.copy(_back);
       if (key === 'hair'){ _c.addScaledVector(_up, 0.025).addScaledVector(_back, 0.012); }
       if (key === 'shoe'){
         const kn = a === FTL ? KNL : KNR;
         _y.subVectors(RP[kn], RP[a]).normalize();
         _z.copy(_back).addScaledVector(_y, -_back.dot(_y));
         if (_z.lengthSq() < 1e-4) _z.copy(_up);
-        _z.normalize();
-        _x.crossVectors(_y, _z);
+        _z.normalize(); _x.crossVectors(_y, _z);
         _c.addScaledVector(_z, -0.05).addScaledVector(_y, -0.03);
       }
       _m.makeBasis(_x.multiplyScalar(sx), _y.multiplyScalar(sy), _z.multiplyScalar(sz));
@@ -1957,10 +1652,7 @@
   let camX = 0, zoom = 0;
   const _camP = new THREE.Vector3(), _camL = new THREE.Vector3(), _zP = new THREE.Vector3(), _zL = new THREE.Vector3();
   function draw(dt){
-    updateChunks();
-    updateFence();
-    drawObstacles();
-
+    updateChunks(); updateFence(); drawObstacles();
     rel(cheeseGroup.position, cheese.s, cheese.x, cheese.y);
     if (!cheese.held){
       cheeseGroup.rotation.y = -Math.atan2(cheese.vx, Math.max(cheese.v, 1));
@@ -1970,31 +1662,23 @@
     cheeseSpin.rotation.x = -cheese.rot;
 
     for (let i = 0; i < activeN; i++) drawChaser(chasers[i], i);
-    cylMesh.count = activeN * CYL.length;
-    sphMesh.count = activeN * SPH.length;
+    cylMesh.count = activeN * CYL.length; sphMesh.count = activeN * SPH.length;
     cylMesh.instanceMatrix.needsUpdate = sphMesh.instanceMatrix.needsUpdate = true;
 
     if (cfg.humanPlayerActive && activeN > 0){
       const pl = chasers[0];
       playerMarker.visible = true;
-      const hx = pl.p[HEAD * 3], hy = pl.p[HEAD * 3 + 1], hs = pl.p[HEAD * 3 + 2];
-      rel(playerMarker.position, hs, hx, hy + 0.65 + Math.sin(performance.now() * 0.008) * 0.1);
+      rel(playerMarker.position, pl.p[HEAD * 3 + 2], pl.p[HEAD * 3], pl.p[HEAD * 3 + 1] + 0.65 + Math.sin(performance.now() * 0.008) * 0.1);
       playerMarker.rotation.y = performance.now() * 0.003;
-      if (cfg.myRole === 'human'){
-        const canDive = game === 'playing' && pl.state === 'run' && pl.cool <= 0;
-        $('diveBtn').classList.toggle('disabled', !canDive);
-      }
-    } else {
-      playerMarker.visible = false;
-    }
+      if (cfg.myRole === 'human') $('diveBtn').classList.toggle('disabled', !(game === 'playing' && pl.state === 'run' && pl.cool <= 0));
+    } else playerMarker.visible = false;
 
     if (cfg.myRole === 'human' && activeN > 0){
       const pl = chasers[0];
       camX += (pl.x * 0.8 - camX) * Math.min(1, dt * 5);
       const baseBack = Math.max(6.5, cfg.camBack);
       _camP.set(camX, SLOPE * baseBack + cfg.camUp, baseBack);
-      const lookAhead = 5.5;
-      _camL.set(lerp(camX, cheese.x, 0.25), -SLOPE * lookAhead + 0.5, -lookAhead);
+      _camL.set(lerp(camX, cheese.x, 0.25), -SLOPE * 5.5 + 0.5, -5.5);
     } else {
       camX += (cheese.x * cfg.camFollowX - camX) * Math.min(1, dt * 4);
       const camY = cheese.y + SLOPE * S0 - bump(cheese.x, cheese.s);
@@ -2008,15 +1692,11 @@
       rel(_zL, cheese.s, cheese.x, cheese.y);
       _zP.set(_zL.x + ZOOM_SIDE, ground(cheese.x, cheese.s - ZOOM_BACK) + SLOPE * S0 + ZOOM_UP, _zL.z + ZOOM_BACK);
       const k = smooth(zoom);
-      _camP.lerp(_zP, k);
-      _camL.lerp(_zL, k);
+      _camP.lerp(_zP, k); _camL.lerp(_zL, k);
     }
-    camera.position.copy(_camP);
-    camera.lookAt(_camL);
+    camera.position.copy(_camP); camera.lookAt(_camL);
     drawTrail(dt);
-
-    sun.target.position.set(camX, 0, -2);
-    sun.position.set(camX - 6, 16, -10);
+    sun.target.position.set(camX, 0, -2); sun.position.set(camX - 6, 16, -10);
 
     if (cfg.isOnline){
       const gap = activeN > 0 ? Math.max(0, Math.round(cheese.s - chasers[0].s)) : 0;
@@ -2027,7 +1707,7 @@
         shownHudKey = key;
         if (cfg.myRole === 'cheese'){
           $('hud').textContent = `${runD} m`;
-          $('hudSub').textContent = `[${tag}] あなた：チーズ役 / 相手との差 ${gap}m（${ESCAPE_LIMIT_ONLINE}mで勝利）`;
+          $('hudSub').textContent = `[${tag}] あなた：チーズ役 / 差 ${gap}m（${ESCAPE_LIMIT_ONLINE}mで勝利）`;
         } else {
           $('hud').textContent = `チーズまで ${gap} m`;
           $('hudSub').textContent = `[${tag}] あなた：人間役 / 地点 ${runD}m`;
@@ -2043,91 +1723,52 @@
         $('hudSub').textContent = `地点 ${runD} m  /  BEST ${formatBest('human', currentBest)}`;
       }
     } else {
-      const d = Math.floor(maxDist);
-      const key = `c:${d}`;
+      const d = Math.floor(maxDist), key = `c:${d}`;
       if (key !== shownHudKey){
         shownHudKey = key;
         $('hud').textContent = `${d} m`;
-        const dispBest = currentBest === null ? d : Math.max(currentBest, d);
-        $('hudSub').textContent = `BEST ${dispBest} m`;
+        $('hudSub').textContent = `BEST ${currentBest === null ? d : Math.max(currentBest, d)} m`;
       }
     }
-
     renderer.render(scene, camera);
   }
 
   // ---------- 設定反映 ----------
   function applyUserConfig(src, isOnlineMatch, myRoleOverride){
-    const s = src || userCfg;
-    const isOnline = !!isOnlineMatch;
+    const s = src || userCfg, isOnline = !!isOnlineMatch;
     const course = isOnline ? s.onlineCourse : (s.mode === 'board' ? 'board' : 'normal');
-    const isBoard = course === 'board';
-    const humanActive = isOnline || s.mode === 'human';
+    const isBoard = course === 'board', humanActive = isOnline || s.mode === 'human';
 
     cfg.mode = isOnline ? 'online' : s.mode;
     cfg.onlineType = s.onlineType || 'room';
-    cfg.course = course;
-    cfg.isOnline = isOnline;
-    cfg.humanPlayerActive = humanActive;
+    cfg.course = course; cfg.isOnline = isOnline; cfg.humanPlayerActive = humanActive;
     cfg.myRole = isOnline ? myRoleOverride : (s.mode === 'human' ? 'human' : 'cheese');
-
-    cfg.targetSpeed = s.speed;
-    cfg.vxMax = s.vxMax;
+    cfg.targetSpeed = s.speed; cfg.vxMax = s.vxMax;
     cfg.chStart = isOnline ? clamp(1 + Math.round(s.chasers), 1, 31) : clamp(Math.round(s.chasers), 1, CH_ALLOC);
-    cfg.chSpeedMult = s.chSpeed;
-    cfg.boardGap = s.boardGap;
-    cfg.camUp = s.camUp;
+    cfg.chSpeedMult = s.chSpeed; cfg.boardGap = s.boardGap; cfg.camUp = s.camUp;
 
     if (isBoard){
-      cfg.halfW = 20;
-      cfg.cheeseR = 0.22;
-      cfg.cheeseW = 0.1;
-      cfg.gFall = 250;
-      cfg.drag = 1.0;
+      cfg.halfW = 20; cfg.cheeseR = 0.22; cfg.cheeseW = 0.1; cfg.gFall = 250; cfg.drag = 1.0;
       cfg.gAlong = cfg.targetSpeed * cfg.targetSpeed * cfg.drag;
-      cfg.turnCost = 0;
-      cfg.latAcc = Math.max(80, cfg.vxMax * 5);
-      cfg.bounce = 0;
-      cfg.bounceMin = 1e30;
-      cfg.airControl = 1.0;
-      cfg.chMax = cfg.chStart;
-      cfg.chAddEvery = 100000;
-      cfg.startDelay = isOnline ? 0.5 : 0.01;
-      cfg.startGrace = 1.0;
-      cfg.runAcc = Math.max(30, cfg.targetSpeed * 1.6);
-      cfg.chVx = Math.max(10, cfg.vxMax * 0.55);
-      cfg.boardW = cfg.halfW;
-      cfg.avoidLook = Math.max(14, cfg.boardGap * 0.8);
-      cfg.thigh = 0.1;
-      cfg.shin = 0.7;
-      cfg.camBack = 5;
-      cfg.camFollowX = 1.0;
-      cfg.camVfovMax = 110;
+      cfg.turnCost = 0; cfg.latAcc = Math.max(80, cfg.vxMax * 5);
+      cfg.bounce = 0; cfg.bounceMin = 1e30; cfg.airControl = 1.0;
+      cfg.chMax = cfg.chStart; cfg.chAddEvery = 100000;
+      cfg.startDelay = isOnline ? 0.5 : 0.01; cfg.startGrace = 1.0;
+      cfg.runAcc = Math.max(30, cfg.targetSpeed * 1.6); cfg.chVx = Math.max(10, cfg.vxMax * 0.55);
+      cfg.boardW = cfg.halfW; cfg.avoidLook = Math.max(14, cfg.boardGap * 0.8);
+      cfg.thigh = 0.1; cfg.shin = 0.7; cfg.camBack = 5; cfg.camFollowX = 1.0; cfg.camVfovMax = 110;
     } else {
-      cfg.halfW = 8;
-      cfg.cheeseR = 0.32;
-      cfg.cheeseW = 0.2;
-      cfg.gFall = 9.8;
+      cfg.halfW = 8; cfg.cheeseR = 0.32; cfg.cheeseW = 0.2; cfg.gFall = 9.8;
       const baseAlong = 9.8 * Math.sin(Math.atan(SLOPE));
       cfg.gAlong = baseAlong * Math.pow(cfg.targetSpeed / 9.5, 1.3);
       cfg.drag = cfg.gAlong / (cfg.targetSpeed * cfg.targetSpeed);
-      cfg.turnCost = 0.1;
-      cfg.latAcc = Math.max(22, cfg.vxMax * 5);
-      cfg.bounce = 0.3;
-      cfg.bounceMin = 1.2;
-      cfg.airControl = 0.6;
+      cfg.turnCost = 0.1; cfg.latAcc = Math.max(22, cfg.vxMax * 5);
+      cfg.bounce = 0.3; cfg.bounceMin = 1.2; cfg.airControl = 0.6;
       cfg.chMax = humanActive ? cfg.chStart : Math.min(CH_ALLOC, Math.max(12, cfg.chStart + 6));
-      cfg.chAddEvery = 100;
-      cfg.startDelay = humanActive ? 0.5 : 1.0;
-      cfg.startGrace = humanActive ? 1.0 : 2.0;
-      cfg.runAcc = Math.max(7, cfg.targetSpeed * 0.8);
-      cfg.chVx = Math.max(3.2, cfg.vxMax * 0.7);
-      cfg.avoidLook = 6;
-      cfg.thigh = 0.43;
-      cfg.shin = 0.43;
-      cfg.camBack = cfg.myRole === 'human' ? 7 : 8;
-      cfg.camFollowX = 0.75;
-      cfg.camVfovMax = 65;
+      cfg.chAddEvery = 100; cfg.startDelay = humanActive ? 0.5 : 1.0; cfg.startGrace = humanActive ? 1.0 : 2.0;
+      cfg.runAcc = Math.max(7, cfg.targetSpeed * 0.8); cfg.chVx = Math.max(3.2, cfg.vxMax * 0.7);
+      cfg.avoidLook = 6; cfg.thigh = 0.43; cfg.shin = 0.43;
+      cfg.camBack = cfg.myRole === 'human' ? 7 : 8; cfg.camFollowX = 0.75; cfg.camVfovMax = 65;
     }
     cfg.xlim = cfg.halfW - cfg.cheeseW / 2 - 0.1;
     cheeseMesh.scale.set(cfg.cheeseW, cfg.cheeseR, cfg.cheeseR);
@@ -2135,17 +1776,31 @@
     resize();
   }
 
-  // ---------- オンライン通信処理（PeerJS：全国フリーマッチ＋合言葉マッチ） ----------
+  // ---------- オンライン通信（PeerJS） ----------
   function setNetStatus(state, text){
     $('netDot').className = 'dot ' + (state || '');
     $('netStatus').textContent = text;
   }
   const r2 = v => Math.round(v * 100) / 100;
 
-  function sendMsg(obj){
-    if (net.conn && net.conn.open){
-      try { net.conn.send(obj); } catch {}
-    }
+  function cleanRoomText(raw){
+    return raw.trim()
+      .replace(/[！-～]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
+      .replace(/\s+/g, '');
+  }
+  function encodeRoomId(raw){
+    const s = cleanRoomText(raw).toLowerCase();
+    if (!s) return '';
+    const bytes = new TextEncoder().encode(s);
+    let hex = '';
+    for (let i = 0; i < bytes.length; i++) hex += bytes[i].toString(16).padStart(2, '0');
+    return hex.slice(0, 48);
+  }
+  function sendMsg(obj){ if (net.conn && net.conn.open){ try { net.conn.send(obj); } catch {} } }
+  function clearNetTimers(){
+    if (net.startTimer){ clearTimeout(net.startTimer); net.startTimer = null; }
+    if (net.joinTimer){ clearTimeout(net.joinTimer); net.joinTimer = null; }
+    if (net.helloTimer){ clearInterval(net.helloTimer); net.helloTimer = null; }
   }
 
   function sendHostSnapshot(force){
@@ -2153,14 +1808,10 @@
     const now = performance.now();
     if (!force && now - net.lastSend < SYNC_MS) return;
     net.lastSend = now;
-
     const cs = [];
     for (let i = 0; i < activeN; i++){
       const c = chasers[i];
-      const item = {
-        st: c.state, s: r2(c.s), x: r2(c.x), v: r2(c.v),
-        yw: r2(c.yaw), ph: r2(c.phase), cl: r2(c.cool),
-      };
+      const item = { st:c.state, s:r2(c.s), x:r2(c.x), v:r2(c.v), yw:r2(c.yaw), ph:r2(c.phase), cl:r2(c.cool) };
       if (c.state === 'windup') item.ck = r2(c.crouchK);
       if (c.state === 'rag' || c.state === 'getup'){
         const arr = new Array(NP * 3);
@@ -2169,14 +1820,9 @@
       }
       cs.push(item);
     }
-
     sendMsg({
-      t: 'snap', g: game, oc: outcome, md: r2(maxDist), pt: r2(playTime),
-      ch: {
-        s: r2(cheese.s), x: r2(cheese.x), y: r2(cheese.y),
-        v: r2(cheese.v), vx: r2(cheese.vx), tl: r2(cheese.tilt),
-        h: cheese.held ? cheese.held.idx : -1, hd: cheese.hand,
-      },
+      t:'snap', g:game, oc:outcome, md:r2(maxDist), pt:r2(playTime),
+      ch:{ s:r2(cheese.s), x:r2(cheese.x), y:r2(cheese.y), v:r2(cheese.v), vx:r2(cheese.vx), tl:r2(cheese.tilt), h:cheese.held ? cheese.held.idx : -1, hd:cheese.hand },
       cs,
     });
   }
@@ -2187,28 +1833,43 @@
     if (!force && !diveRequested && now - net.lastSend < SYNC_MS) return;
     net.lastSend = now;
     const inp = input();
-    sendMsg({ t: 'in', x: r2(inp.x), y: r2(inp.y), d: diveRequested });
+    sendMsg({ t:'in', x:r2(inp.x), y:r2(inp.y), d:diveRequested });
     diveRequested = false;
   }
 
   function sendLobbyPreview(){
     if (!net.connected || net.role !== 'host' || net.matchKind !== 'room') return;
-    sendMsg({ t: 'lobby', cfg: { ...userCfg } });
+    sendMsg({ t:'lobby', cfg:{ ...userCfg } });
   }
 
   function handlePeerMessage(msg){
     if (!msg || typeof msg !== 'object') return;
+    if (msg.t === 'hello' && net.role === 'host'){
+      sendMsg({ t:'welcome', cfg:{ ...userCfg } });
+      return;
+    }
+    if (msg.t === 'welcome' && net.role === 'guest'){
+      if (net.joinTimer){ clearTimeout(net.joinTimer); net.joinTimer = null; }
+      if (net.helloTimer){ clearInterval(net.helloTimer); net.helloTimer = null; }
+      net.connected = true;
+      if (msg.cfg) Object.assign(userCfg, msg.cfg, { mode:'online', onlineType:'room' });
+      setNetStatus('ok', `接続完了！（部屋: ${net.room}）ホストが開始するのを待っています`);
+      syncMenuUI();
+      return;
+    }
     if (msg.t === 'in' && net.role === 'host'){
       net.remoteInput.x = clamp(Number(msg.x) || 0, -1, 1);
       net.remoteInput.y = clamp(Number(msg.y) || 0, -1, 1);
       if (msg.d) net.remoteInput.dive = true;
     } else if (msg.t === 'lobby' && net.role === 'guest'){
-      Object.assign(userCfg, msg.cfg, { mode: 'online' });
+      Object.assign(userCfg, msg.cfg, { mode:'online' });
       syncMenuUI();
     } else if (msg.t === 'start' && net.role === 'guest'){
-      Object.assign(userCfg, msg.cfg, { mode: 'online' });
-      const guestRole = msg.cfg.hostRole === 'cheese' ? 'human' : 'cheese';
-      startMatch(true, msg.seed, guestRole);
+      if (net.joinTimer){ clearTimeout(net.joinTimer); net.joinTimer = null; }
+      if (net.helloTimer){ clearInterval(net.helloTimer); net.helloTimer = null; }
+      net.connected = true;
+      Object.assign(userCfg, msg.cfg, { mode:'online' });
+      startMatch(true, msg.seed, msg.cfg.hostRole === 'cheese' ? 'human' : 'cheese');
     } else if (msg.t === 'snap' && net.role === 'guest'){
       net.snap = msg;
     } else if (msg.t === 'menu' && net.role === 'guest'){
@@ -2222,35 +1883,28 @@
     conn.on('close', () => {
       if (net.conn !== conn) return;
       const wasPlaying = game !== 'menu';
-      net.connected = false;
-      net.conn = null;
-      net.snap = null;
-      if (net.startTimer){ clearTimeout(net.startTimer); net.startTimer = null; }
+      net.connected = false; net.conn = null; net.snap = null;
+      clearNetTimers();
       if (net.matchKind === 'free'){
         disconnectNet(true);
         setNetStatus('err', '相手との接続が切れました。もう一度探せます');
+      } else if (net.role === 'host'){
+        setNetStatus('wait', `相手が退出しました。部屋「${net.room}」で待機中…`);
       } else {
-        setNetStatus('err', '相手との接続が切れました');
+        disconnectNet(true);
+        setNetStatus('err', 'ホストとの接続が切れました');
       }
       if (wasPlaying) setupWorld(false);
       else syncMenuUI();
     });
-    conn.on('error', () => {
-      setNetStatus('err', '通信エラーが発生しました');
-      syncMenuUI();
-    });
+    conn.on('error', () => { setNetStatus('err', '通信エラーが発生しました'); syncMenuUI(); });
   }
 
   function disconnectNet(silent){
-    net.searchGen++;
-    if (net.startTimer){ clearTimeout(net.startTimer); net.startTimer = null; }
+    net.searchGen++; clearNetTimers();
     if (net.conn){ try { net.conn.close(); } catch {} net.conn = null; }
     if (net.peer){ try { net.peer.destroy(); } catch {} net.peer = null; }
-    net.role = 'none';
-    net.searching = false;
-    net.connected = false;
-    net.room = '';
-    net.snap = null;
+    net.role = 'none'; net.searching = false; net.connected = false; net.room = ''; net.snap = null;
     if (!silent){
       setNetStatus('', userCfg.onlineType === 'free'
         ? 'コースを選んでマッチングを開始してください'
@@ -2259,18 +1913,13 @@
     syncMenuUI();
   }
 
-  // --- 全国フリーマッチ（空きスロット0〜14を自動スキャン） ---
+  // --- 全国フリーマッチ ---
   function startFreeMatch(){
-    if (typeof Peer === 'undefined'){
-      setNetStatus('err', 'PeerJSの読み込みに失敗しました（ネット接続を確認）');
-      return;
-    }
+    if (typeof Peer === 'undefined'){ setNetStatus('err', 'PeerJSの読み込みに失敗しました（ネット接続を確認）'); return; }
     disconnectNet(true);
-    const gen = ++net.searchGen;
-    const course = userCfg.onlineCourse;
+    const gen = ++net.searchGen, course = userCfg.onlineCourse;
     Object.assign(userCfg, FREE_RULES[course], { mode:'online', onlineType:'free' });
-    net.matchKind = 'free';
-    net.searching = true;
+    net.matchKind = 'free'; net.searching = true;
     setNetStatus('wait', `全国の対戦相手を探しています…（${course === 'board' ? '板よけ' : '通常'}コース）`);
     syncMenuUI();
     tryFreeSlot(0, course, gen);
@@ -2279,79 +1928,59 @@
   function tryFreeSlot(idx, course, gen){
     if (gen !== net.searchGen) return;
     if (idx >= FREE_SLOTS){
-      // すべて満室なら少し待ってスロット0から再探索
       setNetStatus('wait', '空き部屋が混み合っています… 再探索中');
       net.startTimer = setTimeout(() => tryFreeSlot(0, course, gen), 1500);
       return;
     }
-
     const slotId = `${FREE_PREFIX}${course}-${idx}`;
     setNetStatus('wait', `全国の対戦相手を探しています…（エリア ${idx + 1}）`);
-
-    // まず自分がホストとしてスロット取得を試みる
-    const hostPeer = new Peer(slotId);
+    const hostPeer = new Peer(slotId, PEER_OPTS);
     net.peer = hostPeer;
-
     let decided = false;
 
     hostPeer.on('open', () => {
       if (gen !== net.searchGen){ try{ hostPeer.destroy(); }catch{} return; }
-      decided = true;
-      net.role = 'host';
-      net.room = `全国 #${idx + 1}`;
+      decided = true; net.role = 'host'; net.room = `全国 #${idx + 1}`;
       setNetStatus('wait', `待機中（エリア ${idx + 1}）… 全国の誰かが参加すると自動で始まります`);
       syncMenuUI();
     });
-
+    hostPeer.on('disconnected', () => { if (gen === net.searchGen && !hostPeer.destroyed){ try { hostPeer.reconnect(); } catch {} } });
     hostPeer.on('connection', conn => {
       if (gen !== net.searchGen){ try{ conn.close(); }catch{} return; }
-      // すでに対戦相手がいる（満室）なら busy を返して次のスロットへ行ってもらう
       if (net.conn){
-        conn.on('open', () => {
-          try { conn.send({ t:'busy' }); } catch {}
-          setTimeout(() => { try { conn.close(); } catch {} }, 250);
-        });
+        const sendBusy = () => { try{ conn.send({ t:'busy' }); }catch{} setTimeout(() => { try{ conn.close(); }catch{} }, 250); };
+        if (conn.open) sendBusy(); else conn.on('open', sendBusy);
         return;
       }
       net.conn = conn;
-      conn.on('open', () => {
-        if (gen !== net.searchGen || net.conn !== conn) return;
-        net.connected = true;
-        net.searching = false;
+      const onAccepted = () => {
+        if (gen !== net.searchGen || net.conn !== conn || net.connected) return;
+        net.connected = true; net.searching = false;
         net.remoteInput = { x:0, y:0, dive:false };
         bindActiveConnection(conn);
-        // ランダムで役割を決定して相手へ承諾を通知
         userCfg.hostRole = Math.random() < 0.5 ? 'cheese' : 'human';
         const myLabel = userCfg.hostRole === 'cheese' ? 'チーズ役（逃げる）' : '人間役（追う）';
-        sendMsg({ t: 'free_accept', guestRole: userCfg.hostRole === 'cheese' ? 'human' : 'cheese' });
+        sendMsg({ t:'free_accept', guestRole: userCfg.hostRole === 'cheese' ? 'human' : 'cheese' });
         setNetStatus('ok', `マッチング成立！あなたは【${myLabel}】です。間もなく開始…`);
         syncMenuUI();
-        // 1.1秒後に自動スタート
         net.startTimer = setTimeout(() => {
           if (gen !== net.searchGen || !net.connected) return;
           const seed = Math.floor(Math.random() * 1e6);
-          const matchCfg = { ...userCfg, ...FREE_RULES[course], mode:'online', onlineType:'free', hostRole: userCfg.hostRole };
-          sendMsg({ t:'start', seed, cfg: matchCfg });
+          const matchCfg = { ...userCfg, ...FREE_RULES[course], mode:'online', onlineType:'free', hostRole:userCfg.hostRole };
+          sendMsg({ t:'start', seed, cfg:matchCfg });
           startMatch(true, seed, userCfg.hostRole);
         }, 1100);
-      });
-      conn.on('close', () => {
-        if (!net.connected && net.conn === conn) net.conn = null;
-      });
+      };
+      if (conn.open) onAccepted(); else conn.on('open', onAccepted);
+      conn.on('close', () => { if (!net.connected && net.conn === conn) net.conn = null; });
     });
-
     hostPeer.on('error', err => {
       if (gen !== net.searchGen) return;
       if (!decided && err.type === 'unavailable-id'){
-        // このスロットにはすでにホストがいる → ゲストとして参加を試みる
-        decided = true;
-        try { hostPeer.destroy(); } catch {}
-        net.peer = null;
+        decided = true; try { hostPeer.destroy(); } catch {} net.peer = null;
         probeFreeSlotAsGuest(idx, course, gen);
       } else if (!decided){
-        decided = true;
-        try { hostPeer.destroy(); } catch {}
-        net.peer = null;
+        decided = true; try { hostPeer.destroy(); } catch {} net.peer = null;
         net.startTimer = setTimeout(() => tryFreeSlot(idx + 1, course, gen), 400);
       }
     });
@@ -2360,102 +1989,85 @@
   function probeFreeSlotAsGuest(idx, course, gen){
     if (gen !== net.searchGen) return;
     const slotId = `${FREE_PREFIX}${course}-${idx}`;
-    const guestPeer = new Peer();
+    const guestPeer = new Peer(PEER_OPTS);
     net.peer = guestPeer;
     let settled = false;
-
     const failAndNext = () => {
       if (settled || gen !== net.searchGen) return;
-      settled = true;
-      clearTimeout(timer);
+      settled = true; clearTimeout(timer);
       try { guestPeer.destroy(); } catch {}
       if (net.peer === guestPeer) net.peer = null;
       tryFreeSlot(idx + 1, course, gen);
     };
-
-    const timer = setTimeout(failAndNext, 3200);
+    const timer = setTimeout(failAndNext, 4000);
 
     guestPeer.on('open', () => {
       if (settled || gen !== net.searchGen){ try{ guestPeer.destroy(); }catch{} return; }
-      const conn = guestPeer.connect(slotId, { reliable: true });
+      const conn = guestPeer.connect(slotId, { reliable:true, serialization:'json' });
       conn.on('data', msg => {
-        if (gen !== net.searchGen) return;
-        if (!settled){
-          if (msg && msg.t === 'busy'){
-            failAndNext();
-            return;
-          }
-          if (msg && (msg.t === 'free_accept' || msg.t === 'start')){
-            settled = true;
-            clearTimeout(timer);
-            net.role = 'guest';
-            net.room = `全国 #${idx + 1}`;
-            net.connected = true;
-            net.searching = false;
-            bindActiveConnection(conn);
-            if (msg.t === 'free_accept'){
-              const myLabel = msg.guestRole === 'cheese' ? 'チーズ役（逃げる）' : '人間役（追う）';
-              setNetStatus('ok', `マッチング成立！あなたは【${myLabel}】です。間もなく開始…`);
-              syncMenuUI();
-            } else {
-              handlePeerMessage(msg);
-            }
-            return;
-          }
+        if (gen !== net.searchGen || settled) return;
+        if (msg && msg.t === 'busy'){ failAndNext(); return; }
+        if (msg && (msg.t === 'free_accept' || msg.t === 'start')){
+          settled = true; clearTimeout(timer);
+          net.role = 'guest'; net.room = `全国 #${idx + 1}`; net.connected = true; net.searching = false;
+          bindActiveConnection(conn);
+          if (msg.t === 'free_accept'){
+            const myLabel = msg.guestRole === 'cheese' ? 'チーズ役（逃げる）' : '人間役（追う）';
+            setNetStatus('ok', `マッチング成立！あなたは【${myLabel}】です。間もなく開始…`);
+            syncMenuUI();
+          } else handlePeerMessage(msg);
         }
       });
       conn.on('close', () => { if (!settled) failAndNext(); });
       conn.on('error', () => { if (!settled) failAndNext(); });
     });
-
     guestPeer.on('error', () => { if (!settled) failAndNext(); });
   }
 
   // --- 合言葉マッチ ---
-  function normalizeRoom(raw){
-    return raw.trim().replace(/[^a-zA-Z0-9_-]/g, '');
-  }
-
   function createRoom(){
     if (typeof Peer === 'undefined'){ setNetStatus('err', 'PeerJSの読み込みに失敗しました（ネット接続を確認）'); return; }
-    let code = normalizeRoom($('roomCode').value);
-    if (!code){
-      code = String(Math.floor(1000 + Math.random() * 9000));
-      $('roomCode').value = code;
-    }
+    let displayCode = cleanRoomText($('roomCode').value);
+    if (!displayCode){ displayCode = String(Math.floor(1000 + Math.random() * 9000)); $('roomCode').value = displayCode; }
+    const peerKey = encodeRoomId(displayCode);
     disconnectNet(true);
     const gen = ++net.searchGen;
-    net.matchKind = 'room';
-    net.role = 'host';
-    net.room = code;
-    setNetStatus('wait', `部屋「${code}」を作成中…`);
+    net.matchKind = 'room'; net.role = 'host'; net.room = displayCode;
+    setNetStatus('wait', `部屋「${displayCode}」を作成中…`);
     syncMenuUI();
 
-    const peer = new Peer(ROOM_PREFIX + code);
+    const peer = new Peer(ROOM_PREFIX + peerKey, PEER_OPTS);
     net.peer = peer;
     peer.on('open', () => {
       if (gen !== net.searchGen) return;
-      setNetStatus('wait', `部屋「${code}」で待機中… 相手に合言葉を伝えてください`);
+      setNetStatus('wait', `部屋「${displayCode}」を作成しました！相手に同じ合言葉で入ってもらってください`);
       syncMenuUI();
     });
+    peer.on('disconnected', () => { if (gen === net.searchGen && !peer.destroyed){ try { peer.reconnect(); } catch {} } });
     peer.on('connection', conn => {
-      if (gen !== net.searchGen || (net.conn && net.conn.open)){ try{ conn.close(); }catch{} return; }
-      conn.on('open', () => {
-        if (gen !== net.searchGen) return;
+      if (gen !== net.searchGen){ try{ conn.close(); }catch{} return; }
+      if (net.conn && net.conn.open){
+        const reject = () => { try{ conn.send({ t:'busy' }); }catch{} setTimeout(() => { try{ conn.close(); }catch{} }, 250); };
+        if (conn.open) reject(); else conn.on('open', reject);
+        return;
+      }
+      bindActiveConnection(conn);
+      const onHostReady = () => {
+        if (gen !== net.searchGen || net.conn !== conn) return;
         net.connected = true;
         net.remoteInput = { x:0, y:0, dive:false };
-        bindActiveConnection(conn);
-        setNetStatus('ok', `接続完了！（部屋: ${net.room}）対戦スタートできます`);
-        sendLobbyPreview();
+        setNetStatus('ok', `相手が入室しました！（部屋: ${net.room}）「対戦スタート」を押してください`);
+        sendMsg({ t:'welcome', cfg:{ ...userCfg } });
         syncMenuUI();
-      });
+      };
+      if (conn.open) onHostReady(); else conn.on('open', onHostReady);
     });
     peer.on('error', err => {
       if (gen !== net.searchGen) return;
       if (err.type === 'unavailable-id'){
-        setNetStatus('err', `合言葉「${code}」は使用中です。別の合言葉にしてください`);
+        setNetStatus('err', `合言葉「${displayCode}」は使用中です。「ランダム」で別の合言葉にしてください`);
       } else {
-        setNetStatus('err', `エラー(${err.type})：もう一度お試しください`);
+        setNetStatus('err', `エラー(${err.type})：通信環境を確認してもう一度お試しください`);
       }
       disconnectNet(true);
     });
@@ -2463,42 +2075,65 @@
 
   function joinRoom(){
     if (typeof Peer === 'undefined'){ setNetStatus('err', 'PeerJSの読み込みに失敗しました（ネット接続を確認）'); return; }
-    const code = normalizeRoom($('roomCode').value);
-    if (!code){ setNetStatus('err', '相手の合言葉を入力してください'); return; }
+    const displayCode = cleanRoomText($('roomCode').value);
+    if (!displayCode){ setNetStatus('err', '相手の合言葉を入力してください'); return; }
+    const peerKey = encodeRoomId(displayCode);
     disconnectNet(true);
     const gen = ++net.searchGen;
-    net.matchKind = 'room';
-    net.role = 'guest';
-    net.room = code;
-    setNetStatus('wait', `部屋「${code}」へ接続中…`);
+    net.matchKind = 'room'; net.role = 'guest'; net.room = displayCode;
+    setNetStatus('wait', `サーバーに接続中…（合言葉: ${displayCode}）`);
     syncMenuUI();
 
-    const peer = new Peer();
+    const peer = new Peer(PEER_OPTS);
     net.peer = peer;
+    net.joinTimer = setTimeout(() => {
+      if (gen !== net.searchGen || net.connected) return;
+      disconnectNet(true);
+      setNetStatus('err', '接続がタイムアウトしました。相手が先に「部屋を作る」を押しているか、Wi-Fi制限がないか確認してください');
+      syncMenuUI();
+    }, 12000);
+
     peer.on('open', () => {
       if (gen !== net.searchGen) return;
-      const conn = peer.connect(ROOM_PREFIX + code, { reliable: true });
-      conn.on('open', () => {
-        if (gen !== net.searchGen) return;
-        net.connected = true;
-        bindActiveConnection(conn);
-        setNetStatus('ok', `接続完了！（部屋: ${net.room}）ホストの開始を待っています`);
-        syncMenuUI();
+      setNetStatus('wait', `部屋「${displayCode}」のホストへ接続中…`);
+      const conn = peer.connect(ROOM_PREFIX + peerKey, { reliable:true, serialization:'json' });
+      bindActiveConnection(conn);
+      conn.on('data', msg => {
+        if (msg && msg.t === 'busy' && gen === net.searchGen){
+          disconnectNet(true); setNetStatus('err', `部屋「${displayCode}」は満員です`); syncMenuUI();
+        }
       });
+      const onGuestOpen = () => {
+        if (gen !== net.searchGen || net.conn !== conn) return;
+        setNetStatus('wait', `部屋「${displayCode}」と通信確認中…`);
+        const sendHello = () => {
+          if (gen !== net.searchGen || net.connected || !conn.open) return;
+          try { conn.send({ t:'hello' }); } catch {}
+        };
+        sendHello();
+        let tries = 0;
+        net.helloTimer = setInterval(() => {
+          if (++tries > 6 || net.connected || gen !== net.searchGen){ clearInterval(net.helloTimer); net.helloTimer = null; return; }
+          sendHello();
+        }, 600);
+      };
+      if (conn.open) onGuestOpen(); else conn.on('open', onGuestOpen);
       conn.on('error', () => {
         if (gen !== net.searchGen) return;
-        setNetStatus('err', '接続に失敗しました');
         disconnectNet(true);
+        setNetStatus('err', 'P2P接続に失敗しました。スマホ回線など別のネットワークでお試しください');
+        syncMenuUI();
       });
     });
     peer.on('error', err => {
       if (gen !== net.searchGen) return;
-      if (err.type === 'peer-unavailable'){
-        setNetStatus('err', `部屋「${code}」が見つかりません。合言葉を確認してください`);
-      } else {
-        setNetStatus('err', `接続エラー(${err.type})：Wi-Fi環境などを確認してください`);
-      }
       disconnectNet(true);
+      if (err.type === 'peer-unavailable'){
+        setNetStatus('err', `部屋「${displayCode}」が見つかりません。相手が先に「部屋を作る」を押してから入ってください`);
+      } else {
+        setNetStatus('err', `接続エラー(${err.type})：通信環境を確認してください`);
+      }
+      syncMenuUI();
     });
   }
 
@@ -2516,12 +2151,9 @@
         while (acc >= STEP){ step(STEP); acc -= STEP; }
         if (game === 'caught'){
           overT += dt;
-          const wait = outcome === 'escaped' ? 0.7 : OVER_DELAY;
-          if (overT >= wait) showOver();
+          if (overT >= (outcome === 'escaped' ? 0.7 : OVER_DELAY)) showOver();
         }
-        if (cfg.isOnline && net.role === 'host'){
-          sendHostSnapshot(false);
-        }
+        if (cfg.isOnline && net.role === 'host') sendHostSnapshot(false);
       }
     }
     draw(dt);
@@ -2536,19 +2168,15 @@
     S0 = cfg.myRole === 'human' ? -3.2 : startCheeseS;
     maxDist = 0; camX = 0; zoom = 0; trail.length = 0; trailK = 0; overT = 0; acc = 0; playTime = 0;
     shownHudKey = ''; diveRequested = false; outcome = 'caught';
-    net.remoteInput = { x:0, y:0, dive:false };
-    net.snap = null;
-    currentBest = getBest(cfg.mode);
-    endJoy();
+    net.remoteInput = { x:0, y:0, dive:false }; net.snap = null;
+    currentBest = getBest(cfg.mode); endJoy();
     activeN = cfg.chStart;
     chasers.forEach((c, i) => {
-      c.active = i < cfg.chStart;
-      c.isPlayer = cfg.humanPlayerActive && i === 0;
+      c.active = i < cfg.chStart; c.isPlayer = cfg.humanPlayerActive && i === 0;
       if (c.active) resetChaser(c, i, true);
     });
     for (const ch of chunks) ch.k = null;
-    clearObstacles(fixedSeed);
-    updateObstacles();
+    clearObstacles(fixedSeed); updateObstacles();
 
     $('resultOverlay').classList.add('hidden');
     game = 'playing';
@@ -2563,14 +2191,13 @@
       if (userCfg.mode === 'online'){
         if (!net.connected || net.role !== 'host') return;
         const seed = Math.floor(Math.random() * 1e6);
-        sendMsg({ t: 'start', seed, cfg: { ...userCfg } });
+        sendMsg({ t:'start', seed, cfg:{ ...userCfg } });
         startMatch(true, seed, userCfg.hostRole);
         return;
       }
       startMatch(false, undefined, userCfg.mode === 'human' ? 'human' : 'cheese');
       return;
     }
-
     const previewRole = userCfg.mode === 'online'
       ? (net.role === 'guest' ? (userCfg.hostRole === 'cheese' ? 'human' : 'cheese') : userCfg.hostRole)
       : (userCfg.mode === 'human' ? 'human' : 'cheese');
@@ -2579,16 +2206,11 @@
     Object.assign(cheese, { s:startCheeseS, x:0, y:ground(0, startCheeseS) + cfg.cheeseR, v:0, vx:0, vy:0, rot:0, tilt:0, tiltV:0, grounded:true, held:null, hand:0 });
     S0 = cfg.myRole === 'human' ? -3.2 : 0;
     maxDist = 0; camX = 0; zoom = 0; trail.length = 0; trailK = 0; overT = 0; acc = 0; playTime = 0;
-    shownHudKey = ''; diveRequested = false;
-    endJoy();
+    shownHudKey = ''; diveRequested = false; endJoy();
     activeN = cfg.chStart;
-    chasers.forEach((c, i) => {
-      c.active = i < cfg.chStart;
-      if (c.active) resetChaser(c, i, true);
-    });
+    chasers.forEach((c, i) => { c.active = i < cfg.chStart; if (c.active) resetChaser(c, i, true); });
     for (const ch of chunks) ch.k = null;
-    clearObstacles();
-    updateObstacles();
+    clearObstacles(); updateObstacles();
 
     game = 'menu';
     $('resultOverlay').classList.add('hidden');
@@ -2614,24 +2236,18 @@
 
     if (cfg.isOnline){
       titleEl.classList.remove('hidden');
-      const cheeseWon = outcome === 'escaped';
-      const iAmCheese = cfg.myRole === 'cheese';
+      const cheeseWon = outcome === 'escaped', iAmCheese = cfg.myRole === 'cheese';
       const iWon = (iAmCheese && cheeseWon) || (!iAmCheese && !cheeseWon);
-
       titleEl.textContent = iWon ? 'あなたの勝ち！' : '相手の勝ち…';
       titleEl.classList.toggle('fail', !iWon);
-
       if (cheeseWon){
-        $('dist').textContent = `逃げ切り！`;
+        $('dist').textContent = '逃げ切り！';
         $('resBest').textContent = `チーズが ${ESCAPE_LIMIT_ONLINE}m 引き離した（${d}m地点 / ${playTime.toFixed(1)}秒）`;
       } else {
         $('dist').textContent = `${d} m`;
-        const who = outcome === 'rival_win' ? 'AI追っ手が捕獲' : '人間プレイヤーが捕獲';
-        $('resBest').textContent = `${who}（タイム ${playTime.toFixed(1)} 秒）`;
+        $('resBest').textContent = `${outcome === 'rival_win' ? 'AI追っ手が捕獲' : '人間プレイヤーが捕獲'}（タイム ${playTime.toFixed(1)} 秒）`;
       }
-
-      const isHost = net.role === 'host' && net.connected;
-      const isFree = cfg.onlineType === 'free';
+      const isHost = net.role === 'host' && net.connected, isFree = cfg.onlineType === 'free';
       $('nextFreeBtn').classList.toggle('hidden', !isFree);
       $('swapRetryBtn').classList.toggle('hidden', !isHost);
       $('retryBtn').classList.toggle('hidden', !isHost || isFree);
@@ -2640,53 +2256,34 @@
     } else if (cfg.mode === 'human'){
       titleEl.classList.remove('hidden');
       if (outcome === 'human_win'){
-        titleEl.textContent = 'チーズ捕獲成功！';
-        titleEl.classList.remove('fail');
-        isNew = saveBest('human', d);
-        $('dist').textContent = `${d} m`;
-      } else if (outcome === 'rival_win'){
-        titleEl.textContent = 'ライバルに先を越された…';
-        titleEl.classList.add('fail');
-        $('dist').textContent = `失敗`;
+        titleEl.textContent = 'チーズ捕獲成功！'; titleEl.classList.remove('fail');
+        isNew = saveBest('human', d); $('dist').textContent = `${d} m`;
       } else {
-        titleEl.textContent = 'チーズに逃げられた…';
-        titleEl.classList.add('fail');
-        $('dist').textContent = `失敗`;
+        titleEl.textContent = outcome === 'rival_win' ? 'ライバルに先を越された…' : 'チーズに逃げられた…';
+        titleEl.classList.add('fail'); $('dist').textContent = '失敗';
       }
       $('resBest').textContent = `BEST ${formatBest('human', getBest('human'))}（タイム ${playTime.toFixed(1)} 秒）`;
-      $('nextFreeBtn').classList.add('hidden');
-      $('retryBtn').classList.remove('hidden');
-      $('swapRetryBtn').classList.add('hidden');
-      $('toMenuBtn').textContent = 'モード・設定';
+      $('nextFreeBtn').classList.add('hidden'); $('retryBtn').classList.remove('hidden');
+      $('swapRetryBtn').classList.add('hidden'); $('toMenuBtn').textContent = 'モード・設定';
     } else {
       titleEl.classList.add('hidden');
-      isNew = saveBest(cfg.mode, d);
-      $('dist').textContent = `${d} m`;
+      isNew = saveBest(cfg.mode, d); $('dist').textContent = `${d} m`;
       $('resBest').textContent = `BEST ${formatBest(cfg.mode, getBest(cfg.mode))}`;
-      $('nextFreeBtn').classList.add('hidden');
-      $('retryBtn').classList.remove('hidden');
-      $('swapRetryBtn').classList.add('hidden');
-      $('toMenuBtn').textContent = 'モード・設定';
+      $('nextFreeBtn').classList.add('hidden'); $('retryBtn').classList.remove('hidden');
+      $('swapRetryBtn').classList.add('hidden'); $('toMenuBtn').textContent = 'モード・設定';
     }
-
     $('resNewBest').classList.toggle('hidden', !isNew);
     $('resultOverlay').classList.remove('hidden');
   }
 
   // ---------- メニューUI連動 ----------
   function syncMenuUI(){
-    const isOnline = userCfg.mode === 'online';
-    const isFree = isOnline && userCfg.onlineType === 'free';
-    const isRoom = isOnline && userCfg.onlineType === 'room';
-    const isHuman = userCfg.mode === 'human';
+    const isOnline = userCfg.mode === 'online', isFree = isOnline && userCfg.onlineType === 'free';
+    const isRoom = isOnline && userCfg.onlineType === 'room', isHuman = userCfg.mode === 'human';
     const isBoard = isOnline ? userCfg.onlineCourse === 'board' : userCfg.mode === 'board';
-    const isGuest = isOnline && net.role === 'guest';
-    const busyNet = net.searching || net.role !== 'none';
+    const isGuest = isOnline && net.role === 'guest', busyNet = net.searching || net.role !== 'none';
 
-    document.querySelectorAll('.mode-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.mode === userCfg.mode);
-    });
-
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === userCfg.mode));
     $('modeHint').textContent = PRESETS[userCfg.mode].hint;
     $('bestBox').classList.toggle('hidden', isOnline);
     $('onlineBox').classList.toggle('hidden', !isOnline);
@@ -2695,64 +2292,46 @@
       $('menuBestLabel').textContent = `${PRESETS[userCfg.mode].label} ベスト`;
       $('menuBestVal').textContent = formatBest(userCfg.mode, getBest(userCfg.mode));
     } else {
-      document.querySelectorAll('[data-match]').forEach(b => {
-        b.classList.toggle('active', b.dataset.match === userCfg.onlineType);
-        b.disabled = busyNet;
-      });
-      document.querySelectorAll('[data-course]').forEach(b => {
-        b.classList.toggle('active', b.dataset.course === userCfg.onlineCourse);
-        b.disabled = isFree ? busyNet : isGuest;
-      });
-
+      document.querySelectorAll('[data-match]').forEach(b => { b.classList.toggle('active', b.dataset.match === userCfg.onlineType); b.disabled = busyNet; });
+      document.querySelectorAll('[data-course]').forEach(b => { b.classList.toggle('active', b.dataset.course === userCfg.onlineCourse); b.disabled = isFree ? busyNet : isGuest; });
       $('freeMatchUI').classList.toggle('hidden', !isFree);
       $('roomMatchUI').classList.toggle('hidden', !isRoom);
-
       if (isFree){
         $('freeSearchBtn').classList.toggle('hidden', busyNet);
         $('freeCancelBtn').classList.toggle('hidden', !busyNet);
       } else {
         $('connectForm').classList.toggle('hidden', net.role !== 'none');
         $('connectedControls').classList.toggle('hidden', net.role === 'none');
+        const hostReady = net.role === 'host' && net.connected;
+        $('roomStartBtn').classList.toggle('hidden', !hostReady);
+        $('copyInviteBtn').classList.toggle('hidden', net.role !== 'host' || net.connected);
         $('roleToggleLabel').textContent = isGuest
           ? `あなたの役割：${userCfg.hostRole === 'cheese' ? '人間役（追う）' : 'チーズ役（逃げる）'}（ホストが設定）`
           : 'ホスト（あなた）の役割（相手は逆の役割）';
-        document.querySelectorAll('[data-role]').forEach(b => {
-          b.classList.toggle('active', b.dataset.role === userCfg.hostRole);
-          b.disabled = isGuest;
-        });
+        document.querySelectorAll('[data-role]').forEach(b => { b.classList.toggle('active', b.dataset.role === userCfg.hostRole); b.disabled = isGuest; });
       }
     }
 
-    // 全国フリーマッチ時は公平固定ルールなのでカスタムスライダーと下部スタート行を隠す
     $('settingsArea').classList.toggle('hidden', isFree);
     $('bottomStartRow').classList.toggle('hidden', isFree);
 
     const chInput = $('optChasers');
     if (isRoom){
-      chInput.min = '0'; chInput.max = '30';
-      userCfg.chasers = clamp(userCfg.chasers, 0, 30);
+      chInput.min = '0'; chInput.max = '30'; userCfg.chasers = clamp(userCfg.chasers, 0, 30);
       $('lblChasers').textContent = '追加AI追っ手（0人で完全1vs1）';
     } else if (!isFree){
-      chInput.min = '1'; chInput.max = '300';
-      userCfg.chasers = clamp(userCfg.chasers, 1, 300);
+      chInput.min = '1'; chInput.max = '300'; userCfg.chasers = clamp(userCfg.chasers, 1, 300);
       $('lblChasers').textContent = isHuman ? '参加人数（自分含む）' : '追っ手の人数';
     }
-
     $('lblVx').textContent = isHuman ? '自分の横移動の速さ' : '横移動の速さ';
     $('lblChSpeed').textContent = (isHuman || isOnline) ? '人間の走る速さ' : '追っ手の速さ';
 
-    $('optSpeed').value = userCfg.speed;
-    $('valSpeed').textContent = `${userCfg.speed} m/s`;
-    $('optVx').value = userCfg.vxMax;
-    $('valVx').textContent = `${userCfg.vxMax} m/s`;
-    chInput.value = userCfg.chasers;
-    $('valChasers').textContent = `${userCfg.chasers} 人`;
-    $('optChSpeed').value = userCfg.chSpeed;
-    $('valChSpeed').textContent = `${userCfg.chSpeed.toFixed(2).replace(/\.00$/, '.0')} 倍`;
-    $('optBoardGap').value = userCfg.boardGap;
-    $('valBoardGap').textContent = `${userCfg.boardGap} m`;
-    $('optCamUp').value = userCfg.camUp;
-    $('valCamUp').textContent = `${userCfg.camUp} m`;
+    $('optSpeed').value = userCfg.speed; $('valSpeed').textContent = `${userCfg.speed} m/s`;
+    $('optVx').value = userCfg.vxMax; $('valVx').textContent = `${userCfg.vxMax} m/s`;
+    chInput.value = userCfg.chasers; $('valChasers').textContent = `${userCfg.chasers} 人`;
+    $('optChSpeed').value = userCfg.chSpeed; $('valChSpeed').textContent = `${userCfg.chSpeed.toFixed(2).replace(/\.00$/, '.0')} 倍`;
+    $('optBoardGap').value = userCfg.boardGap; $('valBoardGap').textContent = `${userCfg.boardGap} m`;
+    $('optCamUp').value = userCfg.camUp; $('valCamUp').textContent = `${userCfg.camUp} m`;
 
     $('rowBoardGap').classList.toggle('hidden', !isBoard);
     $('settingsArea').querySelectorAll('input').forEach(inp => { inp.disabled = isGuest; });
@@ -2760,29 +2339,17 @@
 
     const startBtn = $('startBtn');
     if (isRoom){
-      if (net.role === 'host' && net.connected){
-        startBtn.disabled = false;
-        startBtn.textContent = '対戦スタート';
-      } else if (net.role === 'guest' && net.connected){
-        startBtn.disabled = true;
-        startBtn.textContent = 'ホストの開始待ち…';
-      } else {
-        startBtn.disabled = true;
-        startBtn.textContent = '接続すると開始可能';
-      }
-    } else if (!isFree){
-      startBtn.disabled = false;
-      startBtn.textContent = 'スタート';
-    }
+      if (net.role === 'host' && net.connected){ startBtn.disabled = false; startBtn.textContent = '対戦スタート'; }
+      else if (net.role === 'guest' && net.connected){ startBtn.disabled = true; startBtn.textContent = 'ホストの開始待ち…'; }
+      else { startBtn.disabled = true; startBtn.textContent = '接続すると開始可能'; }
+    } else if (!isFree){ startBtn.disabled = false; startBtn.textContent = 'スタート'; }
   }
 
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const m = btn.dataset.mode;
-      if (userCfg.mode === 'online' && m !== 'online' && (net.role !== 'none' || net.searching)){
-        disconnectNet(false);
-      }
-      Object.assign(userCfg, { mode: m, ...PRESETS[m] });
+      if (userCfg.mode === 'online' && m !== 'online' && (net.role !== 'none' || net.searching)) disconnectNet(false);
+      Object.assign(userCfg, { mode:m, ...PRESETS[m] });
       if (m === 'online'){
         userCfg.onlineCourse = 'normal';
         if (userCfg.onlineType === 'free') Object.assign(userCfg, FREE_RULES.normal);
@@ -2801,45 +2368,46 @@
       if (userCfg.onlineType === 'free'){
         Object.assign(userCfg, FREE_RULES[userCfg.onlineCourse]);
         setNetStatus('', 'コースを選んでマッチングを開始してください');
-      } else {
-        setNetStatus('', '未接続：合言葉を決めて部屋を作るか入ってください');
-      }
+      } else setNetStatus('', '未接続：合言葉を決めて部屋を作るか入ってください');
       setupWorld(false);
     });
   });
 
   document.querySelectorAll('[data-role]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      userCfg.hostRole = btn.dataset.role;
-      syncMenuUI();
-      sendLobbyPreview();
-    });
+    btn.addEventListener('click', () => { userCfg.hostRole = btn.dataset.role; syncMenuUI(); sendLobbyPreview(); });
   });
 
   document.querySelectorAll('[data-course]').forEach(btn => {
     btn.addEventListener('click', () => {
       const c = btn.dataset.course;
       userCfg.onlineCourse = c;
-      if (userCfg.onlineType === 'free'){
-        Object.assign(userCfg, FREE_RULES[c]);
-      } else if (c === 'board'){
-        userCfg.speed = 45; userCfg.vxMax = 24; userCfg.boardGap = 28; userCfg.camUp = 36;
-      } else {
-        userCfg.speed = 9.5; userCfg.vxMax = 5.0; userCfg.camUp = 6;
-      }
-      setupWorld(false);
-      sendLobbyPreview();
+      if (userCfg.onlineType === 'free') Object.assign(userCfg, FREE_RULES[c]);
+      else if (c === 'board'){ userCfg.speed = 45; userCfg.vxMax = 24; userCfg.boardGap = 28; userCfg.camUp = 36; }
+      else { userCfg.speed = 9.5; userCfg.vxMax = 5.0; userCfg.camUp = 6; }
+      setupWorld(false); sendLobbyPreview();
     });
   });
 
   $('freeSearchBtn').addEventListener('click', startFreeMatch);
   $('freeCancelBtn').addEventListener('click', () => disconnectNet(false));
-  $('randCodeBtn').addEventListener('click', () => {
-    $('roomCode').value = String(Math.floor(1000 + Math.random() * 9000));
-  });
+  $('randCodeBtn').addEventListener('click', () => { $('roomCode').value = String(Math.floor(1000 + Math.random() * 9000)); });
   $('hostBtn').addEventListener('click', createRoom);
   $('joinBtn').addEventListener('click', joinRoom);
   $('disconnectBtn').addEventListener('click', () => disconnectNet(false));
+  $('roomStartBtn').addEventListener('click', () => setupWorld(true));
+
+  $('copyInviteBtn').addEventListener('click', async () => {
+    const code = net.room || cleanRoomText($('roomCode').value);
+    if (!code) return;
+    const isWeb = location.protocol === 'http:' || location.protocol === 'https:';
+    const text = isWeb ? `${location.origin}${location.pathname}?room=${encodeURIComponent(code)}` : code;
+    try {
+      await navigator.clipboard.writeText(text);
+      const b = $('copyInviteBtn'), old = b.textContent;
+      b.textContent = isWeb ? 'URLコピー完了!' : '合言葉コピー完了!';
+      setTimeout(() => { b.textContent = old; }, 1600);
+    } catch { prompt(isWeb ? 'このURLを相手に送ってください' : 'この合言葉を相手に伝えてください', text); }
+  });
 
   const onSettingChange = () => { syncMenuUI(); sendLobbyPreview(); };
   $('optSpeed').addEventListener('input', e => { userCfg.speed = parseFloat(e.target.value); onSettingChange(); });
@@ -2847,49 +2415,39 @@
   $('optChasers').addEventListener('input', e => { userCfg.chasers = parseInt(e.target.value, 10); onSettingChange(); });
   $('optChSpeed').addEventListener('input', e => { userCfg.chSpeed = parseFloat(e.target.value); onSettingChange(); });
   $('optBoardGap').addEventListener('input', e => { userCfg.boardGap = parseInt(e.target.value, 10); onSettingChange(); });
-  $('optCamUp').addEventListener('input', e => {
-    userCfg.camUp = parseInt(e.target.value, 10);
-    cfg.camUp = userCfg.camUp;
-    onSettingChange();
-  });
+  $('optCamUp').addEventListener('input', e => { userCfg.camUp = parseInt(e.target.value, 10); cfg.camUp = userCfg.camUp; onSettingChange(); });
 
   $('presetResetBtn').addEventListener('click', () => {
     const m = userCfg.mode;
-    Object.assign(userCfg, { mode: m, ...PRESETS[m] });
+    Object.assign(userCfg, { mode:m, ...PRESETS[m] });
     if (m === 'online') userCfg.onlineCourse = 'normal';
-    setupWorld(false);
-    sendLobbyPreview();
+    setupWorld(false); sendLobbyPreview();
   });
 
   $('startBtn').addEventListener('click', () => setupWorld(true));
   $('retryBtn').addEventListener('click', () => setupWorld(true));
   $('swapRetryBtn').addEventListener('click', () => {
     userCfg.hostRole = userCfg.hostRole === 'cheese' ? 'human' : 'cheese';
-    sendLobbyPreview();
-    setupWorld(true);
+    sendLobbyPreview(); setupWorld(true);
   });
-  $('nextFreeBtn').addEventListener('click', () => {
-    setupWorld(false);
-    startFreeMatch();
-  });
+  $('nextFreeBtn').addEventListener('click', () => { setupWorld(false); startFreeMatch(); });
   $('toMenuBtn').addEventListener('click', () => {
     if (cfg.isOnline){
       if (cfg.onlineType === 'free') disconnectNet(false);
-      else if (net.role === 'host') sendMsg({ t: 'menu' });
+      else if (net.role === 'host') sendMsg({ t:'menu' });
     }
     setupWorld(false);
   });
   $('menuBtn').addEventListener('click', () => {
     if (cfg.isOnline){
       if (cfg.onlineType === 'free' || net.role === 'guest') disconnectNet(false);
-      else if (net.role === 'host') sendMsg({ t: 'menu' });
+      else if (net.role === 'host') sendMsg({ t:'menu' });
     }
     setupWorld(false);
   });
 
   $('diveBtn').addEventListener('pointerdown', e => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     if (game === 'playing' && cfg.myRole === 'human'){
       diveRequested = true;
       if (cfg.isOnline && net.role === 'guest') sendGuestInput(true);
@@ -2905,22 +2463,14 @@
     }
     return { x:(keys.right ? 1 : 0) - (keys.left ? 1 : 0), y:(keys.up ? 1 : 0) - (keys.down ? 1 : 0) };
   }
-  function endJoy(){
-    dragId = null;
-    stick.x = stick.y = 0;
-    $('joy').classList.add('hidden');
-  }
+  function endJoy(){ dragId = null; stick.x = stick.y = 0; $('joy').classList.add('hidden'); }
   cv.addEventListener('pointerdown', e => {
     if (game !== 'playing' || dragId !== null) return;
-    e.preventDefault();
-    cv.setPointerCapture(e.pointerId);
-    dragId = e.pointerId;
+    e.preventDefault(); cv.setPointerCapture(e.pointerId); dragId = e.pointerId;
     const g = $('game').getBoundingClientRect();
     joyX0 = e.clientX - g.left; joyY0 = e.clientY - g.top;
-    $('joy').style.left = joyX0 + 'px';
-    $('joy').style.top = joyY0 + 'px';
-    $('knob').style.transform = '';
-    $('joy').classList.remove('hidden');
+    $('joy').style.left = joyX0 + 'px'; $('joy').style.top = joyY0 + 'px';
+    $('knob').style.transform = ''; $('joy').classList.remove('hidden');
   });
   cv.addEventListener('pointermove', e => {
     if (e.pointerId !== dragId) return;
@@ -2937,19 +2487,13 @@
 
   document.addEventListener('keydown', e => {
     if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
-    if (game === 'over' && (e.key === 'Enter' || e.key === ' ')){
-      if (!cfg.isOnline){ e.preventDefault(); setupWorld(true); }
-      return;
-    }
+    if (game === 'over' && (e.key === 'Enter' || e.key === ' ')){ if (!cfg.isOnline){ e.preventDefault(); setupWorld(true); } return; }
     if (game === 'menu' && e.key === 'Enter'){
-      if (userCfg.mode !== 'online' || (userCfg.onlineType === 'room' && !$('startBtn').disabled)){
-        e.preventDefault(); setupWorld(true);
-      }
+      if (userCfg.mode !== 'online' || (userCfg.onlineType === 'room' && !$('startBtn').disabled)){ e.preventDefault(); setupWorld(true); }
       return;
     }
     if (game === 'playing' && cfg.myRole === 'human' && (e.key === ' ' || e.code === 'Space')){
-      e.preventDefault();
-      diveRequested = true;
+      e.preventDefault(); diveRequested = true;
       if (cfg.isOnline && net.role === 'guest') sendGuestInput(true);
       return;
     }
@@ -2988,7 +2532,17 @@
   }
   addEventListener('resize', resize);
 
-  $('roomCode').value = String(Math.floor(1000 + Math.random() * 9000));
+  // URLに ?room=xxx が付いていれば合言葉マッチ画面を自動で開く
+  const params = new URLSearchParams(location.search);
+  const inviteRoom = params.get('room');
+  if (inviteRoom){
+    Object.assign(userCfg, { mode:'online', onlineType:'room', onlineCourse:'normal', ...PRESETS.online });
+    $('roomCode').value = inviteRoom;
+    setNetStatus('', `招待された合言葉「${inviteRoom}」が入りました。「部屋に入る」を押してください`);
+  } else {
+    $('roomCode').value = String(Math.floor(1000 + Math.random() * 9000));
+  }
+
   setupWorld(false);
   requestAnimationFrame(loop);
 })();
