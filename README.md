@@ -271,7 +271,7 @@
 <script>
 (() => {
   'use strict';
-  const SUPABASE＿URL ＝ ’https：//corkwvuykdeygnbmroup.supabase.co';
+ const SUPABASE_URL = 'https://corkwvuykdeygnbmroup.supabase.co';
   const SUPABASE_KEY = 'sb_publishable___inJSz36aJXoRX7yFAwbg_sbWQWwjv';
   const $ = id => document.getElementById(id);
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
