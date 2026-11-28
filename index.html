@@ -26,16 +26,20 @@
   #hudWrap{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px)+10px);display:flex;flex-direction:column;align-items:center;pointer-events:none;z-index:4}
   #hud{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;color:#162618;text-shadow:0 2px 6px rgba(255,255,255,.85)}
   #hudSub{margin-top:3px;font-size:12px;font-weight:700;background:rgba(31,53,36,.85);color:#ffd23f;padding:3px 12px;border-radius:999px}
-  #rankBarWrap{margin-top:7px;width:min(320px,78vw);background:rgba(20,36,24,.78);border:1.5px solid rgba(255,255,255,.28);border-radius:999px;padding:6px 12px;box-shadow:0 4px 12px rgba(0,0,0,.22)}
-  #rankTrack{position:relative;height:8px;background:rgba(255,255,255,.22);border-radius:999px}
-  #rankTrack::after{content:"GOAL";position:absolute;right:-4px;top:-14px;font-size:9px;font-weight:900;color:#ffd23f;letter-spacing:.04em}
-  .rank-pin{position:absolute;top:50%;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);border:1.5px solid rgba(0,0,0,.55);transition:left .08s linear}
-  .rank-pin.me{width:16px;height:16px;border:2.5px solid #fff;box-shadow:0 0 8px #ffd23f;z-index:3}
+  #rankBarWrap{margin-top:5px;width:min(240px,64vw);background:rgba(20,36,24,.76);border:1.5px solid rgba(255,255,255,.28);border-radius:12px;padding:4px 10px 6px;box-shadow:0 4px 12px rgba(0,0,0,.22)}
+  #rankMeta{display:flex;justify-content:space-between;align-items:center;font-size:9px;font-weight:800;color:rgba(255,255,255,.82);margin-bottom:3px;font-variant-numeric:tabular-nums}
+  #rankPct{color:#ffd23f}
+  #rankTrack{position:relative;height:6px;background:rgba(255,255,255,.2);border-radius:999px}
+  #rankFill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,#ffd23f,#69db7c);border-radius:999px;transition:width .08s linear}
+  .rank-pin{position:absolute;top:50%;width:10px;height:10px;border-radius:50%;transform:translate(-50%,-50%);border:1.5px solid rgba(0,0,0,.55);transition:left .08s linear;z-index:2}
+  .rank-pin.me{width:13px;height:13px;border:2px solid #fff;box-shadow:0 0 7px #ffd23f;z-index:4}
+  .rank-pin.human-pin{border-radius:3px}
   #miniMap{position:absolute;right:12px;top:calc(env(safe-area-inset-top,0px)+74px);width:86px;height:172px;border-radius:12px;border:2px solid rgba(255,255,255,.65);background:rgba(20,36,24,.78);box-shadow:0 6px 18px rgba(0,0,0,.3);pointer-events:none;z-index:4}
   #toast{margin-top:8px;font-size:15px;font-weight:900;padding:5px 14px;border-radius:999px;background:rgba(0,0,0,.78);color:#fff;opacity:0;transform:translateY(-6px);transition:.2s}
   #toast.show{opacity:1;transform:translateY(0)} #toast.boost{background:rgba(0,180,150,.92)} #toast.fall{background:rgba(220,53,69,.92)}
   #topLeftBtns{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px)+12px);display:flex;gap:6px;z-index:5}
   .hud-btn{border:none;border-radius:10px;padding:9px 11px;font-size:12px;font-weight:700;cursor:pointer;background:rgba(31,53,36,.85);color:#fff}
+  .hud-btn.danger{background:rgba(205,52,62,.92);color:#fff}
   #diveBtn{position:absolute;right:18px;bottom:calc(env(safe-area-inset-bottom,0px)+24px);width:100px;height:100px;border-radius:50%;border:3px solid rgba(255,255,255,.85);background:rgba(255,210,63,.92);color:#1f3524;font-size:15px;font-weight:900;box-shadow:0 8px 20px rgba(0,0,0,.3);cursor:pointer;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;touch-action:none}
   #diveBtn small{font-size:10px;opacity:.75;margin-top:2px} #diveBtn.disabled{opacity:.45;transform:scale(.95)}
   .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:10px;background:rgba(15,28,18,.52);backdrop-filter:blur(4px);z-index:10}
@@ -107,12 +111,17 @@
 <div id="game">
   <div id="topLeftBtns" class="hidden">
     <button id="menuBtn" type="button" class="hud-btn">設定 / 退出</button>
+    <button id="taQuitBtn" type="button" class="hud-btn danger hidden">途中でやめる</button>
+    <button id="taRetryBtn" type="button" class="hud-btn hidden">やり直す</button>
     <button id="muteHudBtn" type="button" class="hud-btn">🔊</button>
   </div>
   <div id="hudWrap" class="hidden">
     <div id="hud">0 m</div>
     <div id="hudSub">BEST 0 m</div>
-    <div id="rankBarWrap" class="hidden"><div id="rankTrack"></div></div>
+    <div id="rankBarWrap" class="hidden">
+      <div id="rankMeta"><span id="rankLeft">START</span><span id="rankPct">0%</span><span id="rankRight">GOAL</span></div>
+      <div id="rankTrack"><div id="rankFill"></div></div>
+    </div>
     <div id="toast"></div>
   </div>
   <canvas id="miniMap" width="86" height="172" class="hidden"></canvas>
@@ -584,7 +593,7 @@
     return { s:Math.max(2, s - 10), x:0 };
   }
   // === パート1 ここまで ===
-  // === パート2 ここから ===
+ // === パート2 ここから ===
   // ---------- 状態＆three.js ----------
   let game = 'menu', outcome = 'caught', winnerIdx = -1, S0 = 0, overT = 0, playTime = 0;
   let activeN = 0, cheeseN = 1, shownHudKey = '', currentBest = null, maxDist = 0, diveRequested = false, raceOrder = [], raceFinishTimer = 0;
@@ -1094,7 +1103,7 @@
   }
   cylMesh.instanceColor.needsUpdate=sphMesh.instanceColor.needsUpdate=true;
   // === パート2 ここまで ===
-  // === パート3 ここから ===
+ // === パート3 ここから ===
   // ---------- AI・操作・物理更新 ----------
   function cheeseAIInput(ch){
     let steer=0, pushY=cfg.isRace?(.62+.38*ch.aiSpeedK):.35;
@@ -1295,22 +1304,48 @@
     S0 = cfg.isRace ? focusCheese().s : (cfg.myRole==='human'&&activeN>cfg.myIndex ? chasers[cfg.myIndex].s : mainCheese().s);
   }
 
-  // ---------- チーズレース用 順位バー＆ミニマップ ----------
+  // ---------- 全コース対応 進行メーター＆チーズレース用ミニマップ ----------
   const rankPins = [];
   for(let i=0;i<MAX_CHEESES;i++){
     const el=document.createElement('div'); el.className='rank-pin hidden'; el.style.background=RACER_COLORS[i];
     $('rankTrack').appendChild(el); rankPins.push(el);
   }
+  const humanPins = [];
+  for(let i=0;i<MAX_CHEESES;i++){
+    const el=document.createElement('div'); el.className='rank-pin human-pin hidden'; el.style.background='#38bdf8';
+    $('rankTrack').appendChild(el); humanPins.push(el);
+  }
   function drawRankBar(){
-    const show = cfg.isRace && game !== 'menu';
+    const show = game !== 'menu';
     $('rankBarWrap').classList.toggle('hidden', !show);
     if(!show) return;
+    const goal = Math.max(1, cfg.goalDist);
+    const myS = cfg.isRace
+      ? focusCheese().s
+      : (cfg.myRole === 'human' && activeN > cfg.myIndex ? chasers[cfg.myIndex].s : mainCheese().s);
+    const myPct = clamp(myS / goal, 0, 1) * 100;
+    if($('rankFill')) $('rankFill').style.width = myPct.toFixed(1) + '%';
+    if($('rankPct')) $('rankPct').textContent = `${Math.floor(myPct)}%`;
+    if($('rankRight')) $('rankRight').textContent = `${cfg.goalDist}m`;
+
+    const cCount = cfg.isRace ? cheeseN : 1;
     for(let i=0;i<MAX_CHEESES;i++){
-      const el=rankPins[i]; el.classList.toggle('hidden', i>=cheeseN);
-      if(i>=cheeseN) continue;
-      el.style.left = (clamp(cheeses[i].s / cfg.goalDist, 0, 1) * 100).toFixed(2) + '%';
-      el.style.background = cheeses[i].color;
-      el.classList.toggle('me', i === cfg.myIndex);
+      const el=rankPins[i]; el.classList.toggle('hidden', i>=cCount);
+      if(i>=cCount) continue;
+      const c = cheeses[i];
+      el.style.left = (clamp(c.s / goal, 0, 1) * 100).toFixed(2) + '%';
+      el.style.background = cfg.isRace ? c.color : '#ffd23f';
+      el.classList.toggle('me', cfg.isRace ? i === cfg.myIndex : cfg.myRole === 'cheese');
+    }
+
+    const hCount = (!cfg.isRace && !cfg.isTA && cfg.humanPlayerCount > 0) ? Math.min(cfg.humanPlayerCount, activeN, MAX_CHEESES) : 0;
+    for(let i=0;i<MAX_CHEESES;i++){
+      const el=humanPins[i]; el.classList.toggle('hidden', i>=hCount);
+      if(i>=hCount) continue;
+      const pl = chasers[i];
+      el.style.left = (clamp(pl.s / goal, 0, 1) * 100).toFixed(2) + '%';
+      el.style.background = (cfg.myRole === 'human' && i === cfg.myIndex) ? '#38bdf8' : '#ff6b6b';
+      el.classList.toggle('me', cfg.myRole === 'human' && i === cfg.myIndex);
     }
   }
   const mmCv = $('miniMap'), mmCtx = mmCv.getContext('2d');
@@ -1745,7 +1780,6 @@
       const ci = ((userCfg.cheeseTurnIdx || 0) % roster.length + roster.length) % roster.length;
       assign[roster[ci].id]={role:'cheese',idx:0}; labels.cheeses.push(roster[ci].name); skins.push(roster[ci].skin||'classic');
       roster.forEach((p,i)=>{if(i!==ci){assign[p.id]={role:'human',idx:hc++};labels.humans.push(p.name);}});
-      // 次の試合では自動的にチーズ役と人間役が入れ替わるように順番を進める
       userCfg.cheeseTurnIdx = (ci + 1) % roster.length;
     }
     broadcastToClients({t:'start',seed,cfg:{...userCfg,mode:'online'},roster,assign,cheeseN:tc,humanCount:hc,labels,skins});
@@ -1821,6 +1855,9 @@
     clearObstacles(cfg.isTA ? TA_SEED : fixedSeed); updateObstacles();
     $('resultOverlay').classList.add('hidden'); game='playing'; $('menuOverlay').classList.add('hidden');
     $('hudWrap').classList.remove('hidden'); $('topLeftBtns').classList.remove('hidden');
+    $('menuBtn').classList.toggle('hidden', cfg.isTA);
+    if($('taQuitBtn')) $('taQuitBtn').classList.toggle('hidden', !cfg.isTA);
+    if($('taRetryBtn')) $('taRetryBtn').classList.toggle('hidden', !cfg.isTA);
     $('diveBtn').classList.toggle('hidden',cfg.isRace||cfg.isTA||cfg.myRole!=='human');
     SFX.start();
     if(isOn && !cfg.isRace) showToast(cfg.myRole==='cheese'?'あなたはチーズ役！逃げ切れ！':'あなたは人間役！チーズを捕まえろ！', cfg.myRole==='cheese'?'boost':'');
@@ -2119,6 +2156,8 @@
     setupWorld(false);
   };
   $('toMenuBtn').addEventListener('click',backMenu); $('menuBtn').addEventListener('click',backMenu);
+  if($('taQuitBtn')) $('taQuitBtn').addEventListener('click',()=>{ if(game!=='playing')return; SFX.click(); setupWorld(false); });
+  if($('taRetryBtn')) $('taRetryBtn').addEventListener('click',()=>{ if(game!=='playing')return; SFX.click(); setupWorld(true); });
   $('diveBtn').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(game==='playing'&&!cfg.isRace&&!cfg.isTA&&cfg.myRole==='human'){diveRequested=true;if(cfg.isOnline&&net.role==='guest'){SFX.dive();sendGuestInput(true);}}});
 
   let dragId=null, joyX0=0, joyY0=0;
@@ -2131,6 +2170,8 @@
     if(document.activeElement&&document.activeElement.tagName==='INPUT')return;
     if(game==='over'&&(e.key==='Enter'||e.key===' ')){if(!cfg.isOnline){e.preventDefault();setupWorld(true);}return;}
     if(game==='menu'&&e.key==='Enter'){if(userCfg.mode!=='online'||(userCfg.onlineType==='room'&&!$('startBtn').disabled)){e.preventDefault();setupWorld(true);}return;}
+    if(game==='playing'&&cfg.isTA&&e.key==='Escape'){e.preventDefault();SFX.click();setupWorld(false);return;}
+    if(game==='playing'&&cfg.isTA&&(e.key==='r'||e.key==='R')){e.preventDefault();SFX.click();setupWorld(true);return;}
     if(game==='playing'&&!cfg.isRace&&!cfg.isTA&&cfg.myRole==='human'&&(e.key===' '||e.code==='Space')){e.preventDefault();diveRequested=true;if(cfg.isOnline&&net.role==='guest'){SFX.dive();sendGuestInput(true);}return;}
     if(e.key==='ArrowLeft'||e.key==='a')keys.left=true; if(e.key==='ArrowRight'||e.key==='d')keys.right=true; if(e.key==='ArrowUp'||e.key==='w')keys.up=true; if(e.key==='ArrowDown'||e.key==='s')keys.down=true;
   });
