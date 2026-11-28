@@ -62,11 +62,22 @@
   .status-line{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;background:rgba(255,255,255,.06);border-radius:8px;padding:7px 9px;margin-bottom:8px;line-height:1.35}
   .dot{width:10px;height:10px;border-radius:50%;background:#adb5bd;flex-shrink:0} .dot.wait{background:var(--accent);animation:p 1s infinite} .dot.ok{background:var(--ok)} .dot.err{background:var(--danger)}
   @keyframes p{0%,100%{opacity:1}50%{opacity:.35}}
-  .chips{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 8px} .chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.12)} .chip.me{background:var(--accent);color:var(--accent-fg)}
+  .chips{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 8px} .chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.12)} .chip.me{background:var(--accent);color:var(--accent-fg)} .chip.ready{background:var(--ok);color:#0f2a15}
   .room-row{display:flex;gap:6px;margin-bottom:8px}
   .room-input{flex:1;min-width:0;border:1px solid rgba(255,255,255,.25);border-radius:8px;background:rgba(255,255,255,.1);color:#fff;padding:8px 10px;font-size:14px;font-weight:700;-webkit-user-select:text;user-select:text;outline:none}
   .mini-btn{border:none;border-radius:8px;padding:0 10px;font-size:12px;font-weight:700;cursor:pointer;background:var(--muted);color:#fff}
   .toggle-group{margin-top:8px} .toggle-label{font-size:11px;font-weight:700;opacity:.85;margin-bottom:4px;display:block}
+  .chat-box{margin-top:9px;border-top:1px solid rgba(255,255,255,.14);padding-top:8px}
+  .chat-msgs{height:112px;overflow-y:auto;background:rgba(0,0,0,.32);border-radius:8px;padding:6px 8px;margin-bottom:6px;display:flex;flex-direction:column;gap:4px;font-size:11.5px;line-height:1.35;text-align:left}
+  .chat-line{word-break:break-word}
+  .chat-line .cn{font-weight:800;color:var(--accent);margin-right:5px}
+  .chat-line.sys{color:#8ce99a;font-size:10.5px;opacity:.92}
+  .quick-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+  .quick-chat{border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(255,255,255,.08);color:#fff;font-size:10.5px;font-weight:700;padding:3px 8px;cursor:pointer}
+  .chat-form{display:flex;gap:5px}
+  .chat-form .room-input{padding:6px 9px;font-size:12.5px}
+  .stay-box{background:rgba(105,219,124,.12);border:1px solid rgba(105,219,124,.45);border-radius:10px;padding:8px 10px;margin:0 0 10px;text-align:left}
+  .stay-info{font-size:12px;font-weight:800;color:#b2f2bb;margin:0 0 4px}
   .settings{display:flex;flex-direction:column;gap:6px;margin-bottom:11px}
   .setting-row{background:rgba(255,255,255,.06);border-radius:9px;padding:6px 10px}
   .setting-row.locked{opacity:.52}
@@ -74,13 +85,13 @@
   input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;margin:0} input[type=range]:disabled{cursor:not-allowed}
   .btn-row{display:flex;gap:7px;flex-wrap:wrap}
   .btn{flex:1;min-width:100px;border:none;border-radius:10px;padding:11px 10px;font-size:13.5px;font-weight:800;cursor:pointer}
-  .btn-primary{background:var(--accent);color:var(--accent-fg)} .btn-sub{background:var(--muted);color:#fff} .btn-danger{background:rgba(255,107,107,.24);color:#ffb3b3} .btn:disabled{opacity:.42;cursor:not-allowed}
-  .result-card{text-align:center;max-width:380px} .result-mode{font-size:12px;opacity:.82;margin:0 0 5px;font-weight:700}
+  .btn-primary{background:var(--accent);color:var(--accent-fg)} .btn-ok{background:var(--ok);color:#0f2a15} .btn-sub{background:var(--muted);color:#fff} .btn-danger{background:rgba(255,107,107,.24);color:#ffb3b3} .btn:disabled{opacity:.42;cursor:not-allowed}
+  .result-card{text-align:center;max-width:400px} .result-mode{font-size:12px;opacity:.82;margin:0 0 5px;font-weight:700}
   .result-title{font-size:21px;font-weight:900;margin:0 0 6px;color:var(--accent)} .result-title.fail{color:#ff8a80}
   .result-value{font-size:36px;font-weight:900;margin:0 0 6px;font-variant-numeric:tabular-nums} .result-best{font-size:13px;font-weight:700;margin:0 0 10px;color:rgba(255,255,255,.88)}
   .pt-badge{display:inline-block;background:var(--ok);color:#0f2a15;font-size:13px;font-weight:900;padding:4px 12px;border-radius:999px;margin-bottom:8px}
   .new-best{display:inline-block;background:var(--accent);color:var(--accent-fg);font-size:11.5px;font-weight:900;padding:3px 10px;border-radius:999px;margin-bottom:6px}
-  .rank-list{list-style:none;margin:0 0 12px;padding:0;text-align:left;display:flex;flex-direction:column;gap:5px;max-height:240px;overflow-y:auto}
+  .rank-list{list-style:none;margin:0 0 12px;padding:0;text-align:left;display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto}
   .rank-item{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.08);font-size:12.5px;font-weight:700}
   .rank-item.me{background:rgba(255,210,63,.22);border:1px solid var(--accent);color:var(--accent)}
   .rank-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:middle}
@@ -124,14 +135,14 @@
         <button type="button" class="mode-btn" data-mode="human"><strong>人間モード</strong><span>障害物すり抜け</span></button>
         <button type="button" class="mode-btn" data-mode="race"><strong>チーズレース</strong><span>マップ＆順位バー</span></button>
         <button type="button" class="mode-btn" data-mode="ta500"><strong>500mタイム</strong><span>全国ランキング</span></button>
-        <button type="button" class="mode-btn" data-mode="online"><strong>オンライン</strong><span>最大6人対戦</span></button>
+        <button type="button" class="mode-btn" data-mode="online"><strong>オンライン</strong><span>最大6人＆トーク</span></button>
       </div>
       <div class="mode-hint" id="modeHint"></div>
       <div class="reward-banner hidden" id="rewardBanner">クリア報酬：+15 pt（距離が長いほどポイントUP！）</div>
       <div class="best-box" id="bestBox"><span id="menuBestLabel">ベスト</span><span class="val" id="menuBestVal">---</span></div>
 
       <div class="online-box hidden" id="ta500Box">
-        <span class="toggle-label" style="margin-top:0">ランキング登録名</span>
+        <span class="toggle-label" style="margin-top:0">プレイヤー名（ランキング＆オンライン共通）</span>
         <div class="room-row" style="margin-bottom:0">
           <input id="playerNameInput" class="room-input" type="text" maxlength="14" placeholder="プレイヤー名">
           <button id="taViewLbBtn" type="button" class="mini-btn">順位を見る</button>
@@ -195,11 +206,26 @@
             </div>
           </div>
           <div class="toggle-group" id="roleToggleBox">
-            <span class="toggle-label" id="roleToggleLabel">ホストの役割（他は人間）</span>
-            <div class="toggle-row">
-              <button type="button" class="seg-btn active" data-role="cheese">チーズ役（逃げる）</button>
-              <button type="button" class="seg-btn" data-role="human">人間役（追う）</button>
+            <span class="toggle-label" id="roleToggleLabel">鬼ごっこのチーズ役（連戦時は自動で順番に入れ替わります）</span>
+            <div class="btn-row">
+              <button type="button" id="swapRoleLobbyBtn" class="btn btn-sub" style="padding:8px">🔄 チーズ役を次の人に交代</button>
             </div>
+          </div>
+        </div>
+
+        <!-- 待機場所トーク（チャット） -->
+        <div id="chatBox" class="chat-box hidden">
+          <span class="toggle-label" style="margin-top:0">💬 待機場所トーク</span>
+          <div id="chatMsgs" class="chat-msgs"></div>
+          <div class="quick-row">
+            <button type="button" class="quick-chat" data-msg="よろしく！">よろしく！</button>
+            <button type="button" class="quick-chat" data-msg="準備OK！">準備OK！</button>
+            <button type="button" class="quick-chat" data-msg="コース変えよう！">コース変えよう！</button>
+            <button type="button" class="quick-chat" data-msg="もう一回！">もう一回！</button>
+          </div>
+          <div class="chat-form">
+            <input id="chatInput" class="room-input" type="text" maxlength="60" placeholder="メッセージを入力…" autocomplete="off">
+            <button id="chatSendBtn" type="button" class="mini-btn">送信</button>
           </div>
         </div>
       </div>
@@ -256,10 +282,18 @@
       <p class="result-value" id="dist">0 m</p>
       <p class="result-best" id="resBest"></p>
       <ul class="rank-list hidden" id="rankList"></ul>
+
+      <!-- 合言葉ルーム「今のルームに残る」全員準備OK状況 -->
+      <div id="stayBox" class="stay-box hidden">
+        <p class="stay-info" id="stayInfo">全員が「今のルームに残る」を押すと次の試合が開始されます</p>
+        <div class="chips" id="stayChips" style="margin:4px 0 0"></div>
+      </div>
+
       <div class="btn-row">
+        <button id="stayRoomBtn" type="button" class="btn btn-ok hidden">今のルームに残る</button>
+        <button id="backLobbyBtn" type="button" class="btn btn-sub hidden">待機所(トーク)へ</button>
         <button id="toMenuBtn" type="button" class="btn btn-sub">モード・設定</button>
         <button id="nextFreeBtn" type="button" class="btn btn-primary hidden">次の相手を探す</button>
-        <button id="swapRetryBtn" type="button" class="btn btn-sub hidden">役割交代で再戦</button>
         <button id="retryBtn" type="button" class="btn btn-primary">もう一回</button>
       </div>
     </div>
@@ -271,8 +305,9 @@
 <script>
 (() => {
   'use strict';
- const SUPABASE_URL = 'https://corkwvuykdeygnbmroup.supabase.co';
+  const SUPABASE_URL = 'https://corkwvuykdeygnbmroup.supabase.co';
   const SUPABASE_KEY = 'sb_publishable___inJSz36aJXoRX7yFAwbg_sbWQWwjv';
+
   const $ = id => document.getElementById(id);
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const list = n => css(n).split(',').map(s => s.trim());
@@ -284,13 +319,12 @@
 
   const MAX_GOAL = 3000, TA_GOAL = 500, TA_SEED = 500500, MAX_ONLINE_PLAYERS = 6, MAX_CHEESES = 6;
   const RACER_COLORS = ['#ffd23f', '#ff595e', '#38bdf8', '#4ade80', '#c084fc', '#fb923c'];
-  const ROOM_PREFIX = 'kcheese-r6-', FREE_PREFIX = 'kcheese-f6-', FREE_SLOTS = 12;
+  const ROOM_PREFIX = 'kcheese-r7-', FREE_PREFIX = 'kcheese-f7-', FREE_SLOTS = 12;
   const PEER_OPTS = { debug:0, config:{ iceServers:[{ urls:'stun:stun.l.google.com:19302' },{ urls:'stun:stun1.l.google.com:19302' },{ urls:'stun:stun.cloudflare.com:3478' }] } };
 
-  // レース距離に応じた獲得ポイント計算（300m=2pt, 1000m=5pt, 2000m=10pt, 3000m=15pt）
   const calcRewardPts = dist => Math.max(2, Math.round(clamp(dist, 300, MAX_GOAL) / 200));
 
-  // ---------- チーズスキン定義（専用エフェクト＆効果音キャラ付き） ----------
+  // ---------- チーズスキン定義 ----------
   const SKINS = [
     { id:'classic',    name:'チェダー（標準）', cost:0,  rind:'#e3a03a', face:'#f3cf72', swatch:'linear-gradient(135deg,#f3cf72,#e3a03a)', style:'solid',   fx:'チーズ粉',     pCol:['#fff4c2','#f3cf72'], trail:'#fff4d6', tone:1.0 },
     { id:'white',      name:'モッツァレラ',     cost:5,  rind:'#e8e4d8', face:'#ffffff', swatch:'linear-gradient(135deg,#fff,#dcd6c8)',    style:'solid',   fx:'ふわ雪',       pCol:['#ffffff','#dbeafe'], trail:'#ffffff', tone:1.15 },
@@ -329,6 +363,7 @@
       get muted(){ return muted; },
       toggle(){ muted = !muted; try{ localStorage.setItem('runawayCheese.v6.mute', muted ? '1' : '0'); }catch{} return muted; },
       click(){ tone(520, 0.05, 'triangle', 0.09, 680); },
+      chat(){ tone(740, 0.07, 'sine', 0.08, 920); },
       start(){ tone(440, 0.1, 'triangle', 0.13, 440, 0); tone(660, 0.18, 'triangle', 0.15, 880, 0.11); },
       bounce(k){ const s = getSkinObj(profile.skin); tone(190 * s.tone, 0.08, s.style==='cyber'?'sawtooth':'sine', Math.min(0.16, 0.06 + k*0.03), 110); },
       hit(){ tone(130, 0.14, 'square', 0.14, 65); },
@@ -341,7 +376,7 @@
     };
   })();
 
-  // ---------- プロフィール＆Firebase全国500mランキング ----------
+  // ---------- プロフィール＆Supabase全国500mランキング ----------
   const DEFAULT_LB = [
     { name:'スピード王AI', time:33.80, skin:'gold' },
     { name:'チーズ職人',   time:35.90, skin:'blue' },
@@ -378,7 +413,7 @@
     profile.lb500 = Array.from(map.values()).sort((a, b) => a.time - b.time).slice(0, 30);
     saveProfile();
   }
-const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL.trim().replace(/\/+$/, '') : '';
+  const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL.trim().replace(/\/+$/, '') : '';
   function sbHeaders(extra){
     const h = { apikey: SUPABASE_KEY.trim(), ...extra };
     if (SUPABASE_KEY.trim().startsWith('eyJ')) h.Authorization = `Bearer ${SUPABASE_KEY.trim()}`;
@@ -390,14 +425,11 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
       const res = await fetch(`${base}/rest/v1/lb500?select=name,time,skin&order=time.asc&limit=30`, { headers: sbHeaders() });
       if (!res.ok) return false;
       const data = await res.json();
-      if (Array.isArray(data)){
-        mergeLeaderboard(data);
-        return true;
-      }
+      if (Array.isArray(data)){ mergeLeaderboard(data); return true; }
     } catch {}
     return false;
   }
-  async function uploadScoreToFirebase(name, time, skin){
+  async function uploadScoreToServer(name, time, skin){
     const base = fbBase(); if (!base) return false;
     const nm = name.trim().slice(0, 14); if (!nm) return false;
     try {
@@ -422,7 +454,7 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     human:  { label:'人間モード（追っ手）', hint:'障害物をすり抜けられます！矢印/WASDで走り、Spaceか右下ボタンで飛びついて捕まえよう。', goalDist:3000, speed:12, vxMax:7, chasers:6, chSpeed:1.05, boardGap:25, camUp:6 },
     race:   { label:'チーズレース', hint:'ミニマップ＆順位バー搭載！ノーマルは距離とカメラ高さのみ変更可能で、距離に応じたポイントがもらえます。', goalDist:3000, speed:22, vxMax:11, chasers:6, chSpeed:1.0, boardGap:28, camUp:11 },
     ta500:  { label:'500mタイムアタック', hint:'人なし・ノーマル500m固定の公式タイム計測！好タイムを出して全国ランキング上位を目指そう。', goalDist:500, speed:14, vxMax:6.5, chasers:0, chSpeed:1.0, boardGap:25, camUp:6 },
-    online: { label:'オンライン対戦', hint:'最大6人の鬼ごっこ＆レース！対戦相手と500mランキングも自動で同期されます。', goalDist:3000, speed:16, vxMax:8, chasers:0, chSpeed:1.05, boardGap:28, camUp:8 },
+    online: { label:'オンライン対戦', hint:'最大6人の鬼ごっこ＆レース！待機場所でトークでき、連戦時は役割交代＆全員「残る」で自動スタート！', goalDist:3000, speed:16, vxMax:8, chasers:0, chSpeed:1.05, boardGap:28, camUp:8 },
   };
   const FREE_RULES = {
     chase_normal:  { onlineGame:'chase', onlineCourse:'normal',  goalDist:3000, speed:16, vxMax:8,  chasers:0, chSpeed:1.05, boardGap:28, camUp:8 },
@@ -433,7 +465,7 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     race_board:    { onlineGame:'race',  onlineCourse:'board',   goalDist:3000, speed:52, vxMax:30, chasers:6, chSpeed:1.0,  boardGap:28, camUp:38 },
   };
 
-  const userCfg = { mode:'normal', raceCourse:'special', onlineType:'free', onlineGame:'chase', onlineCourse:'normal', hostRole:'cheese', ...PRESETS.normal };
+  const userCfg = { mode:'normal', raceCourse:'special', onlineType:'free', onlineGame:'chase', onlineCourse:'normal', cheeseTurnIdx:0, ...PRESETS.normal };
   const cfg = {
     mode:'normal', onlineType:'room', isOnline:false, isRace:false, isTA:false, isPointEligible:false, course:'normal', goalDist:3000,
     myRole:'cheese', myIndex:0, humanPlayerCount:0, halfW:8, xlim:7.8, cheeseR:0.32, cheeseW:0.2,
@@ -441,7 +473,11 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     chStart:6, chMax:12, chAddEvery:100, startDelay:1.0, startGrace:2.0, chSpeedMult:1.0, runAcc:7, chVx:3.2,
     boardGap:25, boardW:20, boardH:3.2, boardThick:1.6, thigh:0.43, shin:0.43, camBack:8, camUp:6, camFollowX:0.75, camVfovMax:65, targetSpeed:14,
   };
-  const net = { peer:null, hostConn:null, clients:new Map(), roster:[], myId:'host', role:'none', matchKind:'room', searching:false, connected:false, room:'', searchGen:0, startTimer:null, joinTimer:null, helloTimer:null, lastSend:0, snap:null };
+  const net = {
+    peer:null, hostConn:null, clients:new Map(), roster:[], myId:'host', role:'none', matchKind:'room',
+    searching:false, connected:false, room:'', searchGen:0, startTimer:null, joinTimer:null, helloTimer:null,
+    lastSend:0, snap:null, chatLog:[], stayReady:new Set(), stayLaunchTimer:null
+  };
 
   const SLOPE = 0.9, SLOPE_ANG = Math.atan(SLOPE), CH_ALLOC = 300, SP_LEN = 50;
   const TILT_KICK = 0.35, TILT_SPRING = 30, TILT_DAMP = 4, TILT_DRIFT = 3, JOY_R = 50, JOY_DEAD = 0.12, PUSH_ACC = 0.8, BRAKE_ACC = 6;
@@ -548,7 +584,7 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     return { s:Math.max(2, s - 10), x:0 };
   }
   // === パート1 ここまで ===
-// === パート2 ここから ===
+  // === パート2 ここから ===
   // ---------- 状態＆three.js ----------
   let game = 'menu', outcome = 'caught', winnerIdx = -1, S0 = 0, overT = 0, playTime = 0;
   let activeN = 0, cheeseN = 1, shownHudKey = '', currentBest = null, maxDist = 0, diveRequested = false, raceOrder = [], raceFinishTimer = 0;
@@ -1058,7 +1094,7 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
   }
   cylMesh.instanceColor.needsUpdate=sphMesh.instanceColor.needsUpdate=true;
   // === パート2 ここまで ===
-// === パート3 ここから ===
+  // === パート3 ここから ===
   // ---------- AI・操作・物理更新 ----------
   function cheeseAIInput(ch){
     let steer=0, pushY=cfg.isRace?(.62+.38*ch.aiSpeedK):.35;
@@ -1409,7 +1445,7 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     renderer.render(scene, camera);
   }
 
-  // ---------- 設定反映（ポイント対象モードは距離＆カメラ高さ以外を固定ロック） ----------
+  // ---------- 設定反映 ----------
   function isPointMode(s){
     const u = s || userCfg;
     return u.mode === 'normal' || (u.mode === 'race' && u.raceCourse === 'normal');
@@ -1424,7 +1460,6 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     cfg.myRole=(isRace||isTA)?'cheese':(isOn?myR:(s.mode==='human'?'human':'cheese'));
     cfg.myIndex=myI||0; cfg.humanPlayerCount=(isRace||isTA)?0:(isOn?(hCnt||1):(s.mode==='human'?1:0));
 
-    // ポイント対象モード・500mタイムアタックは距離＆カメラ以外のパラメータを公式固定値にする
     if(isTA){
       cfg.targetSpeed=14; cfg.vxMax=6.5; cfg.chSpeedMult=1.0; cfg.boardGap=25; cfg.chStart=cfg.chMax=0;
     } else if(ptMode){
@@ -1452,11 +1487,97 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     cfg.xlim=cfg.halfW-cfg.cheeseW/2-.1; for(const v of cheeseVisuals)v.mesh.scale.set(cfg.cheeseW,cfg.cheeseR,cfg.cheeseR); rebuildBodyDist(); resize();
   }
 
+  // ---------- 待機場所トーク＆「今のルームに残る」管理 ----------
+  function renderChat(){
+    const box = $('chatMsgs'); box.innerHTML = '';
+    for(const m of net.chatLog){
+      const div = document.createElement('div');
+      div.className = 'chat-line' + (m.sys ? ' sys' : '');
+      if(m.sys){ div.textContent = m.text; }
+      else {
+        const sp = document.createElement('span'); sp.className = 'cn'; sp.textContent = `${m.name}:`;
+        div.appendChild(sp); div.appendChild(document.createTextNode(m.text));
+      }
+      box.appendChild(div);
+    }
+    box.scrollTop = box.scrollHeight;
+  }
+  function pushChatLocal(name, text, sys, silent){
+    net.chatLog.push({ name:String(name||'').slice(0,14), text:String(text||'').slice(0,80), sys:!!sys });
+    if(net.chatLog.length > 50) net.chatLog.shift();
+    renderChat();
+    if(!silent) SFX.chat();
+  }
+  function hostSysChat(text){
+    pushChatLocal('', text, true, true);
+    broadcastToClients({ t:'chat', name:'', text, sys:true });
+  }
+  function sendChatText(raw){
+    const text = String(raw || '').trim().slice(0, 60);
+    if(!text || net.role === 'none') return;
+    const nm = (profile.name || 'プレイヤー').trim().slice(0, 14);
+    if(net.role === 'host'){
+      pushChatLocal(nm, text, false, true);
+      broadcastToClients({ t:'chat', name:nm, text, sys:false });
+    } else if(net.role === 'guest' && net.connected){
+      sendToHost({ t:'chat', name:nm, text });
+    }
+    SFX.click();
+  }
+
+  function renderStayUI(starting){
+    const canStay = cfg.isOnline && cfg.onlineType === 'room' && net.roster.length >= 2;
+    $('stayBox').classList.toggle('hidden', !canStay);
+    $('stayRoomBtn').classList.toggle('hidden', !canStay);
+    $('backLobbyBtn').classList.toggle('hidden', !(cfg.isOnline && cfg.onlineType === 'room' && net.role !== 'none'));
+    if(!canStay) return;
+    const total = net.roster.length, readyCnt = net.roster.filter(p => net.stayReady.has(p.id)).length;
+    const iAmReady = net.stayReady.has(net.myId);
+    const nextHint = !cfg.isRace && net.roster.length > 0
+      ? `（次のチーズ役：${net.roster[(userCfg.cheeseTurnIdx || 0) % net.roster.length].name}）`
+      : '';
+    $('stayInfo').textContent = starting
+      ? `全員OK！まもなく次の試合を開始します…${nextHint}`
+      : `今のルームに残る：${readyCnt} / ${total}人 OK${nextHint}`;
+    const chips = $('stayChips'); chips.innerHTML = '';
+    net.roster.forEach(p => {
+      const sp = document.createElement('span');
+      const ok = net.stayReady.has(p.id);
+      sp.className = 'chip' + (ok ? ' ready' : (p.id === net.myId ? ' me' : ''));
+      sp.textContent = `${ok ? '✅ ' : '⏳ '}${p.name}${p.id === net.myId ? '(あなた)' : ''}`;
+      chips.appendChild(sp);
+    });
+    const btn = $('stayRoomBtn');
+    btn.disabled = !!starting;
+    btn.textContent = starting ? 'まもなく開始…' : (iAmReady ? '✅ 残る準備OK（取消も可）' : '今のルームに残る');
+  }
+  function hostBroadcastStayAndCheck(){
+    if(net.role !== 'host' || game !== 'over' || cfg.onlineType !== 'room') return;
+    const roster = buildHostRoster();
+    const validIds = new Set(roster.map(p => p.id));
+    for(const id of Array.from(net.stayReady)) if(!validIds.has(id)) net.stayReady.delete(id);
+    const allReady = roster.length >= 2 && roster.every(p => net.stayReady.has(p.id));
+    if(net.stayLaunchTimer){ clearTimeout(net.stayLaunchTimer); net.stayLaunchTimer = null; }
+    broadcastToClients({ t:'stay_state', ready:Array.from(net.stayReady), starting:allReady, turnIdx:userCfg.cheeseTurnIdx });
+    renderStayUI(allReady);
+    if(allReady){
+      net.stayLaunchTimer = setTimeout(() => {
+        net.stayLaunchTimer = null;
+        if(game === 'over' && net.role === 'host' && net.clients.size > 0) hostLaunchOnlineMatch();
+      }, 900);
+    }
+  }
+
   // ---------- オンライン通信（PeerJS） ----------
   const setNetStatus=(st,tx)=>{ $('netDot').className='dot '+(st||''); $('netStatus').textContent=tx; }, r2=v=>Math.round(v*100)/100;
   const cleanRoomText=raw=>raw.trim().replace(/[！-～]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0xFEE0)).replace(/\s+/g,'');
   const encodeRoomId=raw=>{ const s=cleanRoomText(raw).toLowerCase(); return s?Array.from(new TextEncoder().encode(s),b=>b.toString(16).padStart(2,'0')).join('').slice(0,48):''; };
-  const clearNetTimers=()=>{ if(net.startTimer){clearTimeout(net.startTimer);net.startTimer=null;} if(net.joinTimer){clearTimeout(net.joinTimer);net.joinTimer=null;} if(net.helloTimer){clearInterval(net.helloTimer);net.helloTimer=null;} };
+  const clearNetTimers=()=>{
+    if(net.startTimer){clearTimeout(net.startTimer);net.startTimer=null;}
+    if(net.joinTimer){clearTimeout(net.joinTimer);net.joinTimer=null;}
+    if(net.helloTimer){clearInterval(net.helloTimer);net.helloTimer=null;}
+    if(net.stayLaunchTimer){clearTimeout(net.stayLaunchTimer);net.stayLaunchTimer=null;}
+  };
   const buildHostRoster=()=>{ const arr=[{id:'host',name:profile.name||'ホスト',skin:profile.skin}]; let n=1; for(const cl of net.clients.values())arr.push({id:cl.id,name:cl.name||`ゲスト${n++}`,skin:cl.skin||'classic'}); net.roster=arr; return arr; };
   const broadcastToClients=obj=>{ for(const cl of net.clients.values())if(cl.conn&&cl.conn.open){try{cl.conn.send(obj);}catch{}} };
   const sendToHost=obj=>{ if(net.hostConn&&net.hostConn.open){try{net.hostConn.send(obj);}catch{}} };
@@ -1476,45 +1597,84 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
   function handleHostData(cl, msg){
     if(!msg||typeof msg!=='object')return;
     if(msg.t==='hello'){
+      const firstHello = !cl.welcomed; cl.welcomed = true;
       if(msg.name) cl.name=String(msg.name).slice(0,14);
       if(msg.skin) cl.skin=String(msg.skin);
       if(Array.isArray(msg.lb)) mergeLeaderboard(msg.lb);
       const roster=buildHostRoster();
-      try{cl.conn.send({t:'welcome',myId:cl.id,cfg:{...userCfg},roster,lb:profile.lb500});}catch{}
+      try{cl.conn.send({t:'welcome',myId:cl.id,cfg:{...userCfg},roster,lb:profile.lb500,chatLog:net.chatLog});}catch{}
       broadcastToClients({t:'lobby',cfg:{...userCfg},roster,lb:profile.lb500});
+      if(firstHello) hostSysChat(`${cl.name || 'ゲスト'} が参加しました！`);
       syncMenuUI();
+    } else if(msg.t==='rename'){
+      if(msg.name) cl.name=String(msg.name).slice(0,14);
+      sendLobbyPreview(); syncMenuUI();
+    } else if(msg.t==='chat'){
+      const txt=String(msg.text||'').trim().slice(0,60), nm=cl.name||String(msg.name||'ゲスト').slice(0,14);
+      if(txt){ pushChatLocal(nm, txt, false, false); broadcastToClients({t:'chat',name:nm,text:txt,sys:false}); }
+    } else if(msg.t==='stay'){
+      if(game==='over'&&cfg.onlineType==='room'){
+        if(msg.ready) net.stayReady.add(cl.id); else net.stayReady.delete(cl.id);
+        hostBroadcastStayAndCheck();
+      }
+    } else if(msg.t==='to_lobby'){
+      if(game!=='menu'&&cfg.onlineType==='room'){
+        net.stayReady.clear(); clearNetTimers();
+        broadcastToClients({t:'menu',cfg:{...userCfg},roster:buildHostRoster()});
+        setupWorld(false);
+        hostSysChat(`${cl.name || 'ゲスト'} が待機所へ戻りました`);
+      }
     } else if(msg.t==='in'){ cl.input.x=clamp(Number(msg.x)||0,-1,1); cl.input.y=clamp(Number(msg.y)||0,-1,1); if(msg.d)cl.input.dive=true; }
   }
   function handleGuestData(msg){
     if(!msg||typeof msg!=='object')return;
     if(Array.isArray(msg.lb)) mergeLeaderboard(msg.lb);
-    if(msg.t==='welcome'){ clearNetTimers(); net.connected=true; net.searching=false; net.myId=msg.myId; if(msg.cfg)Object.assign(userCfg,msg.cfg,{mode:'online'}); if(msg.roster)net.roster=msg.roster; setNetStatus('ok',`接続完了！（部屋: ${net.room} / ${net.roster.length}人参加中）ホスト開始待ち`); syncMenuUI(); }
-    else if(msg.t==='lobby'){ if(msg.cfg)Object.assign(userCfg,msg.cfg,{mode:'online'}); if(msg.roster)net.roster=msg.roster; if(net.connected)setNetStatus('ok',`接続中（部屋: ${net.room} / ${net.roster.length}人参加中）ホスト開始待ち`); syncMenuUI(); }
-    else if(msg.t==='start'){ clearNetTimers(); net.connected=true; net.searching=false; Object.assign(userCfg,msg.cfg,{mode:'online'}); const a=msg.assign[net.myId]||{role:'human',idx:0}; startMatchInternal(true,msg.seed,a.role,a.idx,msg.cheeseN,msg.humanCount,null,msg.labels,msg.skins); }
-    else if(msg.t==='snap') net.snap=msg; else if(msg.t==='menu') setupWorld(false);
+    if(msg.t==='welcome'){
+      clearNetTimers(); net.connected=true; net.searching=false; net.myId=msg.myId;
+      if(msg.cfg)Object.assign(userCfg,msg.cfg,{mode:'online'}); if(msg.roster)net.roster=msg.roster;
+      if(Array.isArray(msg.chatLog)){ net.chatLog=msg.chatLog.slice(-50); renderChat(); }
+      setNetStatus('ok',`接続完了！（部屋: ${net.room} / ${net.roster.length}人参加中）待機所でトークできます`); syncMenuUI();
+    }
+    else if(msg.t==='lobby'){ if(msg.cfg)Object.assign(userCfg,msg.cfg,{mode:'online'}); if(msg.roster)net.roster=msg.roster; if(net.connected)setNetStatus('ok',`接続中（部屋: ${net.room} / ${net.roster.length}人参加中）ホスト開始待ち`); syncMenuUI(); if(game==='over') renderStayUI(false); }
+    else if(msg.t==='chat'){ pushChatLocal(msg.name||'', msg.text||'', !!msg.sys, msg.name===profile.name); }
+    else if(msg.t==='stay_state'){
+      net.stayReady = new Set(Array.isArray(msg.ready) ? msg.ready : []);
+      if(typeof msg.turnIdx === 'number') userCfg.cheeseTurnIdx = msg.turnIdx;
+      if(game==='over') renderStayUI(!!msg.starting);
+    }
+    else if(msg.t==='start'){
+      clearNetTimers(); net.connected=true; net.searching=false; net.stayReady.clear();
+      Object.assign(userCfg,msg.cfg,{mode:'online'}); if(msg.roster)net.roster=msg.roster;
+      const a=msg.assign[net.myId]||{role:'human',idx:0};
+      startMatchInternal(true,msg.seed,a.role,a.idx,msg.cheeseN,msg.humanCount,null,msg.labels,msg.skins);
+    }
+    else if(msg.t==='snap') net.snap=msg;
+    else if(msg.t==='menu'){ net.stayReady.clear(); if(msg.cfg)Object.assign(userCfg,msg.cfg,{mode:'online'}); if(msg.roster)net.roster=msg.roster; setupWorld(false); }
   }
   function disconnectNet(silent){
     net.searchGen++; clearNetTimers(); for(const cl of net.clients.values()){try{cl.conn.close();}catch{}} net.clients.clear();
     if(net.hostConn){try{net.hostConn.close();}catch{} net.hostConn=null;} if(net.peer){try{net.peer.destroy();}catch{} net.peer=null;}
-    net.role='none'; net.searching=false; net.connected=false; net.room=''; net.roster=[]; net.snap=null;
+    net.role='none'; net.searching=false; net.connected=false; net.room=''; net.roster=[]; net.snap=null; net.chatLog=[]; net.stayReady.clear(); renderChat();
     if(!silent) setNetStatus('',userCfg.onlineType==='free'?'ルールとコースを選んで開始してください':'合言葉を決めて部屋を作るか入ってください（最大6人）');
     syncMenuUI();
   }
   function acceptHostConnection(conn, gen, isFree){
     if(gen!==net.searchGen||net.clients.size>=MAX_ONLINE_PLAYERS-1||game!=='menu'){ const rej=()=>{try{conn.send({t:'busy'});}catch{} setTimeout(()=>{try{conn.close();}catch{}},200);}; if(conn.open)rej(); else conn.on('open',rej); return; }
-    const cid=conn.peer, cl={conn,id:cid,name:'',skin:'classic',input:{x:0,y:0,dive:false}}; net.clients.set(cid,cl); conn.on('data',m=>handleHostData(cl,m));
+    const cid=conn.peer, cl={conn,id:cid,name:'',skin:'classic',welcomed:false,input:{x:0,y:0,dive:false}}; net.clients.set(cid,cl); conn.on('data',m=>handleHostData(cl,m));
     const onOpen=()=>{
       if(gen!==net.searchGen||!net.clients.has(cid))return; net.connected=true; const roster=buildHostRoster();
-      try{conn.send({t:'welcome',myId:cid,cfg:{...userCfg},roster,lb:profile.lb500});}catch{} broadcastToClients({t:'lobby',cfg:{...userCfg},roster,lb:profile.lb500});
+      try{conn.send({t:'welcome',myId:cid,cfg:{...userCfg},roster,lb:profile.lb500,chatLog:net.chatLog});}catch{} broadcastToClients({t:'lobby',cfg:{...userCfg},roster,lb:profile.lb500});
       if(isFree){ setNetStatus('ok',`${roster.length}人集まりました！${roster.length>=MAX_ONLINE_PLAYERS?'間もなく開始…':'数秒後に開始（受付中）'}`); if(net.startTimer)clearTimeout(net.startTimer); net.startTimer=setTimeout(()=>{ if(gen===net.searchGen&&game==='menu'&&net.clients.size>0)hostLaunchOnlineMatch(); },roster.length>=MAX_ONLINE_PLAYERS?900:3500); }
       else setNetStatus('ok',`${roster.length}/${MAX_ONLINE_PLAYERS}人参加中（部屋: ${net.room}）「対戦スタート」で開始`);
       syncMenuUI();
     };
     if(conn.open)onOpen(); else conn.on('open',onOpen);
     conn.on('close',()=>{
-      if(!net.clients.has(cid))return; net.clients.delete(cid);
-      if(game!=='menu'){ for(let i=0;i<cheeseN;i++)if(cheeses[i].ctrlId===cid)cheeses[i].ctrlId='ai'; for(let i=0;i<activeN;i++)if(chasers[i].ctrlId===cid){chasers[i].isPlayer=false;chasers[i].ctrlId=null;} }
+      if(!net.clients.has(cid))return; const leftName=cl.name||'ゲスト'; net.clients.delete(cid); net.stayReady.delete(cid);
+      if(game==='playing'||game==='caught'){ for(let i=0;i<cheeseN;i++)if(cheeses[i].ctrlId===cid)cheeses[i].ctrlId='ai'; for(let i=0;i<activeN;i++)if(chasers[i].ctrlId===cid){chasers[i].isPlayer=false;chasers[i].ctrlId=null;} }
       const roster=buildHostRoster(); net.connected=net.clients.size>0; broadcastToClients({t:'lobby',cfg:{...userCfg},roster,lb:profile.lb500});
+      hostSysChat(`${leftName} が退出しました`);
+      if(game==='over') hostBroadcastStayAndCheck();
       if(game==='menu'){ if(net.clients.size===0){if(net.startTimer){clearTimeout(net.startTimer);net.startTimer=null;} setNetStatus('wait',isFree?`待機中（${net.room}）…`:`部屋「${net.room}」待機中（1/${MAX_ONLINE_PLAYERS}人）`);} else setNetStatus('ok',`${roster.length}/${MAX_ONLINE_PLAYERS}人参加中`); syncMenuUI(); }
     });
   }
@@ -1529,7 +1689,7 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     if(idx>=FREE_SLOTS){ setNetStatus('wait','混み合っています… 再探索中'); net.startTimer=setTimeout(()=>tryFreeSlot(0,key,gen),1500); return; }
     const slotId=`${FREE_PREFIX}${key}-${idx}`, hp=new Peer(slotId,PEER_OPTS); net.peer=hp; let dec=false;
     setNetStatus('wait',`対戦相手を探しています…（エリア ${idx+1}）`);
-    hp.on('open',()=>{ if(gen!==net.searchGen){try{hp.destroy();}catch{}return;} dec=true;net.role='host';net.myId='host';net.room=`全国#${idx+1}`;buildHostRoster();setNetStatus('wait',`待機中（${net.room}）… 参加待ち`);syncMenuUI(); });
+    hp.on('open',()=>{ if(gen!==net.searchGen){try{hp.destroy();}catch{}return;} dec=true;net.role='host';net.myId='host';net.room=`全国#${idx+1}`;buildHostRoster();pushChatLocal('',`全国フリーマッチ（${net.room}）で待機中…`,true,true);setNetStatus('wait',`待機中（${net.room}）… 参加待ち`);syncMenuUI(); });
     hp.on('disconnected',()=>{ if(gen===net.searchGen&&!hp.destroyed){try{hp.reconnect();}catch{}} });
     hp.on('connection',c=>acceptHostConnection(c,gen,true));
     hp.on('error',e=>{ if(gen!==net.searchGen||dec)return; dec=true;try{hp.destroy();}catch{}net.peer=null; if(e.type==='unavailable-id')probeFreeSlotAsGuest(idx,key,gen); else net.startTimer=setTimeout(()=>tryFreeSlot(idx+1,key,gen),400); });
@@ -1549,10 +1709,10 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
   function createRoom(){
     if(typeof Peer==='undefined'){setNetStatus('err','PeerJS読み込み失敗');return;}
     let code=cleanRoomText($('roomCode').value); if(!code){code=String(Math.floor(1000+Math.random()*9000));$('roomCode').value=code;}
-    disconnectNet(true); const gen=++net.searchGen; net.matchKind='room'; net.role='host'; net.myId='host'; net.room=code; buildHostRoster();
+    disconnectNet(true); const gen=++net.searchGen; net.matchKind='room'; net.role='host'; net.myId='host'; net.room=code; userCfg.cheeseTurnIdx=0; buildHostRoster();
     setNetStatus('wait',`部屋「${code}」を作成中…`); syncMenuUI();
     const peer=new Peer(ROOM_PREFIX+encodeRoomId(code),PEER_OPTS); net.peer=peer;
-    peer.on('open',()=>{ if(gen===net.searchGen){setNetStatus('wait',`部屋「${code}」作成完了！（1/${MAX_ONLINE_PLAYERS}人）`);syncMenuUI();} });
+    peer.on('open',()=>{ if(gen===net.searchGen){ pushChatLocal('',`部屋「${code}」を作成しました！待機場所でトークできます`,true,true); setNetStatus('wait',`部屋「${code}」作成完了！（1/${MAX_ONLINE_PLAYERS}人）`); syncMenuUI(); } });
     peer.on('disconnected',()=>{ if(gen===net.searchGen&&!peer.destroyed){try{peer.reconnect();}catch{}} });
     peer.on('connection',c=>acceptHostConnection(c,gen,false));
     peer.on('error',e=>{ if(gen!==net.searchGen)return; setNetStatus('err',e.type==='unavailable-id'?`合言葉「${code}」は使用中です`:`エラー(${e.type})`); disconnectNet(true); });
@@ -1575,18 +1735,20 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     peer.on('error',e=>{ if(gen!==net.searchGen)return; disconnectNet(true); setNetStatus('err',e.type==='peer-unavailable'?`部屋「${code}」が見つかりません`:`エラー(${e.type})`); syncMenuUI(); });
   }
   function hostLaunchOnlineMatch(){
-    if(net.role!=='host'||net.clients.size===0)return; clearNetTimers();
+    if(net.role!=='host'||net.clients.size===0)return; clearNetTimers(); net.stayReady.clear();
     const roster=buildHostRoster(), seed=Math.floor(Math.random()*1e6), assign={}, labels={cheeses:[],humans:[]}, skins=[]; let tc=1, hc=0;
     if(userCfg.onlineGame==='race'){
       tc=clamp(Math.max(roster.length,Math.round(userCfg.chasers)),roster.length,MAX_CHEESES);
       roster.forEach((p,i)=>{assign[p.id]={role:'cheese',idx:i};labels.cheeses.push(p.name);skins.push(p.skin||'classic');});
       for(let i=roster.length;i<tc;i++){labels.cheeses.push(`CPU${i-roster.length+1}`);skins.push('classic');}
     } else {
-      let ci=userCfg.hostRole==='cheese'?0:1; if(net.matchKind==='free')ci=Math.floor(Math.random()*roster.length);
+      const ci = ((userCfg.cheeseTurnIdx || 0) % roster.length + roster.length) % roster.length;
       assign[roster[ci].id]={role:'cheese',idx:0}; labels.cheeses.push(roster[ci].name); skins.push(roster[ci].skin||'classic');
       roster.forEach((p,i)=>{if(i!==ci){assign[p.id]={role:'human',idx:hc++};labels.humans.push(p.name);}});
+      // 次の試合では自動的にチーズ役と人間役が入れ替わるように順番を進める
+      userCfg.cheeseTurnIdx = (ci + 1) % roster.length;
     }
-    broadcastToClients({t:'start',seed,cfg:{...userCfg,mode:'online'},assign,cheeseN:tc,humanCount:hc,labels,skins});
+    broadcastToClients({t:'start',seed,cfg:{...userCfg,mode:'online'},roster,assign,cheeseN:tc,humanCount:hc,labels,skins});
     const ha=assign['host']; startMatchInternal(true,seed,ha.role,ha.idx,tc,hc,assign,labels,skins);
   }
 
@@ -1610,8 +1772,8 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
   }
   function renderLeaderboard(){
     $('lbSourceHint').textContent = fbBase()
-      ? 'Firebase全国サーバーとリアルタイム同期中！'
-      : 'ローカル＆対戦相手自動同期中（Firebase URLを設定すると全国サーバー保存になります）';
+      ? 'Supabase全国サーバーとリアルタイム同期中！'
+      : 'ローカル＆対戦相手自動同期中（Supabase URLを設定すると全国サーバー保存になります）';
     const ul = $('lbList'); ul.innerHTML = '';
     const myNm = (profile.name || '').trim();
     profile.lb500.forEach((e, i) => {
@@ -1661,6 +1823,7 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     $('hudWrap').classList.remove('hidden'); $('topLeftBtns').classList.remove('hidden');
     $('diveBtn').classList.toggle('hidden',cfg.isRace||cfg.isTA||cfg.myRole!=='human');
     SFX.start();
+    if(isOn && !cfg.isRace) showToast(cfg.myRole==='cheese'?'あなたはチーズ役！逃げ切れ！':'あなたは人間役！チーズを捕まえろ！', cfg.myRole==='cheese'?'boost':'');
   }
   function setupWorld(startPlaying){
     if(startPlaying){
@@ -1669,7 +1832,7 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
       const cnt=isR?(ptMode?6:clamp(Math.round(userCfg.chasers),2,MAX_CHEESES)):1;
       startMatchInternal(false,undefined,userCfg.mode==='human'?'human':'cheese',0,cnt,userCfg.mode==='human'?1:0,null,null,null); return;
     }
-    const isOn=userCfg.mode==='online'; applyUserConfig(userCfg,isOn,isOn?userCfg.hostRole:(userCfg.mode==='human'?'human':'cheese'),0,userCfg.mode==='human'?1:0);
+    const isOn=userCfg.mode==='online'; applyUserConfig(userCfg,isOn,isOn?'cheese':(userCfg.mode==='human'?'human':'cheese'),0,userCfg.mode==='human'?1:0);
     cheeseN=cfg.isRace?(isPointMode(userCfg)&&!isOn?6:clamp(Math.round(userCfg.chasers),2,MAX_CHEESES)):1;
     for(let i=0;i<cheeseN;i++){
       const sx=cfg.isRace?(i-(cheeseN-1)/2)*2:0;
@@ -1694,7 +1857,8 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     });
   }
   function showOver(){
-    game='over'; $('diveBtn').classList.add('hidden'); if(cfg.isOnline&&net.role==='host')sendHostSnapshot(true);
+    game='over'; $('diveBtn').classList.add('hidden'); net.stayReady.clear();
+    if(cfg.isOnline&&net.role==='host')sendHostSnapshot(true);
     const d=Math.min(cfg.goalDist,Math.max(1,Math.floor(maxDist))), tEl=$('resTitle'), rEl=$('rankList'), cLbl=cfg.course==='special'?'スペシャル':cfg.course==='board'?'板よけ':'ノーマル';
     rEl.classList.add('hidden'); rEl.innerHTML=''; let isNew=false, gotPts=0;
 
@@ -1709,7 +1873,7 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
       $('resBest').textContent=`ランキング ${myRank}位 / ${profile.lb500.length}人  (BEST ${formatBest('ta500',getBest('ta500'))})`;
       renderTAResultRanks(myNm);
       if(fbBase()){
-        uploadScoreToFirebase(myNm, t, profile.skin).then(ok => {
+        uploadScoreToServer(myNm, t, profile.skin).then(ok => {
           if(ok && game==='over' && cfg.isTA){
             const nr = profile.lb500.findIndex(e => e.name === myNm) + 1;
             $('resBest').textContent=`全国ランキング ${nr}位 / ${profile.lb500.length}人  (BEST ${formatBest('ta500',getBest('ta500'))})`;
@@ -1752,9 +1916,15 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     if(gotPts > 0){ profile.pts += gotPts; saveProfile(); $('resPts').textContent = `+${gotPts} ポイント獲得！（所持 ${profile.pts} pt）`; }
     $('resPts').classList.toggle('hidden', gotPts <= 0);
 
-    const isH=cfg.isOnline&&net.role==='host'&&net.clients.size>0, isF=cfg.isOnline&&cfg.onlineType==='free';
-    $('nextFreeBtn').classList.toggle('hidden',!isF); $('swapRetryBtn').classList.toggle('hidden',!(isH&&!cfg.isRace)); $('retryBtn').classList.toggle('hidden',cfg.isOnline&&(!isH||isF));
-    $('toMenuBtn').textContent=cfg.isOnline?'ロビーへ':'モード・設定'; $('resNewBest').classList.toggle('hidden',!isNew); $('resultOverlay').classList.remove('hidden');
+    const isF = cfg.isOnline && cfg.onlineType === 'free';
+    const isRm = cfg.isOnline && cfg.onlineType === 'room';
+    $('nextFreeBtn').classList.toggle('hidden', !isF);
+    $('retryBtn').classList.toggle('hidden', cfg.isOnline);
+    $('toMenuBtn').textContent = isRm ? 'ルームを退出' : (cfg.isOnline ? 'ロビーへ' : 'モード・設定');
+    $('resNewBest').classList.toggle('hidden', !isNew);
+    renderStayUI(false);
+    if(isRm && net.role === 'host') hostBroadcastStayAndCheck();
+    $('resultOverlay').classList.remove('hidden');
   }
 
   let last=performance.now(), acc=0;
@@ -1782,7 +1952,9 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     $('modeHint').textContent=PRESETS[m].hint;
     $('rewardBanner').classList.toggle('hidden', !ptMode);
     if(ptMode) $('rewardBanner').textContent = `クリア報酬：+${calcRewardPts(userCfg.goalDist)} pt（距離が長いほどUP！速さ等は固定）`;
-    $('bestBox').classList.toggle('hidden',isOn); $('ta500Box').classList.toggle('hidden',!isTA);
+    $('bestBox').classList.toggle('hidden',isOn);
+    $('ta500Box').classList.toggle('hidden', !(isTA || isOn));
+    $('taViewLbBtn').classList.toggle('hidden', !isTA);
     $('raceCourseBox').classList.toggle('hidden',m!=='race'); $('onlineBox').classList.toggle('hidden',!isOn);
     if(m==='race')document.querySelectorAll('[data-rcourse]').forEach(b=>b.classList.toggle('active',b.dataset.rcourse===userCfg.raceCourse));
     if(!isOn){ $('menuBestLabel').textContent=`${PRESETS[m].label} ベスト`; $('menuBestVal').textContent=formatBest(m,getBest(m)); }
@@ -1790,10 +1962,27 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
       document.querySelectorAll('[data-match]').forEach(b=>{b.classList.toggle('active',b.dataset.match===userCfg.onlineType);b.disabled=busy;});
       document.querySelectorAll('[data-otype]').forEach(b=>{b.classList.toggle('active',b.dataset.otype===userCfg.onlineGame);b.disabled=isF?busy:isG;});
       document.querySelectorAll('[data-course]').forEach(b=>{b.classList.toggle('active',b.dataset.course===userCfg.onlineCourse);b.disabled=isF?busy:isG;});
-      $('freeMatchUI').classList.toggle('hidden',!isF); $('roomMatchUI').classList.toggle('hidden',!isRm); $('roleToggleBox').classList.toggle('hidden',isR);
-      const ch=$('playerChips'); if(net.roster.length>0){ch.classList.remove('hidden');ch.innerHTML=net.roster.map(p=>`<span class="chip${p.id===net.myId?' me':''}">${p.name}${p.id===net.myId?'(あなた)':''}</span>`).join('');}else ch.classList.add('hidden');
+      $('freeMatchUI').classList.toggle('hidden',!isF); $('roomMatchUI').classList.toggle('hidden',!isRm);
+      $('roleToggleBox').classList.toggle('hidden', isR || net.role==='none');
+      $('chatBox').classList.toggle('hidden', net.role==='none');
+      const ch=$('playerChips');
+      if(net.roster.length>0){
+        const ci = ((userCfg.cheeseTurnIdx || 0) % net.roster.length + net.roster.length) % net.roster.length;
+        ch.classList.remove('hidden'); ch.innerHTML='';
+        net.roster.forEach((p, idx) => {
+          const sp = document.createElement('span');
+          sp.className = 'chip' + (p.id === net.myId ? ' me' : '');
+          const icon = isR ? '🧀 ' : (idx === ci ? '🧀チーズ役: ' : '🏃人間役: ');
+          sp.textContent = `${icon}${p.name}${p.id === net.myId ? '(あなた)' : ''}`;
+          ch.appendChild(sp);
+        });
+        if(!isR){
+          $('roleToggleLabel').textContent = `次のチーズ役：${net.roster[ci].name}（連戦時は自動で入れ替わります）`;
+          $('swapRoleLobbyBtn').disabled = isG || net.roster.length < 2;
+        }
+      } else ch.classList.add('hidden');
       if(isF){ $('freeSearchBtn').classList.toggle('hidden',busy); $('freeCancelBtn').classList.toggle('hidden',!busy); $('freeStartNowBtn').classList.toggle('hidden',!(net.role==='host'&&net.clients.size>0)); }
-      else { $('connectForm').classList.toggle('hidden',net.role!=='none'); $('connectedControls').classList.toggle('hidden',net.role==='none'); $('roomStartBtn').classList.toggle('hidden',!(net.role==='host'&&net.clients.size>0)); $('copyInviteBtn').classList.toggle('hidden',net.role!=='host'); $('roleToggleLabel').textContent=isG?'ホストが役割を設定します':'ホストの役割（他は人間）'; document.querySelectorAll('[data-role]').forEach(b=>{b.classList.toggle('active',b.dataset.role===userCfg.hostRole);b.disabled=isG;}); }
+      else { $('connectForm').classList.toggle('hidden',net.role!=='none'); $('connectedControls').classList.toggle('hidden',net.role==='none'); $('roomStartBtn').classList.toggle('hidden',!(net.role==='host'&&net.clients.size>0)); $('copyInviteBtn').classList.toggle('hidden',net.role!=='host'); }
     }
     $('settingsArea').classList.toggle('hidden',isF); $('bottomStartRow').classList.toggle('hidden',isF);
     $('rowSpeed').classList.toggle('hidden',isTA); $('rowVx').classList.toggle('hidden',isTA);
@@ -1803,11 +1992,7 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     else if(isRm){ci.min='0';ci.max='30';userCfg.chasers=clamp(userCfg.chasers,0,30);$('lblChasers').textContent='追加AI追っ手（0人で人間のみ）';}
     else if(!isTA){ci.min='1';ci.max='300';userCfg.chasers=ptMode?6:clamp(userCfg.chasers,1,300);$('lblChasers').textContent=isH?'参加人数（自分含む）':'追っ手の人数';}
 
-    if(ptMode){
-      userCfg.speed = isR ? 24 : 14;
-      userCfg.vxMax = isR ? 11 : 6;
-      userCfg.chSpeed = 1.0;
-    }
+    if(ptMode){ userCfg.speed = isR ? 24 : 14; userCfg.vxMax = isR ? 11 : 6; userCfg.chSpeed = 1.0; }
 
     $('lblVx').textContent=isH?'自分の横移動の速さ':'横移動の速さ'; $('lblChSpeed').textContent=(isH||isOn)?'人間の走る速さ':'追っ手の速さ';
     $('optGoal').value=userCfg.goalDist;
@@ -1820,10 +2005,8 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     $('optCamUp').value=userCfg.camUp; $('valCamUp').textContent=`${userCfg.camUp} m`;
     $('rowBoardGap').classList.toggle('hidden',!isB);
 
-    // ロック制御：ポイント対象モードでは「ゴール距離」「カメラの高さ」以外を操作不可にする
     const lockParams = isG || ptMode;
-    $('optGoal').disabled = isG || isTA;
-    $('rowGoal').classList.toggle('locked', isG || isTA);
+    $('optGoal').disabled = isG || isTA; $('rowGoal').classList.toggle('locked', isG || isTA);
     $('optSpeed').disabled = lockParams; $('rowSpeed').classList.toggle('locked', lockParams);
     $('optVx').disabled = lockParams; $('rowVx').classList.toggle('locked', lockParams);
     $('optChasers').disabled = lockParams; $('rowChasers').classList.toggle('locked', lockParams);
@@ -1847,11 +2030,15 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
   $('closeLbBtn').addEventListener('click',()=>{ SFX.click(); $('lbOverlay').classList.add('hidden'); });
   $('lbRefreshBtn').addEventListener('click',async()=>{
     SFX.click();
-    if(!fbBase()){ showToast('Firebase URL未設定です','fall'); return; }
+    if(!fbBase()){ showToast('Supabase URL未設定です','fall'); return; }
     const ok = await fetchGlobalLb(); renderLeaderboard();
     showToast(ok ? '最新の全国記録を取得しました！' : '取得に失敗しました', ok ? 'boost' : 'fall');
   });
-  $('playerNameInput').addEventListener('input',e=>{ profile.name=e.target.value.trim().slice(0,14)||'名無し'; saveProfile(); });
+  $('playerNameInput').addEventListener('input',e=>{
+    profile.name=e.target.value.trim().slice(0,14)||'名無し'; saveProfile();
+    if(net.role==='host'){ sendLobbyPreview(); syncMenuUI(); }
+    else if(net.role==='guest'&&net.connected) sendToHost({t:'rename',name:profile.name});
+  });
   $('lbExportBtn').addEventListener('click',async()=>{
     const code = btoa(unescape(encodeURIComponent(JSON.stringify(profile.lb500.slice(0,12)))));
     try{ await navigator.clipboard.writeText(code); SFX.click(); showToast('記録コードをコピーしました','boost'); }
@@ -1863,12 +2050,51 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
     catch{ alert('コードの形式が正しくありません'); }
   });
 
+  // チャット＆役割交代＆「今のルームに残る」イベント
+  $('chatSendBtn').addEventListener('click',()=>{ sendChatText($('chatInput').value); $('chatInput').value=''; });
+  $('chatInput').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); sendChatText($('chatInput').value); $('chatInput').value=''; } });
+  document.querySelectorAll('.quick-chat').forEach(b=>b.addEventListener('click',()=>{ sendChatText(b.dataset.msg); }));
+
+  $('swapRoleLobbyBtn').addEventListener('click',()=>{
+    if(net.role!=='host'||net.roster.length<2)return;
+    SFX.click();
+    userCfg.cheeseTurnIdx = ((userCfg.cheeseTurnIdx || 0) + 1) % net.roster.length;
+    hostSysChat(`🔄 次のチーズ役が ${net.roster[userCfg.cheeseTurnIdx].name} に交代しました`);
+    sendLobbyPreview(); syncMenuUI();
+  });
+
+  $('stayRoomBtn').addEventListener('click',()=>{
+    if(!cfg.isOnline || cfg.onlineType!=='room' || game!=='over') return;
+    SFX.click();
+    const nextState = !net.stayReady.has(net.myId);
+    if(net.role==='host'){
+      if(nextState) net.stayReady.add('host'); else net.stayReady.delete('host');
+      hostBroadcastStayAndCheck();
+    } else if(net.role==='guest' && net.connected){
+      if(nextState) net.stayReady.add(net.myId); else net.stayReady.delete(net.myId);
+      sendToHost({ t:'stay', ready:nextState });
+      renderStayUI(false);
+    }
+  });
+
+  $('backLobbyBtn').addEventListener('click',()=>{
+    if(!cfg.isOnline || cfg.onlineType!=='room') return;
+    SFX.click();
+    if(net.role==='host'){
+      net.stayReady.clear(); clearNetTimers();
+      broadcastToClients({t:'menu',cfg:{...userCfg},roster:buildHostRoster()});
+      setupWorld(false);
+      hostSysChat('待機所へ戻りました（トークや設定変更ができます）');
+    } else if(net.role==='guest' && net.connected){
+      sendToHost({t:'to_lobby'});
+    }
+  });
+
   document.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{ SFX.click(); const m=b.dataset.mode; if(userCfg.mode==='online'&&m!=='online'&&(net.role!=='none'||net.searching))disconnectNet(false); Object.assign(userCfg,{mode:m,...PRESETS[m]}); if(m==='race')userCfg.raceCourse='special'; if(m==='online'){userCfg.onlineCourse='normal';userCfg.onlineGame='chase';setNetStatus('',userCfg.onlineType==='free'?'ルールとコースを選んで開始してください':'合言葉を決めて部屋を作るか入ってください（最大6人）');} setupWorld(false); }));
   document.querySelectorAll('[data-rcourse]').forEach(b=>b.addEventListener('click',()=>{ SFX.click(); const c=b.dataset.rcourse; userCfg.raceCourse=c; if(c==='board'){userCfg.speed=55;userCfg.vxMax=30;userCfg.boardGap=28;userCfg.camUp=38;} else if(c==='special'){userCfg.speed=22;userCfg.vxMax=11;userCfg.camUp=11;} else {userCfg.speed=24;userCfg.vxMax=11;userCfg.chasers=6;userCfg.camUp=10;} setupWorld(false); }));
   document.querySelectorAll('[data-match]').forEach(b=>b.addEventListener('click',()=>{ if(net.searching||net.role!=='none')return; SFX.click(); userCfg.onlineType=b.dataset.match; if(userCfg.onlineType==='free')Object.assign(userCfg,FREE_RULES[`${userCfg.onlineGame}_${userCfg.onlineCourse}`]); setNetStatus('',userCfg.onlineType==='free'?'ルールとコースを選んで開始してください':'合言葉を決めて部屋を作るか入ってください（最大6人）'); setupWorld(false); }));
   document.querySelectorAll('[data-otype]').forEach(b=>b.addEventListener('click',()=>{ SFX.click(); userCfg.onlineGame=b.dataset.otype; if(userCfg.onlineGame==='race')userCfg.onlineCourse='special'; if(userCfg.onlineType==='free')Object.assign(userCfg,FREE_RULES[`${userCfg.onlineGame}_${userCfg.onlineCourse}`]); else userCfg.chasers=userCfg.onlineGame==='race'?6:0; setupWorld(false); sendLobbyPreview(); }));
   document.querySelectorAll('[data-course]').forEach(b=>b.addEventListener('click',()=>{ SFX.click(); const c=b.dataset.course; userCfg.onlineCourse=c; if(userCfg.onlineType==='free')Object.assign(userCfg,FREE_RULES[`${userCfg.onlineGame}_${c}`]); else if(c==='board'){userCfg.speed=50;userCfg.vxMax=28;userCfg.boardGap=28;userCfg.camUp=38;} else if(c==='special'){userCfg.speed=userCfg.onlineGame==='race'?22:18;userCfg.vxMax=10;userCfg.camUp=11;} else {userCfg.speed=userCfg.onlineGame==='race'?24:16;userCfg.vxMax=10;userCfg.camUp=8;} setupWorld(false); sendLobbyPreview(); }));
-  document.querySelectorAll('[data-role]').forEach(b=>b.addEventListener('click',()=>{ SFX.click(); userCfg.hostRole=b.dataset.role; syncMenuUI(); sendLobbyPreview(); }));
   $('freeSearchBtn').addEventListener('click',()=>{ SFX.click(); startFreeMatch(); }); $('freeStartNowBtn').addEventListener('click',hostLaunchOnlineMatch); $('freeCancelBtn').addEventListener('click',()=>disconnectNet(false));
   $('randCodeBtn').addEventListener('click',()=>{ SFX.click(); $('roomCode').value=String(Math.floor(1000+Math.random()*9000)); });
   $('hostBtn').addEventListener('click',()=>{ SFX.click(); createRoom(); }); $('joinBtn').addEventListener('click',()=>{ SFX.click(); joinRoom(); }); $('disconnectBtn').addEventListener('click',()=>disconnectNet(false)); $('roomStartBtn').addEventListener('click',()=>setupWorld(true));
@@ -1883,9 +2109,15 @@ const fbBase = () => (SUPABASE_URL.trim() && SUPABASE_KEY.trim()) ? SUPABASE_URL
   $('optCamUp').addEventListener('input',e=>{userCfg.camUp=parseInt(e.target.value,10);cfg.camUp=userCfg.camUp;onSet();});
   $('presetResetBtn').addEventListener('click',()=>{SFX.click();const m=userCfg.mode;Object.assign(userCfg,{mode:m,...PRESETS[m]});if(m==='race')userCfg.raceCourse='special';if(m==='online'){userCfg.onlineCourse='normal';userCfg.onlineGame='chase';}setupWorld(false);sendLobbyPreview();});
   $('startBtn').addEventListener('click',()=>setupWorld(true)); $('retryBtn').addEventListener('click',()=>setupWorld(true));
-  $('swapRetryBtn').addEventListener('click',()=>{userCfg.hostRole=userCfg.hostRole==='cheese'?'human':'cheese';sendLobbyPreview();setupWorld(true);});
   $('nextFreeBtn').addEventListener('click',()=>{setupWorld(false);startFreeMatch();});
-  const backMenu=()=>{ SFX.click(); if(cfg.isOnline){if(cfg.onlineType==='free'||net.role==='guest')disconnectNet(false); else if(net.role==='host')broadcastToClients({t:'menu'});} setupWorld(false); };
+  const backMenu=()=>{
+    SFX.click();
+    if(cfg.isOnline){
+      if(cfg.onlineType==='free' || game==='over' || net.role==='guest') disconnectNet(false);
+      else if(net.role==='host') broadcastToClients({t:'menu',cfg:{...userCfg},roster:buildHostRoster()});
+    }
+    setupWorld(false);
+  };
   $('toMenuBtn').addEventListener('click',backMenu); $('menuBtn').addEventListener('click',backMenu);
   $('diveBtn').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(game==='playing'&&!cfg.isRace&&!cfg.isTA&&cfg.myRole==='human'){diveRequested=true;if(cfg.isOnline&&net.role==='guest'){SFX.dive();sendGuestInput(true);}}});
 
